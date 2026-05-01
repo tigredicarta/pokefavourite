@@ -3007,12 +3007,24 @@ function renderAccountSettings(app){
 }
 
 function goBackFromLegal(){
-  if(S.user){
-    if(typeof goHome==='function') goHome();
-    else { S.screen='menu'; S.currentView='game'; render(); }
-  } else {
-    S.screen='landing'; S.currentView='game'; render();
+  // Restore previous screen if we have a stored prev state
+  if(S.legalPrev){
+    S.screen = S.legalPrev.screen || (S.user ? 'menu' : 'landing');
+    S.currentView = S.legalPrev.currentView || 'game';
+    if(S.legalPrev.section) S.section = S.legalPrev.section;
+    S.legalPrev = null;
+    render();
+    return;
   }
+  // Fallback
+  if(S.user) {
+    S.screen = 'menu';
+    S.currentView = 'game';
+  } else {
+    S.screen = 'landing';
+    S.currentView = 'game';
+  }
+  render();
 }
 
 function openLegalPage(page){
@@ -3125,7 +3137,9 @@ function render(){
       +(!isL?'<div class="terms-row"><input type="checkbox" id="auth-terms"><label for="auth-terms">I agree to the <button class="landing-legal-link" style="display:inline;padding:0;font-size:inherit" onclick="event.preventDefault();event.stopPropagation();openLegalPage(&quot;terms&quot;)">Terms</button> and <button class="landing-legal-link" style="display:inline;padding:0;font-size:inherit" onclick="event.preventDefault();event.stopPropagation();openLegalPage(&quot;privacy&quot;)">Privacy Policy</button>. I am at least 13 years old.</label></div>':'')
       +'<div class="auth-msg" id="auth-msg"></div>'
       +'<button class="btn-primary" onclick="doAuth()">▶ '+(isL?'LOGIN':'CREATE ACCOUNT')+'</button>'
-      +(isL?'<button class="btn-primary dark guest-cta" onclick="continueAsGuest()">▶ PLAY AS GUEST</button><div class="guest-note">Play without an account. Use SAVE PICKS later to attach your choices.</div>':'')
+      +(isL?'<div class="auth-toggle" style="margin-top:6px;font-size:6px;cursor:pointer" onclick="forgotPassword()">▷ Forgot password?</div>'
+        +'<button class="btn-primary dark guest-cta" onclick="continueAsGuest()">▶ PLAY AS GUEST</button>'
+        +'<div class="guest-note">Play without an account. Picks are kept on this device only.</div>':'')
       +'<div class="auth-toggle" onclick="S.authMode=S.authMode===\'login\'?\'register\':\'login\';render()">'
       +(isL?'▷ No account? Register':'▷ Already have an account? Login')
       +'</div></div></div>';
