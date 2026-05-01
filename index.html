@@ -2196,6 +2196,9 @@ function bracketAdvanceRound(b){
 }
 
 async function startGame(mode,ft){
+  if(S.busy) return;
+  S.busy=true;
+  try {
   // check for saved session first — registered users only
   if(S.user&&!S.isGuest){
     const ft2=(ft||'__none__');
@@ -2217,6 +2220,7 @@ async function startGame(mode,ft){
   const pkm=currentPKM();
   const pool=ft?shuffle(pkm.filter(p=>p.types.includes(ft))):shuffle([...pkm]);
   if(pool.length===0){
+    S.busy=false;
     alert('No Pokémon of this type in this generation.');
     return;
   }
@@ -2244,6 +2248,9 @@ async function startGame(mode,ft){
     Object.assign(S,{mode,filterType:ft||null,pool,round:0,total:pool.length-1,streak:0,maxStreak:0,winner:null,screen:'battle',currentView:'game',history:[],bracket:null});
   }
   render();
+  } finally {
+    S.busy=false;
+  }
 }
 
 async function choose(idx){
@@ -2842,14 +2849,20 @@ function switchSection(sec){
 }
 
 async function startChallenge(slug){
+  if(S.busy) return;
   const ch=CHALLENGES[slug];
   if(!ch||!ch.available) return;
-  S.challenge=slug;
-  await clearFavorite(categoryFor('challenge',slug));
-  const pool=shuffle([...ch.pool]);
-  Object.assign(S,{mode:'challenge',filterType:slug,pool,round:0,total:pool.length-1,
-    streak:0,maxStreak:0,winner:null,screen:'battle',currentView:'game',history:[]});
-  render();
+  S.busy=true;
+  try {
+    S.challenge=slug;
+    await clearFavorite(categoryFor('challenge',slug));
+    const pool=shuffle([...ch.pool]);
+    Object.assign(S,{mode:'challenge',filterType:slug,pool,round:0,total:pool.length-1,
+      streak:0,maxStreak:0,winner:null,screen:'battle',currentView:'game',history:[]});
+    render();
+  } finally {
+    S.busy=false;
+  }
 }
 
 function renderChallengesMenu(app){
