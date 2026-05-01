@@ -1,0 +1,3360 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>YOUR FAVOURITE POKÉMON</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+:root { --px: 'Press Start 2P', monospace; }
+
+.gen1 {
+  --bg0:#0a0f0a; --bg1:#0f1f0f; --bg2:#1a3a1a; --bg3:#306230;
+  --fg4:#3d8c3d; --fg5:#8bac0f; --fg6:#9bbc0f; --accent:#c8ff00;
+  --border:#1a3a1a; --scanline:rgba(0,0,0,0.09);
+}
+.gen2 {
+  --bg0:#0d0b1a; --bg1:#13112a; --bg2:#1e1b3a; --bg3:#3a2d6e;
+  --fg4:#6a5acd; --fg5:#c8a800; --fg6:#e8c800; --accent:#ffe040;
+  --border:#1e1b3a; --scanline:rgba(100,80,200,0.06);
+}
+/* CHALLENGES theme — neutral blue/gold, distinct from gens */
+.challenges {
+  --bg0:#08101a; --bg1:#0c1830; --bg2:#15264a; --bg3:#2a4070;
+  --fg4:#5570a0; --fg5:#c89030; --fg6:#e0b860; --accent:#ffd060;
+  --border:#15264a; --scanline:rgba(80,120,200,0.05);
+}
+body.challenges::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:999;
+  background:
+    radial-gradient(ellipse 70% 50% at 30% 30%, rgba(80,120,255,0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 70% at 80% 80%, rgba(255,200,80,0.04) 0%, transparent 60%);
+}
+
+/* TOP NAV — primary section switcher */
+.top-nav {
+  background:var(--bg0); border-bottom:1px solid var(--border);
+  padding:0 16px; display:flex; gap:0;
+}
+.top-nav-tab {
+  flex:1; background:transparent; border:none; color:var(--fg4);
+  font-family:var(--px); font-size:7px; padding:14px 0; cursor:pointer;
+  letter-spacing:2px; text-align:center;
+  border-bottom:2px solid transparent;
+  -webkit-appearance:none; border-radius:0;
+}
+.top-nav-tab.active { color:var(--accent); border-bottom-color:var(--accent); }
+
+/* CHALLENGES PAGE */
+.challenges-wrap { flex:1; padding:24px 16px; }
+.challenges-title { font-size:10px; color:var(--accent); letter-spacing:2px; line-height:2; margin-bottom:6px; }
+.challenges-sub { font-size:6px; color:var(--fg4); line-height:2.2; margin-bottom:24px; }
+.challenges-grid { display:flex; flex-direction:column; gap:10px; }
+.challenge-card {
+  background:var(--bg1); border:1px solid var(--border); padding:18px 16px;
+  display:flex; flex-direction:column; gap:6px; cursor:pointer;
+  position:relative; -webkit-appearance:none; border-radius:0;
+  font-family:var(--px); color:var(--fg6); text-align:left;
+  transition:background 0.1s, border-color 0.1s;
+  min-height:130px; justify-content:space-between;
+}
+.challenge-card-body { display:flex; flex-direction:column; gap:6px; }
+.challenge-card-footer { margin-top:10px; }
+.challenge-card:active { background:var(--bg2); border-color:var(--fg5); }
+.challenge-card.disabled { opacity:0.4; cursor:not-allowed; pointer-events:none; }
+.challenge-card-eyebrow { font-size:6px; color:var(--fg4); letter-spacing:2px; }
+.challenge-card-title { font-size:9px; color:var(--accent); letter-spacing:1px; }
+.challenge-card-desc { font-size:6px; color:var(--fg4); line-height:2; margin-top:4px; }
+.challenge-badge {
+  position:absolute; top:14px; right:14px; font-size:4px; color:var(--bg3);
+  border:1px solid var(--bg3); padding:3px 7px; letter-spacing:2px;
+}
+.challenge-badge.new { color:var(--accent); border-color:var(--accent); }
+
+/* gen badge under sprite in challenge battle */
+.poke-gen-badge {
+  font-size:5px; color:var(--fg4); border:1px solid var(--bg3);
+  padding:3px 8px; letter-spacing:2px; margin-top:4px;
+}
+
+/* GEN 3 — Game Boy Advance: deep red/crimson */
+.gen3 {
+  --bg0:#0f0a08; --bg1:#1f1008; --bg2:#3a1a08; --bg3:#7a2a08;
+  --fg4:#c05020; --fg5:#e87828; --fg6:#f09038; --accent:#ff4800;
+  --border:#3a1a08; --scanline:rgba(200,80,0,0.07);
+}
+body.gen3::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:999;
+  background:
+    radial-gradient(ellipse 70% 50% at 30% 30%, rgba(200,60,0,0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 70% at 80% 80%, rgba(255,80,0,0.04) 0%, transparent 60%);
+}
+
+/* GEN 4 — Nintendo DS Diamond/Pearl: glacial steel-blue */
+.gen4 {
+  --bg0:#080c12; --bg1:#0e1422; --bg2:#1a2540; --bg3:#3a4d75;
+  --fg4:#5a78a8; --fg5:#8ca8d4; --fg6:#c0d4ec; --accent:#7cc8ff;
+  --border:#1a2540; --scanline:rgba(120,180,240,0.06);
+}
+body.gen4::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:999;
+  background:
+    radial-gradient(ellipse 70% 50% at 30% 30%, rgba(120,180,255,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 70% at 80% 80%, rgba(180,200,230,0.04) 0%, transparent 60%);
+}
+
+html, body {
+  min-height:100vh; min-height:100svh; min-height:100dvh;
+  background:var(--bg0); color:var(--fg6);
+  font-family:var(--px); overflow-x:hidden;
+  transition:background 0.3s, color 0.3s;
+  -webkit-text-size-adjust:100%;
+}
+
+body::before {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:1000;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,var(--scanline) 3px,var(--scanline) 4px);
+}
+body.gen2::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:999;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 40%, rgba(100,60,200,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 80% at 80% 70%, rgba(200,168,0,0.05) 0%, transparent 60%);
+}
+
+@keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+@keyframes flashwin { 0%,100%{background:var(--bg2)} 50%{background:var(--bg1)} }
+
+/* ── GEN SWITCHER ── */
+.gen-switcher {
+  background:var(--bg1); border-bottom:1px solid var(--border);
+  padding:8px 16px; display:flex; align-items:center; gap:4px;
+}
+.gen-switcher-label { display:none; }
+.gen-tab {
+  flex:1; background:transparent; border:1px solid var(--bg3); color:var(--fg4);
+  font-family:var(--px); font-size:6px; padding:8px 0; cursor:pointer;
+  letter-spacing:1px; text-align:center; transition:all 0.15s;
+}
+.gen-tab.active { background:var(--bg3); border-color:var(--accent); color:var(--accent); }
+
+/* ── SITE HEADER ── */
+.site-header {
+  border-bottom:1px solid var(--border); padding:12px 16px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--bg1); position:sticky; top:0; z-index:100;
+  gap:12px;
+}
+.logo { font-size:7px; color:var(--accent); letter-spacing:1px; line-height:1.6;
+  white-space:nowrap; flex-shrink:1; min-width:0; overflow:hidden; text-overflow:ellipsis; }
+.logo span { display:none; font-size:6px; color:var(--fg4); letter-spacing:1px; }
+.header-right { display:flex; align-items:center; gap:8px; flex-shrink:0; position:relative; }
+
+/* user trigger button */
+.user-trigger {
+  display:flex; align-items:center; gap:6px;
+  background:transparent; border:1px solid var(--bg3); color:var(--fg5);
+  font-family:var(--px); font-size:6px; padding:7px 10px; cursor:pointer;
+  letter-spacing:1px; -webkit-appearance:none; border-radius:0;
+}
+.user-trigger:active, .user-trigger.open { border-color:var(--accent); color:var(--accent); }
+.user-trigger-name { max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.user-trigger-caret { font-size:5px; color:var(--fg4); transition:transform 0.15s; }
+.user-trigger.open .user-trigger-caret { transform:rotate(180deg); color:var(--accent); }
+
+/* dropdown menu */
+.user-menu {
+  position:absolute; top:calc(100% + 6px); right:0; min-width:220px;
+  background:var(--bg1); border:1px solid var(--border);
+  z-index:200; padding:0;
+  box-shadow:0 4px 0 rgba(0,0,0,0.4);
+}
+.user-menu-status {
+  padding:14px 16px; border-bottom:1px solid var(--border);
+  display:flex; flex-direction:column; gap:6px;
+}
+.user-menu-label { font-size:5px; color:var(--fg4); letter-spacing:2px; }
+.user-menu-name { font-size:8px; color:var(--accent); letter-spacing:1px;
+  word-break:break-all; line-height:1.5; }
+.user-menu-meta { font-size:5px; color:var(--bg3); letter-spacing:1px; line-height:1.6; }
+.user-menu-action {
+  display:block; width:100%; text-align:left;
+  background:transparent; border:none; border-bottom:1px solid var(--border);
+  color:var(--fg5); font-family:var(--px); font-size:7px; padding:14px 16px;
+  cursor:pointer; letter-spacing:1px;
+  -webkit-appearance:none; border-radius:0;
+}
+.user-menu-action:last-child { border-bottom:none; }
+.user-menu-action:active { background:var(--bg2); color:var(--accent); }
+.user-menu-action.danger:active { color:#ff5050; }
+.user-menu-action .menu-action-sub {
+  display:block; font-size:5px; color:var(--bg3); letter-spacing:1px; margin-top:5px;
+}
+
+/* backdrop for closing */
+.user-menu-backdrop {
+  position:fixed; inset:0; z-index:150; background:transparent;
+}
+
+/* confirm dialog */
+.confirm-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:1000;
+  display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.confirm-box {
+  background:var(--bg1); border:1px solid var(--accent);
+  max-width:340px; width:100%; padding:24px 20px;
+  display:flex; flex-direction:column; gap:14px;
+}
+.confirm-title { font-size:9px; color:var(--accent); letter-spacing:2px; line-height:1.6; }
+.confirm-msg { font-size:7px; color:var(--fg5); line-height:2; letter-spacing:1px; }
+.confirm-actions { display:flex; gap:10px; margin-top:8px; }
+.confirm-btn {
+  flex:1; background:transparent; border:1px solid var(--bg3); color:var(--fg5);
+  font-family:var(--px); font-size:7px; padding:12px 10px; cursor:pointer;
+  letter-spacing:1px; -webkit-appearance:none; border-radius:0;
+}
+.confirm-btn.primary { border-color:var(--accent); color:var(--accent); }
+.confirm-btn:active { background:var(--bg2); }
+
+/* ── LEGAL PAGES ── */
+.legal-wrap {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  padding:32px 20px 80px;
+  overflow-y:auto;
+}
+.legal-box {
+  width:100%; max-width:720px;
+  background:var(--bg1); border:1px solid var(--border);
+  padding:28px 22px;
+}
+.legal-back {
+  background:transparent; border:none; color:var(--fg4);
+  font-family:var(--px); font-size:6px; padding:0; cursor:pointer;
+  margin-bottom:18px; letter-spacing:1px;
+}
+.legal-title {
+  font-size:11px; color:var(--accent); letter-spacing:2px;
+  line-height:1.6; margin-bottom:8px;
+}
+.legal-sub {
+  font-size:6px; color:var(--fg4); letter-spacing:2px;
+  margin-bottom:24px;
+}
+.legal-h2 {
+  font-size:9px; color:var(--accent); letter-spacing:2px;
+  margin-top:24px; margin-bottom:10px;
+  padding-top:18px; border-top:1px solid var(--border);
+}
+.legal-h2:first-of-type { padding-top:0; border-top:none; margin-top:0; }
+.legal-p {
+  font-size:7px; color:var(--fg5); line-height:2.2;
+  margin-bottom:14px; letter-spacing:0.5px;
+}
+.legal-p strong { color:var(--fg6); }
+.legal-p a { color:var(--accent); text-decoration:underline; }
+.legal-list {
+  font-size:7px; color:var(--fg5); line-height:2.2;
+  margin-bottom:14px; padding-left:18px; letter-spacing:0.5px;
+}
+.legal-list li { margin-bottom:6px; }
+.legal-meta {
+  font-size:5px; color:var(--bg3); letter-spacing:2px;
+  margin-top:32px; padding-top:16px; border-top:1px solid var(--border);
+}
+@media (min-width:700px){
+  .legal-wrap { padding:48px 32px 96px; }
+  .legal-box { padding:48px 56px; }
+  .legal-title { font-size:18px; margin-bottom:14px; }
+  .legal-sub { font-size:7px; margin-bottom:32px; }
+  .legal-h2 { font-size:12px; margin-top:32px; padding-top:24px; }
+  .legal-p, .legal-list { font-size:9px; line-height:2; }
+  .legal-meta { font-size:6px; }
+}
+
+/* ── TERMS CHECKBOX (register form) ── */
+.terms-row {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:14px 0; margin-bottom:12px;
+  font-size:7px; color:var(--fg4); line-height:1.8; letter-spacing:0.5px;
+}
+.terms-row input[type="checkbox"] {
+  flex-shrink:0; width:16px; height:16px;
+  margin-top:1px; cursor:pointer;
+  accent-color:var(--accent);
+}
+.terms-row label { cursor:pointer; }
+.terms-row a { color:var(--accent); text-decoration:underline; }
+
+/* ── LANDING LEGAL FOOTER ── */
+.landing-legal {
+  padding:24px 20px 32px;
+  display:flex; flex-direction:column; gap:10px;
+  align-items:center; text-align:center;
+  border-top:1px solid var(--border);
+}
+.landing-legal-links {
+  display:flex; gap:16px; flex-wrap:wrap; justify-content:center;
+}
+.landing-legal-link {
+  font-size:6px; color:var(--fg4); letter-spacing:2px;
+  cursor:pointer; padding:4px 0;
+  background:none; border:none; font-family:var(--px);
+}
+.landing-legal-link:active, .landing-legal-link:hover { color:var(--accent); }
+.landing-legal-disclaimer {
+  font-size:5px; color:var(--bg3); line-height:1.8;
+  letter-spacing:1px; max-width:480px; margin-top:8px;
+}
+@media (min-width:700px){
+  .landing-legal-link { font-size:7px; }
+  .landing-legal-disclaimer { font-size:6px; }
+}
+
+/* ── ACCOUNT SETTINGS PAGE ── */
+.account-section {
+  border-top:1px solid var(--border);
+  padding:18px 0; margin-top:18px;
+}
+.account-section:first-child { border-top:none; padding-top:0; margin-top:0; }
+.account-h3 {
+  font-size:8px; color:var(--accent); letter-spacing:2px;
+  margin-bottom:12px;
+}
+.account-row {
+  display:flex; flex-direction:column; gap:6px;
+  padding:10px 0; font-size:7px; color:var(--fg5);
+}
+.account-row-label { font-size:5px; color:var(--bg3); letter-spacing:2px; }
+.account-row-value { color:var(--fg6); word-break:break-all; }
+.btn-danger {
+  background:transparent; border:1px solid #6b2020; color:#c05050;
+  font-family:var(--px); font-size:7px; padding:12px 16px; cursor:pointer;
+  letter-spacing:1px; -webkit-appearance:none; border-radius:0;
+  margin-top:8px;
+}
+.btn-danger:active { background:#6b2020; color:var(--fg6); }
+@media (min-width:700px){
+  .account-h3 { font-size:10px; }
+  .account-row { font-size:8px; }
+  .account-row-label { font-size:6px; }
+  .btn-danger { font-size:8px; }
+  .btn-danger:hover { background:#6b2020; color:var(--fg6); }
+}
+
+@media (max-width: 520px) {
+  .site-header { padding:10px 12px; gap:8px; }
+  .header-right { gap:4px; }
+  .user-trigger { font-size:5px; padding:6px 8px; }
+  .user-trigger-name { max-width:60px; }
+  .user-menu { min-width:200px; right:-8px; }
+  .user-menu-name { font-size:7px; }
+  .user-menu-action { font-size:6px; padding:12px 14px; }
+}
+.nav-btn {
+  background:transparent; border:none; color:var(--fg4); font-family:var(--px);
+  font-size:5px; padding:7px 8px; cursor:pointer; letter-spacing:1px;
+  border-bottom:2px solid transparent;
+}
+.nav-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+.btn-sm {
+  background:transparent; border:1px solid var(--bg3); color:var(--fg5);
+  font-family:var(--px); font-size:5px; padding:7px 10px; cursor:pointer; letter-spacing:1px;
+}
+
+/* ── MAIN ── */
+.main { min-height:calc(100svh - 95px); min-height:calc(100dvh - 95px); display:flex; flex-direction:column; }
+
+/* LOADING */
+.loading-wrap { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; font-size:7px; color:var(--fg4); letter-spacing:2px; }
+.pixel-cursor { width:10px; height:16px; background:var(--accent); animation:blink 0.7s infinite; }
+
+/* ── AUTH ── */
+.auth-wrap { flex:1; display:flex; align-items:center; justify-content:center; padding:24px 16px; }
+.auth-box { width:100%; max-width:340px; margin:0 auto; border:1px solid var(--border); background:var(--bg1); padding:24px 18px; }
+.auth-title { font-size:9px; color:var(--accent); margin-bottom:8px; letter-spacing:2px; line-height:1.7; }
+.auth-sub { font-size:7px; color:var(--fg4); margin-bottom:22px; line-height:1.8; }
+.field-label { font-size:7px; color:var(--fg4); margin-bottom:8px; display:block; letter-spacing:1px; }
+.field-input {
+  width:100%; background:var(--bg0); border:1px solid var(--bg3); color:var(--fg6);
+  font-family:var(--px); font-size:16px; line-height:1.35; padding:10px 12px; outline:none; margin-bottom:12px;
+  -webkit-appearance:none; border-radius:0;
+}
+.field-input::placeholder { font-size:12px; }
+.field-input:focus { border-color:var(--accent); }
+.field-input::placeholder { color:var(--bg3); }
+/* Prevent iOS Safari auto-zoom on form fields */
+input, textarea, select { font-size:16px; }
+.btn-primary {
+  width:100%; background:var(--fg5); border:none; color:var(--bg0);
+  font-family:var(--px); font-size:7px; padding:12px; cursor:pointer;
+  letter-spacing:1px; margin-top:4px; -webkit-appearance:none; border-radius:0;
+}
+.btn-primary:active { background:var(--accent); }
+.btn-primary.dark { background:var(--bg2); color:var(--fg5); }
+.btn-primary.dark:active { background:var(--bg3); color:var(--accent); }
+.auth-msg { font-size:7px; color:var(--fg4); min-height:18px; margin:10px 0; line-height:1.8; }
+.auth-msg.error { color:#c05050; }
+.auth-toggle { font-size:7px; color:var(--fg4); text-align:center; margin-top:18px; cursor:pointer; line-height:1.8; padding:10px; }
+.guest-note { font-size:6px; color:var(--fg4); line-height:1.8; text-align:center; margin-top:14px; }
+.guest-cta { margin-top:10px; }
+
+/* ── MENU ── */
+.menu-wrap { flex:1; display:flex; flex-direction:column; }
+.menu-left { background:var(--bg1); padding:28px 16px 24px; border-bottom:1px solid var(--border); }
+.menu-hero { font-size:10px; color:var(--accent); line-height:2.2; margin-bottom:6px; letter-spacing:1px; }
+.menu-sub { font-size:7px; color:var(--fg4); line-height:2.0; margin-bottom:24px; }
+.menu-btn {
+  display:block; width:100%; background:transparent; border:1px solid var(--bg3);
+  color:var(--fg6); font-family:var(--px); font-size:7px; padding:16px 14px;
+  cursor:pointer; text-align:left; letter-spacing:1px; margin-bottom:8px;
+  position:relative; -webkit-appearance:none; border-radius:0;
+}
+.menu-btn::after { content:'▶'; position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--bg3); }
+.menu-btn:active { background:var(--bg2); border-color:var(--fg5); color:var(--accent); }
+.menu-btn small { display:block; font-size:6px; color:var(--fg4); margin-top:8px; letter-spacing:1px; }
+.menu-pick-preview {
+  display:flex; align-items:center; gap:10px; margin-top:12px; padding-top:10px;
+  border-top:1px solid var(--bg2); min-height:34px;
+}
+.menu-pick-preview .preview-sprite { width:34px; height:34px; image-rendering:pixelated; flex-shrink:0; }
+.preview-copy { display:flex; flex-direction:column; gap:4px; min-width:0; }
+/* Pick preview — compact pill */
+.preview-name {
+  font-size:7px; color:var(--accent); letter-spacing:1px;
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.type-pick-preview, .challenge-pick-preview {
+  display:inline-flex; align-items:center; gap:8px;
+  background:rgba(0,0,0,0.25); border:1px solid var(--bg3);
+  padding:5px 12px 5px 5px; max-width:100%;
+}
+.type-pick-preview.empty, .challenge-pick-preview.empty { display:none; }
+.type-pick-preview .preview-sprite,
+.challenge-pick-preview .preview-sprite {
+  width:34px; height:34px; image-rendering:pixelated; flex-shrink:0;
+}
+
+
+/* Leaderboard card — compact tinted card */
+.lb-card {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  width:100%;
+  margin-top:24px;
+  padding:14px 16px;
+  background:var(--bg2);
+  border:1px solid var(--fg5);
+  cursor:pointer;
+  box-sizing:border-box;
+  text-align:left;
+  font-family:var(--px);
+  transition:background 0.15s;
+}
+.lb-card-body { display:flex; flex-direction:column; gap:5px; flex:1; min-width:0; }
+.lb-card-eyebrow {
+  font-size:5px;
+  color:var(--accent);
+  letter-spacing:3px;
+}
+.lb-card-title {
+  font-size:8px;
+  color:var(--fg6);
+  letter-spacing:1px;
+  line-height:1.4;
+}
+.lb-card-cta {
+  font-size:11px;
+  color:var(--accent);
+  flex-shrink:0;
+  line-height:1;
+}
+.lb-card:active {
+  background:var(--fg5);
+}
+.lb-card:active .lb-card-eyebrow,
+.lb-card:active .lb-card-title,
+.lb-card:active .lb-card-cta {
+  color:var(--bg0);
+}
+.menu-right { background:var(--bg0); padding:20px 16px; flex:1; }
+.saved-title { font-size:7px; color:var(--bg3); letter-spacing:2px; margin-bottom:18px; border-bottom:1px solid var(--border); padding-bottom:12px; }
+.saved-item { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px solid var(--bg1); }
+.saved-sprite { width:40px; height:40px; image-rendering:pixelated; flex-shrink:0; }
+.saved-cat { font-size:6px; color:var(--bg3); margin-bottom:5px; letter-spacing:1px; }
+.saved-name { font-size:8px; color:var(--accent); }
+.saved-type { font-size:6px; color:var(--fg4); margin-top:4px; }
+.no-saved { font-size:8px; color:var(--bg2); line-height:2.4; padding:24px 0; }
+
+/* ── TYPE SELECT ── */
+.typesel-wrap { flex:1; padding:20px 16px; }
+.typesel-title { font-size:10px; color:var(--accent); margin-bottom:6px; letter-spacing:2px; }
+.typesel-sub { font-size:6px; color:var(--fg4); margin-bottom:20px; line-height:2.2; }
+.type-grid { display:grid; grid-template-columns:1fr 1fr; gap:6px; }
+.type-btn {
+  background:var(--bg1); border:1px solid var(--border); color:var(--fg5);
+  font-family:var(--px); font-size:6px; padding:14px 12px; cursor:pointer;
+  text-align:left; -webkit-appearance:none; border-radius:0;
+  display:flex; flex-direction:column; gap:8px;
+  min-height:96px;
+}
+.type-btn-head { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+.type-btn-meta { display:flex; flex-direction:column; gap:6px; flex:1; min-width:0; }
+.type-btn small { display:block; font-size:6px; color:var(--bg3); letter-spacing:1px; }
+.type-btn:active { background:var(--bg2); border-color:var(--fg4); color:var(--accent); }
+.type-btn.inprog { border-color:var(--fg5); }
+.type-btn.inprog small { color:var(--accent); }
+.back-link {
+  background:transparent; border:none; color:var(--bg3); font-family:var(--px);
+  font-size:6px; cursor:pointer; padding:0; margin-bottom:20px;
+  display:inline-block; letter-spacing:1px;
+}
+
+/* ── BATTLE ── */
+.battle-wrap { flex:1; display:flex; flex-direction:column; min-height:calc(100svh - 95px); min-height:calc(100dvh - 95px); }
+
+.battle-topbar {
+  background:var(--bg1); border-bottom:1px solid var(--border);
+  padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:8px;
+}
+.battle-topbar-center { flex:1; display:flex; flex-direction:column; align-items:center; gap:6px; }
+.battle-mode-label { font-size:6px; color:var(--bg3); letter-spacing:2px; }
+.battle-count { font-size:6px; color:var(--fg5); }
+.battle-streak { font-size:6px; color:var(--fg4); min-width:60px; }
+.battle-streak-r { text-align:right; }
+.progress-track { width:100%; max-width:200px; height:3px; background:var(--bg2); }
+.progress-fill { height:100%; background:var(--accent); transition:width 0.4s; }
+.autosave-badge { font-size:4px; color:var(--bg3); letter-spacing:1px; opacity:0; transition:opacity 0.3s; }
+.autosave-badge.show { opacity:1; }
+
+/* BATTLE ARENA — stacked on mobile */
+.battle-arena { flex:1; display:flex; flex-direction:column; }
+
+/* ── BRACKET MODE ── */
+.battle-body { flex:1; display:flex; flex-direction:column; }
+.bracket-round-label {
+  font-size:7px; color:var(--accent); letter-spacing:3px;
+  text-align:center; padding:14px 16px 6px;
+  border-bottom:1px solid var(--border);
+}
+.bracket-side {
+  display:flex; flex-direction:column; gap:14px;
+  padding:14px 12px; background:var(--bg1);
+  border-bottom:1px solid var(--border);
+  max-height:170px; overflow-y:auto;
+  scrollbar-width:thin;
+}
+.bracket-side-title { font-size:6px; color:var(--accent); letter-spacing:2px; }
+.bracket-side-sub { font-size:5px; color:var(--fg4); letter-spacing:2px; margin-top:-8px; }
+.bracket-side-group { display:flex; flex-direction:column; gap:6px; }
+.bracket-side-group-label { font-size:5px; color:var(--bg3); letter-spacing:2px; }
+.bracket-side-grid {
+  display:flex; flex-wrap:wrap; gap:3px;
+}
+.bracket-side-cell {
+  width:30px; height:30px; flex-shrink:0;
+  background:var(--bg2); border:1px solid var(--bg3);
+  display:flex; align-items:center; justify-content:center;
+  position:relative;
+}
+.bracket-side-cell.advanced { border-color:var(--accent); }
+.bracket-side-cell.waiting { opacity:0.5; }
+.bracket-side-sprite {
+  width:24px; height:24px; image-rendering:pixelated;
+}
+.bracket-side-empty { font-size:5px; color:var(--bg3); padding:4px 0; }
+
+.pokemon-card {
+  flex:1; display:flex; flex-direction:row; align-items:center; justify-content:center;
+  gap:16px; padding:16px; cursor:pointer; background:transparent; border:none;
+  border-bottom:1px solid var(--border); transition:background 0.1s;
+  -webkit-tap-highlight-color:transparent;
+}
+.pokemon-card .poke-sprite { transition:opacity 0.18s; }
+.pokemon-card .poke-info { transition:opacity 0.18s; }
+.pokemon-card.is-loading .poke-sprite,
+.pokemon-card.is-loading .poke-info { opacity:0; }
+.pokemon-card:last-child { border-bottom:none; border-top:1px solid var(--border); }
+.pokemon-card:active { background:var(--bg1); transform:scale(0.99); }
+.pokemon-card:active .poke-name { color:var(--accent); }
+.pokemon-card.winner { background:var(--bg2); animation:flashwin 0.2s 3; }
+.pokemon-card.loser { background:var(--bg0); opacity:0.2; pointer-events:none; }
+
+.poke-sprite { width:96px; height:96px; image-rendering:pixelated; flex-shrink:0; }
+.poke-info { display:flex; flex-direction:column; gap:6px; }
+.poke-num { font-size:6px; color:var(--bg3); letter-spacing:2px; }
+.poke-name { font-size:10px; color:var(--fg6); letter-spacing:1px; transition:color 0.1s; }
+.poke-type { font-size:6px; color:var(--bg3); letter-spacing:1px; }
+
+.vs-divider {
+  display:flex; align-items:center; justify-content:center;
+  background:var(--bg1); padding:8px 0;
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+}
+.vs-text { font-size:9px; color:var(--bg2); letter-spacing:8px; writing-mode:horizontal-tb; }
+
+.battle-footer {
+  background:var(--bg1); border-top:1px solid var(--border);
+  padding:10px 14px; display:flex; align-items:center; justify-content:space-between;
+  gap:8px;
+}
+.battle-footer-text { flex:1; text-align:center; font-size:6px; color:var(--fg4); letter-spacing:1px; }
+.guest-battle-banner {
+  background:var(--bg0); border-bottom:1px solid var(--border);
+  color:var(--fg4); font-size:5px; line-height:2; letter-spacing:1px;
+  padding:8px 14px; text-align:center;
+}
+.guest-battle-banner button {
+  background:transparent; border:none; color:var(--accent); font-family:var(--px);
+  font-size:5px; cursor:pointer; padding:0; letter-spacing:1px;
+}
+.battle-helper-text { display:block; font-size:4px; color:var(--bg3); margin-top:4px; letter-spacing:1px; }
+.battle-exit-btn {
+  background:transparent; border:1px solid var(--bg3); color:var(--fg4);
+  font-family:var(--px); font-size:6px; padding:8px 12px; cursor:pointer; letter-spacing:1px;
+  white-space:nowrap; flex-shrink:0; -webkit-appearance:none; border-radius:0;
+}
+.battle-restart-btn {
+  background:transparent; border:1px solid var(--bg3); color:var(--fg4);
+  font-family:var(--px); font-size:6px; padding:8px 12px; cursor:pointer; letter-spacing:1px;
+  white-space:nowrap; flex-shrink:0; -webkit-appearance:none; border-radius:0;
+}
+.battle-undo-floating {
+  display:block; width:100%; background:var(--bg1); border:none; border-top:1px solid var(--border);
+  color:var(--fg4); font-family:var(--px); font-size:6px; padding:12px 16px;
+  cursor:pointer; letter-spacing:2px; text-align:center;
+  -webkit-appearance:none; border-radius:0;
+  transition:background 0.1s, color 0.1s;
+}
+.battle-undo-floating:active {
+  background:var(--bg2); color:var(--accent);
+}
+
+/* ── RESULT ── */
+.result-wrap { flex:1; display:flex; flex-direction:column; }
+.result-left {
+  background:var(--bg1); border-bottom:1px solid var(--border);
+  display:flex; flex-direction:column; align-items:center;
+  padding:32px 16px; gap:14px;
+}
+.result-eyebrow { font-size:5px; color:var(--bg3); letter-spacing:3px; }
+.result-sprite { width:120px; height:120px; image-rendering:pixelated; }
+.result-name { font-size:13px; color:var(--accent); letter-spacing:2px; text-align:center; line-height:1.8; }
+.result-num { font-size:7px; color:var(--bg3); letter-spacing:2px; }
+.result-badge { font-size:6px; color:var(--fg4); border:1px solid var(--bg3); padding:6px 12px; letter-spacing:2px; }
+.result-right { background:var(--bg0); padding:24px 16px; display:flex; flex-direction:column; }
+.result-stat { border-bottom:1px solid var(--bg1); padding:12px 0; display:flex; justify-content:space-between; align-items:baseline; }
+.result-stat-label { font-size:6px; color:var(--bg3); letter-spacing:1px; }
+.result-stat-val { font-size:10px; color:var(--fg5); }
+.result-saved { font-size:6px; color:var(--bg3); letter-spacing:1px; margin-top:16px; line-height:2.5; }
+.guest-save-note { font-size:6px; color:var(--fg4); line-height:2.2; margin-bottom:14px; border:1px solid var(--bg3); padding:12px; }
+.result-actions { display:flex; flex-direction:column; gap:8px; margin-top:20px; }
+
+/* ── LEADERBOARD ── */
+.lb-wrap { flex:1; padding:20px 16px; }
+.lb-top { margin-bottom:20px; }
+.lb-title { font-size:10px; color:var(--accent); letter-spacing:2px; line-height:1.8; }
+.lb-sub { font-size:6px; color:var(--fg4); margin-top:6px; line-height:2; }
+.lb-view-tabs { display:flex; gap:4px; margin-bottom:12px; }
+.lb-view-tab {
+  flex:1; background:transparent; border:1px solid var(--bg2); color:var(--fg4);
+  font-family:var(--px); font-size:5px; padding:9px 4px; cursor:pointer;
+  letter-spacing:1px; text-align:center;
+}
+.lb-view-tab.active { background:var(--bg2); border-color:var(--fg5); color:var(--accent); }
+.lb-filter-tabs { display:flex; gap:3px; flex-wrap:wrap; margin-bottom:8px; }
+.lb-tab {
+  background:transparent; border:1px solid var(--bg3); color:var(--fg4);
+  font-family:var(--px); font-size:5px; padding:6px 8px; cursor:pointer; letter-spacing:1px;
+}
+.lb-tab.active { background:var(--bg3); color:var(--accent); border-color:var(--fg5); }
+.lb-table-wrap { overflow-x:auto; margin-top:16px; -webkit-overflow-scrolling:touch; }
+.lb-table { width:100%; border-collapse:collapse; }
+.lb-table th { font-size:5px; color:var(--bg3); letter-spacing:1px; padding:8px 8px; text-align:left; border-bottom:1px solid var(--border); font-weight:normal; white-space:nowrap; }
+.lb-table td { padding:8px 8px; border-bottom:1px solid var(--bg1); vertical-align:middle; }
+.lb-sprite { width:28px; height:28px; image-rendering:pixelated; display:block; }
+.lb-pkm-name { font-size:6px; color:var(--fg6); letter-spacing:1px; }
+.lb-pkm-num { font-size:5px; color:var(--bg3); margin-top:2px; letter-spacing:1px; }
+.lb-pkm-type { font-size:4px; color:var(--fg4); margin-top:2px; }
+.lb-votes { font-size:8px; color:var(--fg5); text-align:right; white-space:nowrap; }
+.lb-bar-cell { width:60px; }
+.lb-bar-track { height:3px; background:var(--bg2); }
+.lb-bar-fill { height:100%; background:var(--fg5); }
+.lb-bar-fill.top { background:var(--accent); }
+.lb-rank { font-size:7px; color:var(--bg3); width:24px; }
+.lb-rank.top { color:var(--accent); }
+.lb-loading { font-size:6px; color:var(--fg4); text-align:center; padding:40px; letter-spacing:2px; }
+.lb-empty { font-size:7px; color:var(--bg2); text-align:center; padding:40px; line-height:3; }
+.trainer-name { font-size:6px; color:var(--accent); letter-spacing:1px; }
+.trainer-pick { display:flex; flex-direction:column; align-items:center; gap:2px; min-width:40px; }
+.trainer-pick-sprite { width:28px; height:28px; image-rendering:pixelated; }
+.trainer-pick-cat { font-size:4px; color:var(--bg3); letter-spacing:1px; text-align:center; }
+.trainer-pick-name { font-size:4px; color:var(--fg5); text-align:center; max-width:44px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.trainer-pick.is-mine .trainer-pick-name { color:var(--accent); }
+.me-badge { font-size:4px; color:var(--bg0); background:var(--accent); padding:2px 5px; letter-spacing:1px; margin-left:6px; }
+
+/* TRAINER LEADERBOARD — aligned columns */
+.lb-trainer-table {
+  table-layout:fixed;
+  min-width:720px;
+}
+.lb-trainer-table th,
+.lb-trainer-table td {
+  text-align:center;
+  vertical-align:middle;
+}
+.lb-trainer-table th:first-child,
+.lb-trainer-table td:first-child {
+  width:180px;
+  min-width:180px;
+  text-align:left;
+  position:sticky;
+  left:0;
+  z-index:2;
+  background:var(--bg0);
+}
+.lb-trainer-table thead th:first-child {
+  z-index:3;
+}
+.lb-trainer-table th:not(:first-child),
+.lb-trainer-table td:not(:first-child) {
+  width:140px;
+  min-width:140px;
+}
+.lb-trainer-table .trainer-pick {
+  width:100%;
+  max-width:120px;
+  min-width:0;
+  margin:0 auto;
+  align-items:center;
+  justify-content:flex-start;
+}
+.lb-trainer-table .trainer-pick-cat,
+.lb-trainer-table .trainer-pick-name {
+  width:100%;
+  max-width:120px;
+  text-align:center;
+}
+.lb-trainer-table .trainer-name {
+  display:flex;
+  align-items:center;
+  gap:6px;
+  max-width:160px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+.lb-trainer-empty {
+  text-align:center;
+  color:var(--bg2);
+  font-size:8px;
+}
+@media (min-width: 700px) {
+  .lb-trainer-table { min-width:0; width:100%; }
+  .lb-trainer-table th:first-child,
+  .lb-trainer-table td:first-child { width:210px; min-width:210px; }
+  .lb-trainer-table th:not(:first-child),
+  .lb-trainer-table td:not(:first-child) { width:auto; min-width:120px; }
+  .lb-trainer-table .trainer-pick { max-width:140px; }
+  .lb-trainer-table .trainer-pick-cat,
+  .lb-trainer-table .trainer-pick-name { max-width:140px; }
+}
+
+::-webkit-scrollbar { width:3px; height:3px; }
+::-webkit-scrollbar-track { background:var(--bg0); }
+::-webkit-scrollbar-thumb { background:var(--bg2); }
+
+.inprog-dot { display:inline-block; width:5px; height:5px; background:var(--accent); margin-left:6px; vertical-align:middle; animation:blink 1s infinite; }
+
+/* ── LANDING ── */
+.landing { flex:1; display:flex; flex-direction:column; }
+
+.landing-hero {
+  background:var(--bg1); border-bottom:1px solid var(--border);
+  padding:48px 20px 40px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:20px;
+}
+.landing-eyebrow { font-size:5px; color:var(--fg4); letter-spacing:4px; }
+.landing-title { font-size:18px; color:var(--accent); letter-spacing:2px; line-height:2; }
+.landing-sub { font-size:6px; color:var(--fg4); line-height:2.8; letter-spacing:1px; max-width:300px; }
+.landing-cta { display:flex; flex-direction:column; gap:8px; width:100%; max-width:280px; }
+.landing-btn {
+  width:100%; background:var(--fg5); border:none; color:var(--bg0);
+  font-family:var(--px); font-size:8px; padding:16px; cursor:pointer;
+  letter-spacing:1px; -webkit-appearance:none; border-radius:0;
+}
+.landing-btn:active { background:var(--accent); }
+.landing-btn.ghost { background:transparent; border:1px solid var(--bg3); color:var(--fg5); font-size:6px; padding:14px; }
+.landing-btn.ghost:active { background:var(--bg2); color:var(--accent); }
+.landing-btn.big { font-size:9px; padding:18px; max-width:360px; }
+.landing-stat-row { display:flex; gap:24px; justify-content:center; }
+.landing-stat { text-align:center; }
+.landing-stat-num { font-size:14px; color:var(--accent); line-height:1; }
+.landing-stat-label { font-size:5px; color:var(--fg4); letter-spacing:1px; margin-top:6px; }
+
+.landing-gens { display:flex; flex-direction:column; }
+.landing-gen {
+  flex:1; padding:28px 20px; border-bottom:1px solid var(--border);
+  display:flex; flex-direction:column; gap:10px;
+}
+.landing-gen-eyebrow { font-size:5px; color:var(--fg4); letter-spacing:2px; }
+.landing-gen-title { font-size:14px; color:var(--accent); letter-spacing:2px; line-height:2; }
+.landing-gen-count { font-size:6px; color:var(--fg5); letter-spacing:1px; }
+.landing-gen-sprites { display:flex; flex-wrap:wrap; gap:4px; margin:8px 0; }
+.landing-gen-desc { font-size:6px; color:var(--fg4); line-height:2.2; }
+
+.gen1-card { background:#0a0f0a; --accent:#c8ff00; --fg4:#3d8c3d; --fg5:#8bac0f; }
+.gen2-card { background:#0d0b1a; --accent:#ffe040; --fg4:#6a5acd; --fg5:#c8a800; }
+.gen3-card { background:#0f0a08; --accent:#ff4800; --fg4:#c05020; --fg5:#e87828; }
+.gen4-card { background:#080c12; --accent:#7cc8ff; --fg4:#5a78a8; --fg5:#8ca8d4; }
+
+.landing-coming {
+  display:flex; flex-direction:column;
+  background:var(--bg1); border-bottom:1px solid var(--border);
+}
+.landing-coming-title { font-size:6px; color:var(--bg3); letter-spacing:3px; padding:20px 20px 12px; border-bottom:1px solid var(--border); }
+.landing-coming-row { display:flex; overflow-x:auto; gap:0; -webkit-overflow-scrolling:touch; }
+.landing-coming-item {
+  flex-shrink:0; padding:20px; border-right:1px solid var(--border);
+  display:flex; flex-direction:column; gap:8px; min-width:140px;
+  opacity:0.45;
+}
+.landing-coming-gen { font-size:8px; color:var(--fg6); letter-spacing:1px; }
+.landing-coming-region { font-size:5px; color:var(--fg4); letter-spacing:2px; }
+.landing-coming-count { font-size:5px; color:var(--fg5); letter-spacing:1px; }
+.landing-coming-badge { font-size:5px; color:var(--bg3); border:1px solid var(--bg3); padding:3px 8px; letter-spacing:2px; width:fit-content; margin-top:2px; }
+
+/* CHALLENGES SHOWCASE on landing */
+.landing-challenges {
+  padding:32px 20px;
+  background:linear-gradient(180deg, #0d1430 0%, #08101a 100%);
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+}
+.landing-challenges-eyebrow {
+  font-size:5px; color:#5570a0; letter-spacing:3px; margin-bottom:8px;
+  display:flex; align-items:center; justify-content:center; gap:8px;
+}
+.landing-challenges-eyebrow::before, .landing-challenges-eyebrow::after { content:'★'; color:#ffd060; }
+.landing-challenges-title {
+  font-size:11px; color:#ffd060; letter-spacing:2px; line-height:2;
+  text-align:center; margin-bottom:8px;
+}
+.landing-challenges-sub {
+  font-size:6px; color:#5570a0; letter-spacing:1px; line-height:2.2;
+  text-align:center; margin-bottom:24px; max-width:340px;
+  margin-left:auto; margin-right:auto;
+}
+.landing-challenges-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:8px;
+  max-width:600px; margin:0 auto;
+}
+.landing-challenge-card {
+  background:rgba(21,38,74,0.5);
+  border:1px solid #2a4070;
+  border-left:3px solid #ffd060;
+  padding:14px 12px;
+  display:flex; flex-direction:column; gap:6px;
+}
+.landing-challenge-card-name {
+  font-size:7px; color:#e0b860; letter-spacing:1px; line-height:1.6;
+}
+.landing-challenge-card-meta {
+  font-size:5px; color:#5570a0; letter-spacing:1px;
+}
+.landing-challenge-sprites {
+  display:flex; gap:2px; margin-top:4px;
+}
+.landing-challenge-sprites img {
+  width:28px; height:28px; image-rendering:pixelated; opacity:0.85;
+}
+
+.landing-features {
+  padding:28px 20px; display:grid; grid-template-columns:1fr 1fr; gap:20px;
+  background:var(--bg0); border-bottom:1px solid var(--border);
+}
+.landing-feature { display:flex; flex-direction:column; gap:8px; padding:16px; background:var(--bg1); border:1px solid var(--border); }
+.landing-feature-icon { font-size:14px; color:var(--accent); }
+.landing-feature-title { font-size:6px; color:var(--fg6); letter-spacing:1px; line-height:1.8; }
+.landing-feature-desc { font-size:5px; color:var(--fg4); line-height:2.2; }
+
+.landing-footer-cta {
+  padding:28px 20px; background:var(--bg0);
+  display:flex; flex-direction:column; align-items:center; gap:12px;
+  border-top:1px solid var(--border);
+}
+.landing-footer-note { font-size:5px; color:var(--bg3); letter-spacing:2px; }
+
+/* ── DESKTOP ── */
+@media (min-width: 700px) {
+  .top-nav { padding:0 48px; }
+  .top-nav-tab { flex:none; padding:16px 32px; font-size:7px; }
+  .challenges-wrap { padding:56px 64px; }
+  .challenges-title { font-size:14px; }
+  .challenges-sub { font-size:7px; }
+  .challenges-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:16px; }
+  .challenge-card { padding:28px 24px; gap:8px; }
+  .challenge-card-title { font-size:11px; }
+  .challenge-card-desc { font-size:7px; }
+  .challenge-card-eyebrow { font-size:6px; }
+  .challenge-badge { font-size:5px; padding:4px 9px; }
+
+  .gen-switcher { padding:8px 48px; gap:8px; }
+  .gen-switcher-label { display:block; font-size:5px; color:var(--fg4); letter-spacing:2px; margin-right:12px; }
+  .gen-tab { flex:none; font-size:6px; padding:7px 20px; text-align:left; }
+
+  .site-header { padding:18px 48px; }
+  .logo { font-size:10px; white-space:nowrap; }
+  .header-nick { max-width:140px; font-size:7px; }
+  .logo span { display:inline; font-size:6px; color:var(--fg4); letter-spacing:1px; }
+  .nav-btn { font-size:6px; padding:8px 12px; }
+  .btn-sm { font-size:6px; padding:8px 14px; }
+
+  .main { min-height:calc(100vh - 102px); }
+
+  .auth-wrap { padding:80px 20px; }
+  .auth-box { max-width:420px; padding:44px; }
+  .auth-title { font-size:13px; }
+  .field-input { font-size:9px; padding:14px 18px; }
+  .btn-primary { font-size:9px; padding:16px; }
+  .auth-msg { font-size:7px; }
+  .auth-toggle { font-size:7px; }
+
+  .menu-wrap { flex-direction:row; flex:1; }
+  .menu-left { flex:1; padding:80px 64px; border-bottom:none; border-right:1px solid var(--border); justify-content:center; }
+  .menu-right { flex:1; padding:80px 64px; }
+  .menu-hero { font-size:20px; }
+  .menu-sub { font-size:7px; margin-bottom:56px; }
+  .menu-btn { font-size:10px; padding:22px 24px; }
+  .menu-btn:hover { background:var(--bg2); border-color:var(--fg5); color:var(--accent); }
+  .menu-btn:hover::after { color:var(--accent); }
+  .menu-btn small { font-size:6px; }
+  .menu-pick-preview .preview-sprite { width:42px; height:42px; }
+  .preview-label { font-size:5px; }
+  .preview-name { font-size:7px; }
+  .type-pick-preview, .challenge-pick-preview { padding:8px 14px 8px 8px; gap:10px; }
+  .type-pick-preview .preview-sprite,
+  .challenge-pick-preview .preview-sprite { width:44px; height:44px; }
+  .type-pick-preview .preview-name,
+  .challenge-pick-preview .preview-name { font-size:8px; }
+
+  .lb-card { padding:18px 22px; margin-top:32px; gap:18px; }
+  .lb-card-eyebrow { font-size:6px; }
+  .lb-card-title { font-size:10px; }
+  .lb-card-cta { font-size:14px; }
+  .lb-card:hover { background:var(--fg5); }
+  .lb-card:hover .lb-card-eyebrow,
+  .lb-card:hover .lb-card-title,
+  .lb-card:hover .lb-card-cta { color:var(--bg0); }
+  .menu-btn:hover small { color:var(--fg5); }
+  .saved-sprite { width:52px; height:52px; }
+  .saved-name { font-size:9px; }
+
+  .typesel-wrap { padding:56px 64px; }
+  .typesel-title { font-size:14px; }
+  .type-grid { grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:8px; }
+  .type-btn { font-size:8px; padding:20px 18px; }
+  .type-btn small { font-size:6px; }
+  .type-btn:hover { background:var(--bg2); border-color:var(--fg4); color:var(--accent); }
+  .back-link { font-size:7px; margin-bottom:36px; }
+
+  .battle-wrap { min-height:calc(100vh - 102px); }
+  .battle-topbar { padding:16px 48px; gap:32px; }
+  .battle-mode-label { font-size:6px; letter-spacing:3px; }
+  .battle-count { font-size:8px; }
+  .battle-streak { font-size:7px; min-width:80px; }
+  .progress-track { max-width:500px; }
+  .autosave-badge { font-size:5px; }
+
+  /* BATTLE ARENA — side by side on desktop */
+  .battle-arena { flex-direction:row; }
+  .battle-body { flex:1; flex-direction:row; }
+  .bracket-side {
+    width:240px; max-height:none; height:auto;
+    border-right:1px solid var(--border); border-bottom:none;
+    padding:18px 14px;
+  }
+  .bracket-side-title { font-size:7px; }
+  .bracket-side-sub { font-size:6px; }
+  .bracket-side-group-label { font-size:6px; }
+  .bracket-side-cell { width:36px; height:36px; }
+  .bracket-side-sprite { width:30px; height:30px; }
+  .bracket-round-label { font-size:9px; padding:18px 24px 8px; }
+  .pokemon-card {
+    flex-direction:column; gap:20px; padding:60px 40px;
+    border-bottom:none; border-right:1px solid var(--border);
+  }
+  .pokemon-card:last-child { border-top:none; border-left:1px solid var(--border); border-right:none; border-bottom:none; }
+  .pokemon-card:hover { background:var(--bg1); }
+  .pokemon-card:hover .poke-name { color:var(--accent); }
+  .poke-sprite { width:140px; height:140px; }
+  .poke-info { align-items:center; }
+  .poke-num { font-size:9px; }
+  .poke-name { font-size:16px; letter-spacing:2px; }
+  .poke-type { font-size:7px; }
+  .vs-divider { width:64px; flex-shrink:0; padding:0; border-top:none; border-bottom:none; border-left:1px solid var(--border); border-right:1px solid var(--border); }
+  .vs-text { font-size:16px; writing-mode:vertical-rl; letter-spacing:10px; }
+
+  .battle-footer { padding:16px 48px; }
+  .battle-footer-text { font-size:8px; }
+  .battle-helper-text { font-size:5px; }
+  .guest-battle-banner { font-size:6px; padding:10px 48px; }
+  .guest-battle-banner button { font-size:6px; }
+  .battle-exit-btn { font-size:6px; padding:8px 14px; }
+  .battle-restart-btn { font-size:6px; padding:8px 14px; }
+  .battle-exit-btn:hover { border-color:var(--fg4); color:var(--fg6); }
+  .battle-restart-btn:hover { border-color:#6b2020; color:#c05050; }
+  .battle-undo-floating { font-size:7px; padding:14px 20px; }
+  .battle-undo-floating:hover { background:var(--bg2); color:var(--accent); }
+
+  .result-wrap { flex-direction:row; flex:1; min-height:calc(100vh - 102px); }
+  .result-left { flex:1; padding:80px 60px; border-bottom:none; border-right:1px solid var(--border); }
+  .result-sprite { width:200px; height:200px; }
+  .result-name { font-size:22px; letter-spacing:3px; }
+  .result-num { font-size:9px; }
+  .result-right { flex:1; padding:80px 64px; }
+  .result-stat-val { font-size:13px; }
+
+  .lb-wrap { padding:56px 64px; }
+  .lb-title { font-size:14px; }
+  .lb-view-tab { flex:none; font-size:7px; padding:10px 18px; }
+  .lb-view-tab:hover { border-color:var(--bg3); color:var(--fg5); }
+  .lb-tab { font-size:6px; padding:7px 12px; }
+  .lb-tab:hover { color:var(--fg5); }
+  .lb-table th { font-size:6px; padding:12px 16px; }
+  .lb-table td { padding:10px 16px; }
+  .lb-sprite { width:36px; height:36px; }
+  .lb-pkm-name { font-size:8px; }
+  .lb-votes { font-size:11px; }
+  .lb-bar-cell { width:160px; }
+  .lb-rank { font-size:9px; }
+  .trainer-pick { min-width:48px; }
+  .trainer-pick-sprite { width:32px; height:32px; }
+  .trainer-name { font-size:8px; }
+  .landing-hero { padding:80px 48px 64px; gap:24px; }
+  .landing-title { font-size:26px; }
+  .landing-sub { font-size:7px; max-width:500px; }
+  .landing-stat-num { font-size:20px; }
+  .landing-stat-label { font-size:6px; }
+  .landing-cta { flex-direction:row; max-width:none; width:auto; gap:12px; }
+  .landing-btn { width:auto; padding:16px 32px; font-size:9px; }
+  .landing-btn.ghost { font-size:7px; padding:16px 24px; }
+  .landing-btn.big { font-size:10px; padding:20px 48px; }
+  .landing-gens { flex-direction:row; }
+  .landing-gen { padding:48px; border-bottom:none; }
+  .landing-gen:first-child { border-right:1px solid rgba(255,255,255,0.08); }
+  .landing-gen-title { font-size:18px; }
+  .landing-gen-sprites { gap:8px; }
+  .landing-gen-sprites img { width:72px; height:72px; }
+  .landing-gen-desc { font-size:7px; }
+  .landing-coming-title { padding:24px 64px 16px; }
+  .landing-coming-item { padding:28px 32px; min-width:180px; }
+  .landing-coming-gen { font-size:10px; }
+  .landing-coming-region { font-size:6px; }
+  .landing-challenges { padding:64px 64px; }
+  .landing-challenges-eyebrow { font-size:6px; }
+  .landing-challenges-title { font-size:18px; margin-bottom:14px; }
+  .landing-challenges-sub { font-size:7px; max-width:480px; margin-bottom:40px; }
+  .landing-challenges-grid { grid-template-columns:repeat(4,1fr); gap:14px; max-width:none; }
+  .landing-challenge-card { padding:18px 16px; gap:8px; }
+  .landing-challenge-card-name { font-size:9px; }
+  .landing-challenge-card-meta { font-size:6px; }
+  .landing-challenge-sprites img { width:36px; height:36px; }
+  .landing-features { padding:56px 64px; grid-template-columns:repeat(4,1fr); gap:24px; }
+  .landing-feature { padding:24px; }
+  .landing-feature-icon { font-size:18px; }
+  .landing-feature-title { font-size:7px; }
+  .landing-feature-desc { font-size:6px; }
+  .landing-footer-cta { padding:56px 64px; flex-direction:row; justify-content:space-between; align-items:center; }
+  .landing-footer-note { font-size:6px; }
+
+}
+</style>
+</head>
+<body class="gen1">
+
+<!-- SITE HEADER -->
+<header class="site-header">
+  <div class="logo">
+    YOUR FAVOURITE POKÉMON<span id="logo-sub"> · GEN I · 151 POKÉMON · v2.3</span>
+  </div>
+  <div class="header-right">
+    <div class="header-nav" id="header-nav"></div>
+    <div id="header-user"></div>
+  </div>
+</header>
+
+<main class="main" id="app"></main>
+<div id="confirm-dialog-mount"></div>
+
+<script>
+const SUPABASE_URL  = 'https://rfttcnteldippzzjxszm.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJmdHRjbnRlbGRpcHB6emp4c3ptIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc1MDI0NDAsImV4cCI6MjA5MzA3ODQ0MH0.sy9k4FptDbTNv2QbpsLTofOngZ8x5zVheZPQtMh1QD8';
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+// ── LEGAL CONFIG ──
+const CONTACT_EMAIL = 'lorenzossj@proton.me';
+const LEGAL_LAST_UPDATED = '2026-05-01';
+
+// ── POKÉMON DATA ──
+const TYPES = ["normal","fire","water","electric","grass","ice","fighting","poison","ground","flying","psychic","bug","rock","ghost","dragon","dark","steel"];
+
+const PKM1 = [
+  {id:1,name:"BULBASAUR",types:["grass","poison"]},{id:2,name:"IVYSAUR",types:["grass","poison"]},{id:3,name:"VENUSAUR",types:["grass","poison"]},
+  {id:4,name:"CHARMANDER",types:["fire"]},{id:5,name:"CHARMELEON",types:["fire"]},{id:6,name:"CHARIZARD",types:["fire","flying"]},
+  {id:7,name:"SQUIRTLE",types:["water"]},{id:8,name:"WARTORTLE",types:["water"]},{id:9,name:"BLASTOISE",types:["water"]},
+  {id:10,name:"CATERPIE",types:["bug"]},{id:11,name:"METAPOD",types:["bug"]},{id:12,name:"BUTTERFREE",types:["bug","flying"]},
+  {id:13,name:"WEEDLE",types:["bug","poison"]},{id:14,name:"KAKUNA",types:["bug","poison"]},{id:15,name:"BEEDRILL",types:["bug","poison"]},
+  {id:16,name:"PIDGEY",types:["normal","flying"]},{id:17,name:"PIDGEOTTO",types:["normal","flying"]},{id:18,name:"PIDGEOT",types:["normal","flying"]},
+  {id:19,name:"RATTATA",types:["normal"]},{id:20,name:"RATICATE",types:["normal"]},
+  {id:21,name:"SPEAROW",types:["normal","flying"]},{id:22,name:"FEAROW",types:["normal","flying"]},
+  {id:23,name:"EKANS",types:["poison"]},{id:24,name:"ARBOK",types:["poison"]},
+  {id:25,name:"PIKACHU",types:["electric"]},{id:26,name:"RAICHU",types:["electric"]},
+  {id:27,name:"SANDSHREW",types:["ground"]},{id:28,name:"SANDSLASH",types:["ground"]},
+  {id:29,name:"NIDORAN-F",types:["poison"]},{id:30,name:"NIDORINA",types:["poison"]},{id:31,name:"NIDOQUEEN",types:["poison","ground"]},
+  {id:32,name:"NIDORAN-M",types:["poison"]},{id:33,name:"NIDORINO",types:["poison"]},{id:34,name:"NIDOKING",types:["poison","ground"]},
+  {id:35,name:"CLEFAIRY",types:["normal"]},{id:36,name:"CLEFABLE",types:["normal"]},
+  {id:37,name:"VULPIX",types:["fire"]},{id:38,name:"NINETALES",types:["fire"]},
+  {id:39,name:"JIGGLYPUFF",types:["normal"]},{id:40,name:"WIGGLYTUFF",types:["normal"]},
+  {id:41,name:"ZUBAT",types:["poison","flying"]},{id:42,name:"GOLBAT",types:["poison","flying"]},
+  {id:43,name:"ODDISH",types:["grass","poison"]},{id:44,name:"GLOOM",types:["grass","poison"]},{id:45,name:"VILEPLUME",types:["grass","poison"]},
+  {id:46,name:"PARAS",types:["bug","grass"]},{id:47,name:"PARASECT",types:["bug","grass"]},
+  {id:48,name:"VENONAT",types:["bug","poison"]},{id:49,name:"VENOMOTH",types:["bug","poison"]},
+  {id:50,name:"DIGLETT",types:["ground"]},{id:51,name:"DUGTRIO",types:["ground"]},
+  {id:52,name:"MEOWTH",types:["normal"]},{id:53,name:"PERSIAN",types:["normal"]},
+  {id:54,name:"PSYDUCK",types:["water"]},{id:55,name:"GOLDUCK",types:["water"]},
+  {id:56,name:"MANKEY",types:["fighting"]},{id:57,name:"PRIMEAPE",types:["fighting"]},
+  {id:58,name:"GROWLITHE",types:["fire"]},{id:59,name:"ARCANINE",types:["fire"]},
+  {id:60,name:"POLIWAG",types:["water"]},{id:61,name:"POLIWHIRL",types:["water"]},{id:62,name:"POLIWRATH",types:["water","fighting"]},
+  {id:63,name:"ABRA",types:["psychic"]},{id:64,name:"KADABRA",types:["psychic"]},{id:65,name:"ALAKAZAM",types:["psychic"]},
+  {id:66,name:"MACHOP",types:["fighting"]},{id:67,name:"MACHOKE",types:["fighting"]},{id:68,name:"MACHAMP",types:["fighting"]},
+  {id:69,name:"BELLSPROUT",types:["grass","poison"]},{id:70,name:"WEEPINBELL",types:["grass","poison"]},{id:71,name:"VICTREEBEL",types:["grass","poison"]},
+  {id:72,name:"TENTACOOL",types:["water","poison"]},{id:73,name:"TENTACRUEL",types:["water","poison"]},
+  {id:74,name:"GEODUDE",types:["rock","ground"]},{id:75,name:"GRAVELER",types:["rock","ground"]},{id:76,name:"GOLEM",types:["rock","ground"]},
+  {id:77,name:"PONYTA",types:["fire"]},{id:78,name:"RAPIDASH",types:["fire"]},
+  {id:79,name:"SLOWPOKE",types:["water","psychic"]},{id:80,name:"SLOWBRO",types:["water","psychic"]},
+  {id:81,name:"MAGNEMITE",types:["electric"]},{id:82,name:"MAGNETON",types:["electric"]},
+  {id:83,name:"FARFETCHD",types:["normal","flying"]},{id:84,name:"DODUO",types:["normal","flying"]},{id:85,name:"DODRIO",types:["normal","flying"]},
+  {id:86,name:"SEEL",types:["water"]},{id:87,name:"DEWGONG",types:["water","ice"]},
+  {id:88,name:"GRIMER",types:["poison"]},{id:89,name:"MUK",types:["poison"]},
+  {id:90,name:"SHELLDER",types:["water"]},{id:91,name:"CLOYSTER",types:["water","ice"]},
+  {id:92,name:"GASTLY",types:["ghost","poison"]},{id:93,name:"HAUNTER",types:["ghost","poison"]},{id:94,name:"GENGAR",types:["ghost","poison"]},
+  {id:95,name:"ONIX",types:["rock","ground"]},{id:96,name:"DROWZEE",types:["psychic"]},{id:97,name:"HYPNO",types:["psychic"]},
+  {id:98,name:"KRABBY",types:["water"]},{id:99,name:"KINGLER",types:["water"]},
+  {id:100,name:"VOLTORB",types:["electric"]},{id:101,name:"ELECTRODE",types:["electric"]},
+  {id:102,name:"EXEGGCUTE",types:["grass","psychic"]},{id:103,name:"EXEGGUTOR",types:["grass","psychic"]},
+  {id:104,name:"CUBONE",types:["ground"]},{id:105,name:"MAROWAK",types:["ground"]},
+  {id:106,name:"HITMONLEE",types:["fighting"]},{id:107,name:"HITMONCHAN",types:["fighting"]},
+  {id:108,name:"LICKITUNG",types:["normal"]},{id:109,name:"KOFFING",types:["poison"]},{id:110,name:"WEEZING",types:["poison"]},
+  {id:111,name:"RHYHORN",types:["ground","rock"]},{id:112,name:"RHYDON",types:["ground","rock"]},
+  {id:113,name:"CHANSEY",types:["normal"]},{id:114,name:"TANGELA",types:["grass"]},
+  {id:115,name:"KANGASKHAN",types:["normal"]},{id:116,name:"HORSEA",types:["water"]},{id:117,name:"SEADRA",types:["water"]},
+  {id:118,name:"GOLDEEN",types:["water"]},{id:119,name:"SEAKING",types:["water"]},
+  {id:120,name:"STARYU",types:["water"]},{id:121,name:"STARMIE",types:["water","psychic"]},
+  {id:122,name:"MR-MIME",types:["psychic"]},{id:123,name:"SCYTHER",types:["bug","flying"]},
+  {id:124,name:"JYNX",types:["ice","psychic"]},{id:125,name:"ELECTABUZZ",types:["electric"]},{id:126,name:"MAGMAR",types:["fire"]},
+  {id:127,name:"PINSIR",types:["bug"]},{id:128,name:"TAUROS",types:["normal"]},
+  {id:129,name:"MAGIKARP",types:["water"]},{id:130,name:"GYARADOS",types:["water","flying"]},
+  {id:131,name:"LAPRAS",types:["water","ice"]},{id:132,name:"DITTO",types:["normal"]},
+  {id:133,name:"EEVEE",types:["normal"]},{id:134,name:"VAPOREON",types:["water"]},{id:135,name:"JOLTEON",types:["electric"]},{id:136,name:"FLAREON",types:["fire"]},
+  {id:137,name:"PORYGON",types:["normal"]},{id:138,name:"OMANYTE",types:["rock","water"]},{id:139,name:"OMASTAR",types:["rock","water"]},
+  {id:140,name:"KABUTO",types:["rock","water"]},{id:141,name:"KABUTOPS",types:["rock","water"]},
+  {id:142,name:"AERODACTYL",types:["rock","flying"]},{id:143,name:"SNORLAX",types:["normal"]},
+  {id:144,name:"ARTICUNO",types:["ice","flying"]},{id:145,name:"ZAPDOS",types:["electric","flying"]},{id:146,name:"MOLTRES",types:["fire","flying"]},
+  {id:147,name:"DRATINI",types:["dragon"]},{id:148,name:"DRAGONAIR",types:["dragon"]},{id:149,name:"DRAGONITE",types:["dragon","flying"]},
+  {id:150,name:"MEWTWO",types:["psychic"]},{id:151,name:"MEW",types:["psychic"]}
+];
+
+const PKM2 = [
+  {id:152,name:"CHIKORITA",types:["grass"]},{id:153,name:"BAYLEEF",types:["grass"]},{id:154,name:"MEGANIUM",types:["grass"]},
+  {id:155,name:"CYNDAQUIL",types:["fire"]},{id:156,name:"QUILAVA",types:["fire"]},{id:157,name:"TYPHLOSION",types:["fire"]},
+  {id:158,name:"TOTODILE",types:["water"]},{id:159,name:"CROCONAW",types:["water"]},{id:160,name:"FERALIGATR",types:["water"]},
+  {id:161,name:"SENTRET",types:["normal"]},{id:162,name:"FURRET",types:["normal"]},
+  {id:163,name:"HOOTHOOT",types:["normal","flying"]},{id:164,name:"NOCTOWL",types:["normal","flying"]},
+  {id:165,name:"LEDYBA",types:["bug","flying"]},{id:166,name:"LEDIAN",types:["bug","flying"]},
+  {id:167,name:"SPINARAK",types:["bug","poison"]},{id:168,name:"ARIADOS",types:["bug","poison"]},
+  {id:169,name:"CROBAT",types:["poison","flying"]},
+  {id:170,name:"CHINCHOU",types:["water","electric"]},{id:171,name:"LANTURN",types:["water","electric"]},
+  {id:172,name:"PICHU",types:["electric"]},{id:173,name:"CLEFFA",types:["normal"]},{id:174,name:"IGGLYBUFF",types:["normal"]},
+  {id:175,name:"TOGEPI",types:["normal"]},{id:176,name:"TOGETIC",types:["normal","flying"]},
+  {id:177,name:"NATU",types:["psychic","flying"]},{id:178,name:"XATU",types:["psychic","flying"]},
+  {id:179,name:"MAREEP",types:["electric"]},{id:180,name:"FLAAFFY",types:["electric"]},{id:181,name:"AMPHAROS",types:["electric"]},
+  {id:182,name:"BELLOSSOM",types:["grass"]},{id:183,name:"MARILL",types:["water"]},{id:184,name:"AZUMARILL",types:["water"]},
+  {id:185,name:"SUDOWOODO",types:["rock"]},{id:186,name:"POLITOED",types:["water"]},
+  {id:187,name:"HOPPIP",types:["grass","flying"]},{id:188,name:"SKIPLOOM",types:["grass","flying"]},{id:189,name:"JUMPLUFF",types:["grass","flying"]},
+  {id:190,name:"AIPOM",types:["normal"]},{id:191,name:"SUNKERN",types:["grass"]},{id:192,name:"SUNFLORA",types:["grass"]},
+  {id:193,name:"YANMA",types:["bug","flying"]},{id:194,name:"WOOPER",types:["water","ground"]},{id:195,name:"QUAGSIRE",types:["water","ground"]},
+  {id:196,name:"ESPEON",types:["psychic"]},{id:197,name:"UMBREON",types:["dark"]},
+  {id:198,name:"MURKROW",types:["dark","flying"]},{id:199,name:"SLOWKING",types:["water","psychic"]},
+  {id:200,name:"MISDREAVUS",types:["ghost"]},{id:201,name:"UNOWN",types:["psychic"]},
+  {id:202,name:"WOBBUFFET",types:["psychic"]},{id:203,name:"GIRAFARIG",types:["normal","psychic"]},
+  {id:204,name:"PINECO",types:["bug"]},{id:205,name:"FORRETRESS",types:["bug","steel"]},
+  {id:206,name:"DUNSPARCE",types:["normal"]},{id:207,name:"GLIGAR",types:["ground","flying"]},
+  {id:208,name:"STEELIX",types:["steel","ground"]},{id:209,name:"SNUBBULL",types:["normal"]},{id:210,name:"GRANBULL",types:["normal"]},
+  {id:211,name:"QWILFISH",types:["water","poison"]},{id:212,name:"SCIZOR",types:["bug","steel"]},
+  {id:213,name:"SHUCKLE",types:["bug","rock"]},{id:214,name:"HERACROSS",types:["bug","fighting"]},
+  {id:215,name:"SNEASEL",types:["dark","ice"]},{id:216,name:"TEDDIURSA",types:["normal"]},{id:217,name:"URSARING",types:["normal"]},
+  {id:218,name:"SLUGMA",types:["fire"]},{id:219,name:"MAGCARGO",types:["fire","rock"]},
+  {id:220,name:"SWINUB",types:["ice","ground"]},{id:221,name:"PILOSWINE",types:["ice","ground"]},
+  {id:222,name:"CORSOLA",types:["water","rock"]},{id:223,name:"REMORAID",types:["water"]},{id:224,name:"OCTILLERY",types:["water"]},
+  {id:225,name:"DELIBIRD",types:["ice","flying"]},{id:226,name:"MANTINE",types:["water","flying"]},
+  {id:227,name:"SKARMORY",types:["steel","flying"]},{id:228,name:"HOUNDOUR",types:["dark","fire"]},{id:229,name:"HOUNDOOM",types:["dark","fire"]},
+  {id:230,name:"KINGDRA",types:["water","dragon"]},{id:231,name:"PHANPY",types:["ground"]},{id:232,name:"DONPHAN",types:["ground"]},
+  {id:233,name:"PORYGON2",types:["normal"]},{id:234,name:"STANTLER",types:["normal"]},
+  {id:235,name:"SMEARGLE",types:["normal"]},{id:236,name:"TYROGUE",types:["fighting"]},
+  {id:237,name:"HITMONTOP",types:["fighting"]},{id:238,name:"SMOOCHUM",types:["ice","psychic"]},
+  {id:239,name:"ELEKID",types:["electric"]},{id:240,name:"MAGBY",types:["fire"]},
+  {id:241,name:"MILTANK",types:["normal"]},{id:242,name:"BLISSEY",types:["normal"]},
+  {id:243,name:"RAIKOU",types:["electric"]},{id:244,name:"ENTEI",types:["fire"]},{id:245,name:"SUICUNE",types:["water"]},
+  {id:246,name:"LARVITAR",types:["rock","ground"]},{id:247,name:"PUPITAR",types:["rock","ground"]},{id:248,name:"TYRANITAR",types:["rock","dark"]},
+  {id:249,name:"LUGIA",types:["psychic","flying"]},{id:250,name:"HO-OH",types:["fire","flying"]},{id:251,name:"CELEBI",types:["psychic","grass"]}
+];
+
+const PKM3 = [
+  {id:252,name:"TREECKO",types:["grass"]},{id:253,name:"GROVYLE",types:["grass"]},{id:254,name:"SCEPTILE",types:["grass"]},
+  {id:255,name:"TORCHIC",types:["fire"]},{id:256,name:"COMBUSKEN",types:["fire","fighting"]},{id:257,name:"BLAZIKEN",types:["fire","fighting"]},
+  {id:258,name:"MUDKIP",types:["water"]},{id:259,name:"MARSHTOMP",types:["water","ground"]},{id:260,name:"SWAMPERT",types:["water","ground"]},
+  {id:261,name:"POOCHYENA",types:["dark"]},{id:262,name:"MIGHTYENA",types:["dark"]},
+  {id:263,name:"ZIGZAGOON",types:["normal"]},{id:264,name:"LINOONE",types:["normal"]},
+  {id:265,name:"WURMPLE",types:["bug"]},{id:266,name:"SILCOON",types:["bug"]},{id:267,name:"BEAUTIFLY",types:["bug","flying"]},
+  {id:268,name:"CASCOON",types:["bug"]},{id:269,name:"DUSTOX",types:["bug","poison"]},
+  {id:270,name:"LOTAD",types:["water","grass"]},{id:271,name:"LOMBRE",types:["water","grass"]},{id:272,name:"LUDICOLO",types:["water","grass"]},
+  {id:273,name:"SEEDOT",types:["grass"]},{id:274,name:"NUZLEAF",types:["grass","dark"]},{id:275,name:"SHIFTRY",types:["grass","dark"]},
+  {id:276,name:"TAILLOW",types:["normal","flying"]},{id:277,name:"SWELLOW",types:["normal","flying"]},
+  {id:278,name:"WINGULL",types:["water","flying"]},{id:279,name:"PELIPPER",types:["water","flying"]},
+  {id:280,name:"RALTS",types:["psychic"]},{id:281,name:"KIRLIA",types:["psychic"]},{id:282,name:"GARDEVOIR",types:["psychic"]},
+  {id:283,name:"SURSKIT",types:["bug","water"]},{id:284,name:"MASQUERAIN",types:["bug","flying"]},
+  {id:285,name:"SHROOMISH",types:["grass"]},{id:286,name:"BRELOOM",types:["grass","fighting"]},
+  {id:287,name:"SLAKOTH",types:["normal"]},{id:288,name:"VIGOROTH",types:["normal"]},{id:289,name:"SLAKING",types:["normal"]},
+  {id:290,name:"NINCADA",types:["bug","ground"]},{id:291,name:"NINJASK",types:["bug","flying"]},{id:292,name:"SHEDINJA",types:["bug","ghost"]},
+  {id:293,name:"WHISMUR",types:["normal"]},{id:294,name:"LOUDRED",types:["normal"]},{id:295,name:"EXPLOUD",types:["normal"]},
+  {id:296,name:"MAKUHITA",types:["fighting"]},{id:297,name:"HARIYAMA",types:["fighting"]},
+  {id:298,name:"AZURILL",types:["normal"]},{id:299,name:"NOSEPASS",types:["rock"]},
+  {id:300,name:"SKITTY",types:["normal"]},{id:301,name:"DELCATTY",types:["normal"]},
+  {id:302,name:"SABLEYE",types:["dark","ghost"]},{id:303,name:"MAWILE",types:["steel"]},
+  {id:304,name:"ARON",types:["steel","rock"]},{id:305,name:"LAIRON",types:["steel","rock"]},{id:306,name:"AGGRON",types:["steel","rock"]},
+  {id:307,name:"MEDITITE",types:["fighting","psychic"]},{id:308,name:"MEDICHAM",types:["fighting","psychic"]},
+  {id:309,name:"ELECTRIKE",types:["electric"]},{id:310,name:"MANECTRIC",types:["electric"]},
+  {id:311,name:"PLUSLE",types:["electric"]},{id:312,name:"MINUN",types:["electric"]},
+  {id:313,name:"VOLBEAT",types:["bug"]},{id:314,name:"ILLUMISE",types:["bug"]},
+  {id:315,name:"ROSELIA",types:["grass","poison"]},{id:316,name:"GULPIN",types:["poison"]},{id:317,name:"SWALOT",types:["poison"]},
+  {id:318,name:"CARVANHA",types:["water","dark"]},{id:319,name:"SHARPEDO",types:["water","dark"]},
+  {id:320,name:"WAILMER",types:["water"]},{id:321,name:"WAILORD",types:["water"]},
+  {id:322,name:"NUMEL",types:["fire","ground"]},{id:323,name:"CAMERUPT",types:["fire","ground"]},
+  {id:324,name:"TORKOAL",types:["fire"]},{id:325,name:"SPOINK",types:["psychic"]},{id:326,name:"GRUMPIG",types:["psychic"]},
+  {id:327,name:"SPINDA",types:["normal"]},{id:328,name:"TRAPINCH",types:["ground"]},{id:329,name:"VIBRAVA",types:["ground","dragon"]},{id:330,name:"FLYGON",types:["ground","dragon"]},
+  {id:331,name:"CACNEA",types:["grass"]},{id:332,name:"CACTURNE",types:["grass","dark"]},
+  {id:333,name:"SWABLU",types:["normal","flying"]},{id:334,name:"ALTARIA",types:["dragon","flying"]},
+  {id:335,name:"ZANGOOSE",types:["normal"]},{id:336,name:"SEVIPER",types:["poison"]},
+  {id:337,name:"LUNATONE",types:["rock","psychic"]},{id:338,name:"SOLROCK",types:["rock","psychic"]},
+  {id:339,name:"BARBOACH",types:["water","ground"]},{id:340,name:"WHISCASH",types:["water","ground"]},
+  {id:341,name:"CORPHISH",types:["water"]},{id:342,name:"CRAWDAUNT",types:["water","dark"]},
+  {id:343,name:"BALTOY",types:["ground","psychic"]},{id:344,name:"CLAYDOL",types:["ground","psychic"]},
+  {id:345,name:"LILEEP",types:["rock","grass"]},{id:346,name:"CRADILY",types:["rock","grass"]},
+  {id:347,name:"ANORITH",types:["rock","bug"]},{id:348,name:"ARMALDO",types:["rock","bug"]},
+  {id:349,name:"FEEBAS",types:["water"]},{id:350,name:"MILOTIC",types:["water"]},
+  {id:351,name:"CASTFORM",types:["normal"]},{id:352,name:"KECLEON",types:["normal"]},
+  {id:353,name:"SHUPPET",types:["ghost"]},{id:354,name:"BANETTE",types:["ghost"]},
+  {id:355,name:"DUSKULL",types:["ghost"]},{id:356,name:"DUSCLOPS",types:["ghost"]},
+  {id:357,name:"TROPIUS",types:["grass","flying"]},{id:358,name:"CHIMECHO",types:["psychic"]},
+  {id:359,name:"ABSOL",types:["dark"]},{id:360,name:"WYNAUT",types:["psychic"]},
+  {id:361,name:"SNORUNT",types:["ice"]},{id:362,name:"GLALIE",types:["ice"]},
+  {id:363,name:"SPHEAL",types:["ice","water"]},{id:364,name:"SEALEO",types:["ice","water"]},{id:365,name:"WALREIN",types:["ice","water"]},
+  {id:366,name:"CLAMPERL",types:["water"]},{id:367,name:"HUNTAIL",types:["water"]},{id:368,name:"GOREBYSS",types:["water"]},
+  {id:369,name:"RELICANTH",types:["water","rock"]},{id:370,name:"LUVDISC",types:["water"]},
+  {id:371,name:"BAGON",types:["dragon"]},{id:372,name:"SHELGON",types:["dragon"]},{id:373,name:"SALAMENCE",types:["dragon","flying"]},
+  {id:374,name:"BELDUM",types:["steel","psychic"]},{id:375,name:"METANG",types:["steel","psychic"]},{id:376,name:"METAGROSS",types:["steel","psychic"]},
+  {id:377,name:"REGIROCK",types:["rock"]},{id:378,name:"REGICE",types:["ice"]},{id:379,name:"REGISTEEL",types:["steel"]},
+  {id:380,name:"LATIAS",types:["dragon","psychic"]},{id:381,name:"LATIOS",types:["dragon","psychic"]},
+  {id:382,name:"KYOGRE",types:["water"]},{id:383,name:"GROUDON",types:["ground"]},{id:384,name:"RAYQUAZA",types:["dragon","flying"]},
+  {id:385,name:"JIRACHI",types:["steel","psychic"]},{id:386,name:"DEOXYS",types:["psychic"]}
+];
+
+const PKM4 = [
+  {id:387,name:"TURTWIG",types:["grass"]},{id:388,name:"GROTLE",types:["grass"]},{id:389,name:"TORTERRA",types:["grass","ground"]},
+  {id:390,name:"CHIMCHAR",types:["fire"]},{id:391,name:"MONFERNO",types:["fire","fighting"]},{id:392,name:"INFERNAPE",types:["fire","fighting"]},
+  {id:393,name:"PIPLUP",types:["water"]},{id:394,name:"PRINPLUP",types:["water"]},{id:395,name:"EMPOLEON",types:["water","steel"]},
+  {id:396,name:"STARLY",types:["normal","flying"]},{id:397,name:"STARAVIA",types:["normal","flying"]},{id:398,name:"STARAPTOR",types:["normal","flying"]},
+  {id:399,name:"BIDOOF",types:["normal"]},{id:400,name:"BIBAREL",types:["normal","water"]},
+  {id:401,name:"KRICKETOT",types:["bug"]},{id:402,name:"KRICKETUNE",types:["bug"]},
+  {id:403,name:"SHINX",types:["electric"]},{id:404,name:"LUXIO",types:["electric"]},{id:405,name:"LUXRAY",types:["electric"]},
+  {id:406,name:"BUDEW",types:["grass","poison"]},{id:407,name:"ROSERADE",types:["grass","poison"]},
+  {id:408,name:"CRANIDOS",types:["rock"]},{id:409,name:"RAMPARDOS",types:["rock"]},
+  {id:410,name:"SHIELDON",types:["rock","steel"]},{id:411,name:"BASTIODON",types:["rock","steel"]},
+  {id:412,name:"BURMY",types:["bug"]},{id:413,name:"WORMADAM",types:["bug","grass"]},{id:414,name:"MOTHIM",types:["bug","flying"]},
+  {id:415,name:"COMBEE",types:["bug","flying"]},{id:416,name:"VESPIQUEN",types:["bug","flying"]},
+  {id:417,name:"PACHIRISU",types:["electric"]},
+  {id:418,name:"BUIZEL",types:["water"]},{id:419,name:"FLOATZEL",types:["water"]},
+  {id:420,name:"CHERUBI",types:["grass"]},{id:421,name:"CHERRIM",types:["grass"]},
+  {id:422,name:"SHELLOS",types:["water"]},{id:423,name:"GASTRODON",types:["water","ground"]},
+  {id:424,name:"AMBIPOM",types:["normal"]},
+  {id:425,name:"DRIFLOON",types:["ghost","flying"]},{id:426,name:"DRIFBLIM",types:["ghost","flying"]},
+  {id:427,name:"BUNEARY",types:["normal"]},{id:428,name:"LOPUNNY",types:["normal"]},
+  {id:429,name:"MISMAGIUS",types:["ghost"]},
+  {id:430,name:"HONCHKROW",types:["dark","flying"]},
+  {id:431,name:"GLAMEOW",types:["normal"]},{id:432,name:"PURUGLY",types:["normal"]},
+  {id:433,name:"CHINGLING",types:["psychic"]},
+  {id:434,name:"STUNKY",types:["poison","dark"]},{id:435,name:"SKUNTANK",types:["poison","dark"]},
+  {id:436,name:"BRONZOR",types:["steel","psychic"]},{id:437,name:"BRONZONG",types:["steel","psychic"]},
+  {id:438,name:"BONSLY",types:["rock"]},
+  {id:439,name:"MIME JR.",types:["psychic"]},
+  {id:440,name:"HAPPINY",types:["normal"]},
+  {id:441,name:"CHATOT",types:["normal","flying"]},
+  {id:442,name:"SPIRITOMB",types:["ghost","dark"]},
+  {id:443,name:"GIBLE",types:["dragon","ground"]},{id:444,name:"GABITE",types:["dragon","ground"]},{id:445,name:"GARCHOMP",types:["dragon","ground"]},
+  {id:446,name:"MUNCHLAX",types:["normal"]},
+  {id:447,name:"RIOLU",types:["fighting"]},{id:448,name:"LUCARIO",types:["fighting","steel"]},
+  {id:449,name:"HIPPOPOTAS",types:["ground"]},{id:450,name:"HIPPOWDON",types:["ground"]},
+  {id:451,name:"SKORUPI",types:["poison","bug"]},{id:452,name:"DRAPION",types:["poison","dark"]},
+  {id:453,name:"CROAGUNK",types:["poison","fighting"]},{id:454,name:"TOXICROAK",types:["poison","fighting"]},
+  {id:455,name:"CARNIVINE",types:["grass"]},
+  {id:456,name:"FINNEON",types:["water"]},{id:457,name:"LUMINEON",types:["water"]},
+  {id:458,name:"MANTYKE",types:["water","flying"]},
+  {id:459,name:"SNOVER",types:["grass","ice"]},{id:460,name:"ABOMASNOW",types:["grass","ice"]},
+  {id:461,name:"WEAVILE",types:["dark","ice"]},
+  {id:462,name:"MAGNEZONE",types:["electric","steel"]},
+  {id:463,name:"LICKILICKY",types:["normal"]},
+  {id:464,name:"RHYPERIOR",types:["ground","rock"]},
+  {id:465,name:"TANGROWTH",types:["grass"]},
+  {id:466,name:"ELECTIVIRE",types:["electric"]},
+  {id:467,name:"MAGMORTAR",types:["fire"]},
+  {id:468,name:"TOGEKISS",types:["fairy","flying"]},
+  {id:469,name:"YANMEGA",types:["bug","flying"]},
+  {id:470,name:"LEAFEON",types:["grass"]},{id:471,name:"GLACEON",types:["ice"]},
+  {id:472,name:"GLISCOR",types:["ground","flying"]},
+  {id:473,name:"MAMOSWINE",types:["ice","ground"]},
+  {id:474,name:"PORYGON-Z",types:["normal"]},
+  {id:475,name:"GALLADE",types:["psychic","fighting"]},
+  {id:476,name:"PROBOPASS",types:["rock","steel"]},
+  {id:477,name:"DUSKNOIR",types:["ghost"]},
+  {id:478,name:"FROSLASS",types:["ice","ghost"]},
+  {id:479,name:"ROTOM",types:["electric","ghost"]},
+  {id:480,name:"UXIE",types:["psychic"]},{id:481,name:"MESPRIT",types:["psychic"]},{id:482,name:"AZELF",types:["psychic"]},
+  {id:483,name:"DIALGA",types:["steel","dragon"]},{id:484,name:"PALKIA",types:["water","dragon"]},
+  {id:485,name:"HEATRAN",types:["fire","steel"]},
+  {id:486,name:"REGIGIGAS",types:["normal"]},
+  {id:487,name:"GIRATINA",types:["ghost","dragon"]},
+  {id:488,name:"CRESSELIA",types:["psychic"]},
+  {id:489,name:"PHIONE",types:["water"]},{id:490,name:"MANAPHY",types:["water"]},
+  {id:491,name:"DARKRAI",types:["dark"]},
+  {id:492,name:"SHAYMIN",types:["grass"]},
+  {id:493,name:"ARCEUS",types:["normal"]},
+];
+
+
+// ── CHALLENGES DATA ──
+// Each starter knows its origin gen for sprite + badge display
+const STARTERS = [
+  {id:1,name:"BULBASAUR",types:["grass","poison"],gen:1},
+  {id:4,name:"CHARMANDER",types:["fire"],gen:1},
+  {id:7,name:"SQUIRTLE",types:["water"],gen:1},
+  {id:152,name:"CHIKORITA",types:["grass"],gen:2},
+  {id:155,name:"CYNDAQUIL",types:["fire"],gen:2},
+  {id:158,name:"TOTODILE",types:["water"],gen:2},
+  {id:252,name:"TREECKO",types:["grass"],gen:3},
+  {id:255,name:"TORCHIC",types:["fire"],gen:3},
+  {id:258,name:"MUDKIP",types:["water"],gen:3},
+  {id:387,name:"TURTWIG",types:["grass"],gen:4},
+  {id:390,name:"CHIMCHAR",types:["fire"],gen:4},
+  {id:393,name:"PIPLUP",types:["water"],gen:4},
+];
+
+// Legendaries: all box legendaries + main mythicals from gen I-III
+const LEGENDARIES = [
+  // Gen I
+  {id:144,name:"ARTICUNO",types:["ice","flying"],gen:1},
+  {id:145,name:"ZAPDOS",types:["electric","flying"],gen:1},
+  {id:146,name:"MOLTRES",types:["fire","flying"],gen:1},
+  {id:150,name:"MEWTWO",types:["psychic"],gen:1},
+  {id:151,name:"MEW",types:["psychic"],gen:1},
+  // Gen II
+  {id:243,name:"RAIKOU",types:["electric"],gen:2},
+  {id:244,name:"ENTEI",types:["fire"],gen:2},
+  {id:245,name:"SUICUNE",types:["water"],gen:2},
+  {id:249,name:"LUGIA",types:["psychic","flying"],gen:2},
+  {id:250,name:"HO-OH",types:["fire","flying"],gen:2},
+  {id:251,name:"CELEBI",types:["psychic","grass"],gen:2},
+  // Gen III
+  {id:377,name:"REGIROCK",types:["rock"],gen:3},
+  {id:378,name:"REGICE",types:["ice"],gen:3},
+  {id:379,name:"REGISTEEL",types:["steel"],gen:3},
+  {id:380,name:"LATIAS",types:["dragon","psychic"],gen:3},
+  {id:381,name:"LATIOS",types:["dragon","psychic"],gen:3},
+  {id:382,name:"KYOGRE",types:["water"],gen:3},
+  {id:383,name:"GROUDON",types:["ground"],gen:3},
+  {id:384,name:"RAYQUAZA",types:["dragon","flying"],gen:3},
+  {id:385,name:"JIRACHI",types:["steel","psychic"],gen:3},
+  {id:386,name:"DEOXYS",types:["psychic"],gen:3},
+  // Gen IV
+  {id:480,name:"UXIE",types:["psychic"],gen:4},
+  {id:481,name:"MESPRIT",types:["psychic"],gen:4},
+  {id:482,name:"AZELF",types:["psychic"],gen:4},
+  {id:483,name:"DIALGA",types:["steel","dragon"],gen:4},
+  {id:484,name:"PALKIA",types:["water","dragon"],gen:4},
+  {id:485,name:"HEATRAN",types:["fire","steel"],gen:4},
+  {id:486,name:"REGIGIGAS",types:["normal"],gen:4},
+  {id:487,name:"GIRATINA",types:["ghost","dragon"],gen:4},
+  {id:488,name:"CRESSELIA",types:["psychic"],gen:4},
+  {id:490,name:"MANAPHY",types:["water"],gen:4},
+  {id:491,name:"DARKRAI",types:["dark"],gen:4},
+  {id:492,name:"SHAYMIN",types:["grass"],gen:4},
+  {id:493,name:"ARCEUS",types:["normal"],gen:4},
+];
+
+// Eevee evolutions available in gen I-III
+const EEVEELUTIONS = [
+  {id:134,name:"VAPOREON",types:["water"],gen:1},
+  {id:135,name:"JOLTEON",types:["electric"],gen:1},
+  {id:136,name:"FLAREON",types:["fire"],gen:1},
+  {id:196,name:"ESPEON",types:["psychic"],gen:2},
+  {id:197,name:"UMBREON",types:["dark"],gen:2},
+  {id:470,name:"LEAFEON",types:["grass"],gen:4},
+  {id:471,name:"GLACEON",types:["ice"],gen:4},
+];
+
+// Pseudo-legendaries (3-stage, 600 base stat club) gen I-III
+const PSEUDO_LEGENDS = [
+  {id:149,name:"DRAGONITE",types:["dragon","flying"],gen:1},
+  {id:248,name:"TYRANITAR",types:["rock","dark"],gen:2},
+  {id:373,name:"SALAMENCE",types:["dragon","flying"],gen:3},
+  {id:376,name:"METAGROSS",types:["steel","psychic"],gen:3},
+  {id:445,name:"GARCHOMP",types:["dragon","ground"],gen:4},
+];
+
+const CHALLENGES = {
+  starters: {
+    slug:'starters',
+    title:'STARTERS',
+    eyebrow:'CROSS-GEN · 12 POKÉMON',
+    desc:'Every first partner from Gen I to Gen IV. Bulbasaur to Piplup — pick one.',
+    pool:STARTERS,
+    available:true,
+  },
+  legendaries: {
+    slug:'legendaries',
+    title:'LEGENDARIES',
+    eyebrow:'CROSS-GEN · 34 POKÉMON',
+    desc:'Mewtwo, Lugia, Rayquaza, Dialga and many more. The most powerful Pokémon from every region.',
+    pool:LEGENDARIES,
+    available:true,
+  },
+  eevee: {
+    slug:'eevee',
+    title:'EEVEE EVOLUTIONS',
+    eyebrow:'TYPE BATTLE · 7 POKÉMON',
+    desc:'Vaporeon, Jolteon, Flareon, Espeon, Umbreon, Leafeon, Glaceon. Which evolution is yours?',
+    pool:EEVEELUTIONS,
+    available:true,
+  },
+  pseudo: {
+    slug:'pseudo',
+    title:'PSEUDO-LEGENDARIES',
+    eyebrow:'CROSS-GEN · 5 POKÉMON',
+    desc:'Dragonite, Tyranitar, Salamence, Metagross, Garchomp. The 600-stat club.',
+    pool:PSEUDO_LEGENDS,
+    available:true,
+  },
+};
+
+// sprite URLs
+// sprite sources with fallbacks
+const SPRITE_SOURCES = {
+  1: [
+    id => 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/transparent/'+id+'.png',
+    id => 'https://play.pokemonshowdown.com/sprites/gen1/'+getPSName(id)+'.png',
+    id => 'https://img.pokemondb.net/sprites/red-blue/normal/'+getPSName(id)+'.png',
+  ],
+  2: [
+    id => 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-ii/crystal/transparent/'+id+'.png',
+    id => 'https://play.pokemonshowdown.com/sprites/gen2/'+getPSName(id)+'.png',
+    id => 'https://img.pokemondb.net/sprites/gold/normal/'+getPSName(id)+'.png',
+  ],
+  3: [
+    id => 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-iii/emerald/'+id+'.png',
+    id => 'https://play.pokemonshowdown.com/sprites/gen3/'+getPSName(id)+'.png',
+    id => 'https://img.pokemondb.net/sprites/ruby-sapphire/normal/'+getPSName(id)+'.png',
+  ],
+  4: [
+    id => 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-iv/heartgold-soulsilver/'+id+'.png',
+    id => 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-iv/diamond-pearl/'+id+'.png',
+    id => 'https://play.pokemonshowdown.com/sprites/gen4/'+getPSName(id)+'.png',
+    id => 'https://img.pokemondb.net/sprites/diamond-pearl/normal/'+getPSName(id)+'.png',
+  ]
+};
+
+// PS-compatible name map for special cases
+const PS_NAMES = {29:'nidoran-f',32:'nidoran-m',83:'farfetchd',122:'mr-mime',
+  185:'sudowoodo',201:'unown',250:'ho-oh',351:'castform',386:'deoxys'};
+function getPSName(id){
+  if(PS_NAMES[id]) return PS_NAMES[id];
+  const pkm = (id<=151?PKM1:id<=251?PKM2:id<=386?PKM3:PKM4).find(p=>p.id===id);
+  if(!pkm) return 'missingno';
+  return pkm.name.toLowerCase().replace(/[^a-z0-9]/g,'-');
+}
+
+function sprite(id, gen) {
+  const sources = SPRITE_SOURCES[gen] || SPRITE_SOURCES[1];
+  return sources[0](id);
+}
+
+// build onerror chain for fallback loading
+function spriteWithFallback(id, gen, cls, extraStyle) {
+  const sources = SPRITE_SOURCES[gen] || SPRITE_SOURCES[1];
+  const s = extraStyle ? ' style="'+extraStyle+'"' : '';
+  // encode fallback chain into data attributes
+  const fallbacks = sources.slice(1).map(fn=>fn(id)).join('|');
+  return '<img class="'+cls+'" src="'+sources[0](id)+'"'
+    +' data-fallbacks="'+fallbacks+'"'
+    +' onerror="spriteFallback(this)"'
+    +s+'>';
+}
+
+function spriteFallback(img) {
+  const fallbacks = (img.getAttribute('data-fallbacks')||'').split('|').filter(Boolean);
+  if(fallbacks.length === 0) {
+    // all sources failed — show pixel placeholder
+    img.style.display = 'none';
+    const ph = document.createElement('div');
+    ph.className = img.className + ' sprite-ph';
+    ph.textContent = '?';
+    ph.style.cssText = 'display:flex;align-items:center;justify-content:center;font-family:var(--px);color:var(--bg3);font-size:10px;background:var(--bg2);width:'+img.width+'px;height:'+img.height+'px;';
+    img.parentNode.insertBefore(ph, img);
+    return;
+  }
+  img.setAttribute('data-fallbacks', fallbacks.slice(1).join('|'));
+  img.src = fallbacks[0];
+}
+
+// for cross-gen challenges: use the pokémon's own origin gen for sprite
+function spriteByOriginGen(p, cls, extraStyle){
+  return spriteWithFallback(p.id, p.gen||S.gen, cls, extraStyle);
+}
+
+// Type icon URLs from PokeAPI sprites repo — varies by gen
+const TYPE_IDS = {normal:1,fighting:2,flying:3,poison:4,ground:5,rock:6,bug:7,ghost:8,steel:9,
+  fire:10,water:11,grass:12,electric:13,psychic:14,ice:15,dragon:16,dark:17};
+function typeIdNum(t){ return TYPE_IDS[t.toLowerCase()]||1; }
+
+function typeIconUrl(type, genOverride){
+  const id=typeIdNum(type);
+  return 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/types/generation-iii/emerald/'+id+'.png';
+}
+
+function typeIconsHTML(types, sizeOverride, genOverride){
+  const size=sizeOverride||14;
+  return '<span class="type-tags" style="display:inline-flex;gap:4px;align-items:center;vertical-align:middle">'
+    +types.map(t=>{
+      const url=typeIconUrl(t);
+      return '<span class="type-tag" data-type="'+t+'" style="position:relative;display:inline-flex">'
+        +'<img src="'+url+'" alt="'+t+'" style="height:'+size+'px;width:auto;image-rendering:auto" '
+        +'onerror="this.parentNode.innerHTML=\'<span style=\\\'font-size:5px;color:var(--fg5);\\\'>\'+this.alt.toUpperCase()+\'</span>\'">'
+        +'</span>';
+    }).join('')
+    +'</span>';
+}
+
+function shuffle(a){a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+// ── STATE ──
+let S = {
+  screen:'loading', authMode:'login', prevScreen:'landing', section:'generations', challenge:null, lbScope:null, lbChallenge:'starters', history:[],
+  user:null, profile:null, favorites:{},
+  isGuest:false,
+  guestLocalOnly:false,
+  userMenuOpen:false,
+  confirmDialog:null,
+  guestAuthReturn:null,
+  guestTransfer:null,
+  gen:1,
+  mode:null, filterType:null,
+  pool:[], round:0, total:0, streak:0, maxStreak:0,
+  winner:null, busy:false,
+  currentView:'game',
+  lbView:'pokemon', lbMode:'overall',
+  lbData:null, trainerData:null,
+  activeSessions:[], // in-progress sessions from DB
+};
+
+function currentPKM() { return S.gen===1 ? PKM1 : S.gen===2 ? PKM2 : S.gen===3 ? PKM3 : PKM4; }
+function genPrefix() { return S.gen===1 ? 'g1_' : S.gen===2 ? 'g2_' : 'g3_'; }
+function guestStorageKey(){ return 'poke_guest_picks_v1'; }
+function loadGuestPicks(){ try{return JSON.parse(localStorage.getItem(guestStorageKey())||'{}')||{};}catch(e){return {};} }
+function saveGuestPicks(){ if(!S.isGuest) return; try{localStorage.setItem(guestStorageKey(), JSON.stringify(S.favorites||{}));}catch(e){} }
+function clearGuestPicks(){ try{localStorage.removeItem(guestStorageKey());}catch(e){} }
+function categoryFor(mode, ft){
+  return mode==='challenge' ? 'ch_'+ft : (genPrefix()+(mode==='type'?'type_'+ft:'overall'));
+}
+// Compact pick preview — shown as a corner badge on card buttons
+// Deduce gen from Pokémon ID (1-151 = gen1, 152-251 = gen2, 252-386 = gen3)
+function genFromId(id){ return id<=151?1:id<=251?2:id<=386?3:4; }
+
+function pickPreviewHTML(p, cls, label, originGen){
+  if(!p||!p.id) return '<div class="'+cls+' empty"></div>';
+  // Priority: explicit originGen > p.gen > deduce from ID > fallback to S.gen
+  const useGen=originGen||p.gen||genFromId(p.id)||S.gen;
+  const spriteHtml=spriteWithFallback(p.id,useGen,cls+' preview-sprite','');
+  return '<div class="'+cls+'">'
+    +spriteHtml
+    +'<span class="preview-name">'+p.name+'</span>'
+    +'</div>';
+}
+async function clearFavorite(cat){
+  if(!cat) return;
+  delete S.favorites[cat];
+  if(S.isGuest) saveGuestPicks();
+  if(S.user && !S.guestLocalOnly){
+    await sb.from('pokemon_favorites').delete().eq('user_id',S.user.id).eq('category',cat);
+  }
+}
+
+async function migrateGuestPicksToUser(uid, picks){
+  for(const [cat,p] of Object.entries(picks||{}).filter(([,p])=>p&&p.id)) await saveFav(uid,cat,p);
+}
+
+
+// ── GEN SWITCH ──
+function switchGen(g) {
+  if(S.gen===g) return;
+  S.gen=g;
+  S.screen = (S.screen==='auth'||S.screen==='loading') ? S.screen : 'menu';
+  S.currentView='game';
+  S.lbData=null; S.trainerData=null;
+  document.body.className = g===1 ? 'gen1' : g===2 ? 'gen2' : g===3 ? 'gen3' : 'gen4';
+  updateLogoSubtitle();
+  render();
+}
+
+// ── SUPABASE ──
+async function loadFavs(uid) {
+  const {data} = await sb.from('pokemon_favorites').select('*').eq('user_id',uid);
+  const f={};
+  if(data) data.forEach(r=>{f[r.category]={id:r.pokemon_id,name:r.pokemon_name,types:r.pokemon_types,gen:r.pokemon_id<=151?1:r.pokemon_id<=251?2:r.pokemon_id<=386?3:4};});
+  return f;
+}
+
+async function saveFav(uid,cat,p) {
+  // ensure gen is preserved in our local cache (DB schema may not have a gen column)
+  if(p && !p.gen && p.id) p.gen = (p.id<=151?1:p.id<=251?2:p.id<=386?3:4);
+  await sb.from('pokemon_favorites').upsert({
+    user_id:uid, category:cat,
+    pokemon_id:p.id, pokemon_name:p.name, pokemon_types:p.types,
+    updated_at:new Date().toISOString()
+  },{onConflict:'user_id,category'});
+}
+
+async function loadProfile(uid) {
+  const {data} = await sb.from('profiles').select('*').eq('id',uid).single();
+  return data;
+}
+
+async function upsertProfile(uid, display_name) {
+  await sb.from('profiles').upsert({id:uid,display_name,updated_at:new Date().toISOString()},{onConflict:'id'});
+}
+
+async function autoSave(cat, p) {
+  const badge=document.getElementById('autosave-badge');
+  S.favorites[cat]=p;
+  if(S.isGuest) saveGuestPicks();
+  if(S.guestLocalOnly){
+    if(badge){badge.textContent='★ PICK KEPT';badge.classList.add('show');setTimeout(()=>badge.classList.remove('show'),1500);}
+    return;
+  }
+  if(!S.user) return;
+  await saveFav(S.user.id,cat,p);
+  if(badge){badge.textContent=S.isGuest?'★ PICK KEPT':'★ SAVED';badge.classList.add('show');setTimeout(()=>badge.classList.remove('show'),1500);}
+}
+
+// ── SESSION PERSISTENCE
+async function saveSession() {
+  if(!S.user||S.isGuest||S.mode==='challenge') return;
+  // For bracket mode: persist S.bracket inside pool field as a wrapper {__bracket:{...}}
+  // For linear mode: persist S.pool as before
+  let payload;
+  if(S.bracket){
+    payload={__bracket:S.bracket};
+  } else if(S.pool.length>1){
+    payload=S.pool;
+  } else {
+    return; // nothing to save
+  }
+  const ft=S.filterType||'__none__';
+  const {error} = await sb.from('pokemon_sessions').upsert({
+    user_id:S.user.id,
+    gen:S.gen,
+    mode:S.mode,
+    filter_type:ft,
+    pool:payload,
+    round:S.round,
+    total:S.total,
+    streak:S.streak,
+    max_streak:S.maxStreak,
+    updated_at:new Date().toISOString()
+  },{onConflict:'user_id,gen,mode,filter_type'});
+  if(error) console.error('saveSession error:', error.message);
+}
+
+async function deleteSession() {
+  if(!S.user||S.isGuest) return;
+  const ft=S.filterType||'__none__';
+  await sb.from('pokemon_sessions')
+    .delete()
+    .eq('user_id',S.user.id)
+    .eq('gen',S.gen)
+    .eq('mode',S.mode)
+    .eq('filter_type',ft);
+}
+
+async function loadActiveSessions(uid) {
+  const {data} = await sb.from('pokemon_sessions').select('*').eq('user_id',uid);
+  return data||[];
+}
+
+async function resumeSession(sess) {
+  S.gen=sess.gen;
+  S.mode=sess.mode;
+  S.filterType=sess.filter_type==='__none__'?null:sess.filter_type;
+  // Detect bracket vs linear payload
+  if(sess.pool && typeof sess.pool==='object' && !Array.isArray(sess.pool) && sess.pool.__bracket){
+    S.bracket=sess.pool.__bracket;
+    S.pool=sess.pool.__bracket.initialPool||[];
+  } else {
+    S.bracket=null;
+    S.pool=sess.pool;
+  }
+  S.round=sess.round;
+  S.total=sess.total;
+  S.streak=sess.streak;
+  S.maxStreak=sess.max_streak;
+  S.winner=null;
+  S.history=[];
+  S.screen='battle';
+  S.currentView='game';
+  document.body.className=S.gen===1?'gen1':S.gen===2?'gen2':S.gen===3?'gen3':'gen4';
+  updateLogoSubtitle();
+  render();
+}
+
+async function abandonSession() {
+  await deleteSession();
+  S.activeSessions=await loadActiveSessions(S.user.id);
+  S.screen='menu';S.currentView='game';
+  S.pool=[];S.round=0;S.total=0;S.streak=0;S.maxStreak=0;S.winner=null;
+  render();
+}
+
+async function loadPokemonLb(mode) {
+  const prefix=genPrefix();
+  const catPrefixed=mode==='overall'?prefix+'overall':prefix+'type_'+mode;
+  // include legacy unprefixed for gen1 backwards compat
+  const cats=[catPrefixed];
+  if(S.gen===1) cats.push(mode==='overall'?'overall':'type_'+mode);
+  const {data,error} = await sb.from('pokemon_favorites')
+    .select('pokemon_id,pokemon_name,pokemon_types,category')
+    .in('category',cats);
+  if(error||!data) return [];
+  const counts={};
+  data.forEach(r=>{
+    const k=r.pokemon_id;
+    if(!counts[k]) counts[k]={id:r.pokemon_id,name:r.pokemon_name,types:r.pokemon_types||[],votes:0};
+    counts[k].votes++;
+  });
+  return Object.values(counts).sort((a,b)=>b.votes-a.votes).slice(0,25);
+}
+
+async function loadChallengeLb(slug){
+  const cat='ch_'+slug;
+  const {data,error}=await sb.from('pokemon_favorites')
+    .select('pokemon_id,pokemon_name,pokemon_types').eq('category',cat);
+  if(error||!data) return [];
+  const counts={};
+  data.forEach(r=>{
+    const k=r.pokemon_id;
+    if(!counts[k]) counts[k]={id:r.pokemon_id,name:r.pokemon_name,types:r.pokemon_types||[],votes:0};
+    counts[k].votes++;
+  });
+  return Object.values(counts).sort((a,b)=>b.votes-a.votes).slice(0,25);
+}
+
+async function loadChallengeTrainerLb(){
+  const {data:favData,error}=await sb.from('pokemon_favorites')
+    .select('user_id,category,pokemon_id,pokemon_name,pokemon_types');
+  if(error||!favData) return [];
+  const {data:profData}=await sb.from('profiles').select('id,display_name');
+  const profiles={};
+  if(profData) profData.forEach(p=>{if(p.display_name) profiles[p.id]=p.display_name;});
+  const users={};
+  favData.forEach(r=>{
+    if(!profiles[r.user_id]) return; // exclude guests / users without profile
+    if(!r.category.startsWith('ch_')) return;
+    const slug=r.category.replace('ch_','');
+    if(!CHALLENGES[slug]||!CHALLENGES[slug].available) return;
+    if(!users[r.user_id]) users[r.user_id]={user_id:r.user_id,display_name:profiles[r.user_id]||null,picks:{}};
+    users[r.user_id].picks[slug]={id:r.pokemon_id,name:r.pokemon_name,types:r.pokemon_types||[]};
+  });
+  return Object.values(users).sort((a,b)=>Object.keys(b.picks).length-Object.keys(a.picks).length);
+}
+
+async function loadTrainerLb() {
+  const {data:favData,error} = await sb.from('pokemon_favorites').select('user_id,category,pokemon_id,pokemon_name,pokemon_types');
+  if(error||!favData) return [];
+  const {data:profData} = await sb.from('profiles').select('id,display_name');
+  const profiles={};
+  if(profData) profData.forEach(p=>{if(p.display_name) profiles[p.id]=p.display_name;});
+  const prefix=genPrefix();
+  const users={};
+  // accept both prefixed (g1_overall) and legacy unprefixed (overall) for gen1
+  const isGen1=S.gen===1;
+  favData.forEach(r=>{
+    if(!profiles[r.user_id]) return; // exclude guests / users without profile
+    let key=null;
+    if(r.category.startsWith(prefix)) key=r.category.replace(prefix,'');
+    else if(isGen1&&!r.category.startsWith('g1_')&&!r.category.startsWith('g2_')&&!r.category.startsWith('g3_')&&!r.category.startsWith('ch_')) key=r.category;
+    if(key===null) return;
+    if(!users[r.user_id]) users[r.user_id]={user_id:r.user_id,display_name:profiles[r.user_id]||null,picks:{}};
+    users[r.user_id].picks[key]={id:r.pokemon_id,name:r.pokemon_name,types:r.pokemon_types||[]};
+  });
+  return Object.values(users).sort((a,b)=>Object.keys(b.picks).length-Object.keys(a.picks).length);
+}
+
+// ── AUTH ──
+async function forgotPassword(){
+  const email=document.getElementById('auth-email')?.value.trim();
+  const msg=document.getElementById('auth-msg');
+  if(!email){
+    if(msg){msg.textContent='▶ ENTER YOUR EMAIL ABOVE FIRST';msg.className='auth-msg error';}
+    return;
+  }
+  if(msg){msg.textContent='▶ ...';msg.className='auth-msg';}
+  try {
+    const redirectTo = window.location.origin;
+    const {error} = await sb.auth.resetPasswordForEmail(email, {redirectTo});
+    if(error) throw error;
+    if(msg){msg.innerHTML='▶ IF AN ACCOUNT EXISTS FOR THIS EMAIL,<br>A PASSWORD RESET LINK HAS BEEN SENT.';msg.className='auth-msg';}
+  } catch(e){
+    if(msg){msg.textContent='▶ '+(e.message||'ERROR').toUpperCase();msg.className='auth-msg error';}
+  }
+}
+
+async function doAuth() {
+  const isReg=S.authMode==='register';
+  const email=document.getElementById('auth-email').value.trim();
+  const pass=document.getElementById('auth-pass').value;
+  const nick=isReg?document.getElementById('auth-nick').value.trim():null;
+  const msg=document.getElementById('auth-msg');
+  if(!email||!pass){msg.textContent='▶ ENTER EMAIL AND PASSWORD';msg.className='auth-msg error';return;}
+  if(isReg&&!nick){msg.textContent='▶ ENTER A NICKNAME';msg.className='auth-msg error';return;}
+  if(isReg){
+    const termsBox=document.getElementById('auth-terms');
+    if(!termsBox||!termsBox.checked){msg.textContent='▶ YOU MUST ACCEPT THE TERMS AND PRIVACY POLICY';msg.className='auth-msg error';return;}
+  }
+  msg.textContent='▶ ...';msg.className='auth-msg';S.busy=true;
+  // Collect picks to migrate: from current guest session OR orphan localStorage picks
+  let guestPicks=S.isGuest?{...(S.favorites||{})}:null;
+  if(!guestPicks){
+    const orphan=loadGuestPicks();
+    if(orphan && Object.keys(orphan).length>0) guestPicks=orphan;
+  }
+  const wasGuest=S.isGuest;
+  let error;
+  try{
+    if(isReg){
+      if(wasGuest){try{await sb.auth.signOut();}catch(e){}}
+      const r=await sb.auth.signUp({email,password:pass});
+      error=r.error;
+      if(!error){
+        if(r.data.user){
+          await upsertProfile(r.data.user.id,nick);
+          if(guestPicks) await migrateGuestPicksToUser(r.data.user.id,guestPicks);
+        }
+        if(r.data.session&&r.data.user){
+          S.user=r.data.user;S.isGuest=false;S.guestLocalOnly=false;
+          S.profile=await loadProfile(S.user.id);S.favorites=await loadFavs(S.user.id);S.activeSessions=await loadActiveSessions(S.user.id);
+          clearGuestPicks();S.screen='menu';S.currentView='game';S.guestAuthReturn=null;S.busy=false;render();return;
+        }
+        msg.innerHTML='▶ ACCOUNT CREATED!<br>CHECK YOUR INBOX FOR A CONFIRMATION EMAIL. CLICK THE LINK, THEN LOG IN.';msg.className='auth-msg';S.busy=false;return;
+      }
+    } else {
+      const r=await sb.auth.signInWithPassword({email,password:pass});
+      error=r.error;
+      if(!error){S.user=r.data.user;S.isGuest=false;S.guestLocalOnly=false;if(guestPicks) await migrateGuestPicksToUser(S.user.id,guestPicks);}
+    }
+  }catch(e){error=e;}
+  S.busy=false;
+  if(error){
+    if(wasGuest){S.user={id:'local-guest'};S.isGuest=true;S.favorites=guestPicks||loadGuestPicks();}
+    let errMsg=(error.message||'').toUpperCase();
+    if(errMsg.includes('NOT CONFIRMED')||errMsg.includes('CONFIRMATION')){
+      msg.innerHTML='▶ EMAIL NOT CONFIRMED YET.<br>CHECK YOUR INBOX FOR THE CONFIRMATION LINK.';
+    } else if(errMsg.includes('INVALID') && errMsg.includes('CREDENTIAL')){
+      msg.textContent='▶ INVALID EMAIL OR PASSWORD';
+    } else if(errMsg.includes('USER ALREADY')){
+      msg.textContent='▶ AN ACCOUNT WITH THIS EMAIL ALREADY EXISTS. TRY LOGGING IN.';
+    } else {
+      msg.textContent='▶ '+(errMsg||'ERROR');
+    }
+    msg.className='auth-msg error';return;
+  }
+  try{const nick=localStorage.getItem('pending_nick');if(nick){await upsertProfile(S.user.id,nick);localStorage.removeItem('pending_nick');}}catch(e){}
+  S.profile=await loadProfile(S.user.id);S.favorites=await loadFavs(S.user.id);S.activeSessions=await loadActiveSessions(S.user.id);
+  clearGuestPicks();S.screen='menu';S.currentView='game';S.guestAuthReturn=null;render();
+}
+
+function cancelAuth(){
+  if(S.guestAuthReturn){
+    S.screen=S.guestAuthReturn.screen||'menu';S.currentView='game';S.section=S.guestAuthReturn.section||S.section;S.gen=S.guestAuthReturn.gen||S.gen;S.mode=S.guestAuthReturn.mode||S.mode;S.filterType=S.guestAuthReturn.filterType||S.filterType;S.guestAuthReturn=null;render();return;
+  }
+  if(S.user){goHome();return;}
+  goLanding();
+}
+
+// ── USER MENU ──
+function toggleUserMenu(e){
+  if(e){e.stopPropagation();}
+  S.userMenuOpen=!S.userMenuOpen;
+  render();
+}
+function closeUserMenu(){
+  if(S.userMenuOpen){S.userMenuOpen=false;render();}
+}
+function renderUserMenu(){
+  const isGuest=S.isGuest;
+  let html='<div class="user-menu-backdrop" onclick="closeUserMenu()"></div>';
+  html+='<div class="user-menu" onclick="event.stopPropagation()">';
+  // status section
+  html+='<div class="user-menu-status">';
+  if(isGuest){
+    html+='<div class="user-menu-label">PLAYING AS</div>'
+      +'<div class="user-menu-name">★ GUEST</div>'
+      +'<div class="user-menu-meta">PICKS KEPT ON THIS DEVICE</div>';
+  } else {
+    const name=(S.profile?.display_name||S.user.email.split('@')[0]).toUpperCase();
+    html+='<div class="user-menu-label">LOGGED IN AS</div>'
+      +'<div class="user-menu-name">★ '+name+'</div>'
+      +'<div class="user-menu-meta">'+S.user.email+'</div>';
+  }
+  html+='</div>';
+  // Guest-only: register/login shortcuts to convert
+  if(isGuest){
+    html+='<button class="user-menu-action" onclick="closeUserMenu();goRegisterFromGuest()">'
+      +'SAVE PICKS'
+      +'<span class="menu-action-sub">CREATE ACCOUNT TO KEEP THEM</span>'
+      +'</button>';
+    html+='<button class="user-menu-action" onclick="closeUserMenu();goLoginFromGuest()">'
+      +'LOG IN'
+      +'<span class="menu-action-sub">USE EXISTING ACCOUNT</span>'
+      +'</button>';
+  }
+  // Logged-in users get account settings entry
+  if(!isGuest){
+    html+='<button class="user-menu-action" onclick="closeUserMenu();openLegalPage(\'account\')">'
+      +'ACCOUNT'
+      +'<span class="menu-action-sub">PROFILE · DATA · DELETE</span>'
+      +'</button>';
+  }
+  // Privacy / Terms — always available
+  html+='<button class="user-menu-action" onclick="closeUserMenu();openLegalPage(\'privacy\')">'
+    +'PRIVACY POLICY'
+    +'</button>';
+  html+='<button class="user-menu-action" onclick="closeUserMenu();openLegalPage(\'terms\')">'
+    +'TERMS OF USE'
+    +'</button>';
+  // Logout — works for both guest and logged-in users
+  html+='<button class="user-menu-action danger" onclick="closeUserMenu();handleLogout()">'
+    +'LOG OUT'
+    +'</button>';
+  html+='</div>';
+  return html;
+}
+
+async function goLoginFromGuest(){
+  if(S.isGuest){
+    saveGuestPicks();
+    S.guestAuthReturn={screen:S.screen,section:S.section,gen:S.gen,mode:S.mode,filterType:S.filterType};
+  }
+  S.screen='auth';S.authMode='login';S.currentView='game';render();
+}
+
+// Unified logout: works for both guest and logged-in users.
+// For guest with picks: warn before exit (picks remain in localStorage).
+function handleLogout(){
+  if(S.isGuest){
+    const hasPicks=S.favorites && Object.keys(S.favorites).length>0;
+    if(hasPicks){
+      showConfirm({
+        title:'LOG OUT?',
+        message:'YOUR PICKS WILL STAY ON THIS DEVICE. LOG IN OR REGISTER LATER TO ATTACH THEM TO AN ACCOUNT.',
+        confirmLabel:'LOG OUT',
+        cancelLabel:'STAY',
+        onConfirm: ()=>exitToLanding(),
+      });
+      return;
+    }
+  }
+  exitToLanding();
+}
+
+// Unified logout — cleans up Supabase session and resets all user state.
+// Guest picks remain in localStorage (recovered on next continueAsGuest or login).
+async function exitToLanding(){
+  if(S.user && !S.guestLocalOnly){
+    try { await sb.auth.signOut(); } catch(e){}
+  }
+  S.user=null;
+  S.profile=null;
+  S.favorites={};
+  S.activeSessions=[];
+  S.isGuest=false;
+  S.guestLocalOnly=false;
+  S.userMenuOpen=false;
+  S.confirmDialog=null;
+  S.guestAuthReturn=null;
+  // Reset navigation
+  S.screen='landing';
+  S.currentView='game';
+  S.section='generations';
+  S.lbData=null;S.trainerData=null;S.lbScope=null;
+  S.pool=[];S.round=0;S.total=0;S.streak=0;S.maxStreak=0;S.winner=null;S.history=[];
+  render();
+}
+
+// ── CONFIRM DIALOG ──
+function showConfirm({title, message, confirmLabel, cancelLabel, onConfirm, onCancel}){
+  S.confirmDialog={title,message,confirmLabel:confirmLabel||'CONFIRM',cancelLabel:cancelLabel||'CANCEL',onConfirm,onCancel};
+  render();
+}
+function dismissConfirm(){
+  const cb=S.confirmDialog?.onCancel;
+  S.confirmDialog=null;
+  if(cb)cb();
+  render();
+}
+function acceptConfirm(){
+  const cb=S.confirmDialog?.onConfirm;
+  S.confirmDialog=null;
+  if(cb)cb();
+  render();
+}
+function renderConfirmDialog(){
+  if(!S.confirmDialog) return '';
+  const d=S.confirmDialog;
+  return '<div class="confirm-overlay" onclick="dismissConfirm()">'
+    +'<div class="confirm-box" onclick="event.stopPropagation()">'
+    +'<div class="confirm-title">'+d.title+'</div>'
+    +'<div class="confirm-msg">'+d.message+'</div>'
+    +'<div class="confirm-actions">'
+    +'<button class="confirm-btn" onclick="dismissConfirm()">'+d.cancelLabel+'</button>'
+    +'<button class="confirm-btn primary" onclick="acceptConfirm()">'+d.confirmLabel+'</button>'
+    +'</div>'
+    +'</div>'
+    +'</div>';
+}
+
+async function goRegisterFromGuest(){
+  if(S.isGuest){
+    saveGuestPicks();
+    S.guestAuthReturn={screen:S.screen,section:S.section,gen:S.gen,mode:S.mode,filterType:S.filterType};
+  }
+  S.screen='auth';S.authMode='register';S.currentView='game';render();
+}
+
+
+async function continueAsGuest(){
+  S.busy=true;
+  try{
+    let {data:{session}}=await sb.auth.getSession();
+    if(!session?.user){
+      const r=await sb.auth.signInAnonymously();
+      if(r.error) throw r.error;
+      session=r.data.session;
+    }
+    S.user=session.user;
+    S.profile=null;
+    S.favorites=loadGuestPicks();
+    S.activeSessions=[];
+    S.isGuest=true;
+    S.guestLocalOnly=false;
+    S.screen='menu';
+    S.currentView='game';
+    render();
+  }catch(e){
+    console.warn('Anonymous Supabase auth is disabled. Starting local guest mode:',e);
+    // Fallback: let the user play as guest even if Supabase anonymous sign-in is disabled.
+    // In this mode votes cannot be written to Supabase leaderboards until Anonymous Sign-ins are enabled.
+    S.user={id:'local-guest'};
+    S.profile=null;
+    S.favorites=loadGuestPicks();
+    S.activeSessions=[];
+    S.isGuest=true;
+    S.guestLocalOnly=true;
+    S.screen='menu';
+    S.currentView='game';
+    render();
+    setTimeout(()=>alert('Guest play enabled locally. To save guest votes in the Pokémon leaderboard, enable Anonymous Sign-ins in Supabase Auth.'),50);
+  }finally{S.busy=false;}
+}
+
+// ── GAME ──
+// ── BRACKET TOURNAMENT ──
+// Use bracket mode when pool > 10 (more than 10 Pokémon makes linear elimination tedious).
+// Challenges always use linear (small pools).
+const BRACKET_THRESHOLD = 10;
+function useBracketFor(poolLen, mode){
+  return mode!=='challenge' && poolLen>BRACKET_THRESHOLD;
+}
+
+// Build initial bracket state from a shuffled pool
+function buildBracket(pool){
+  const totalRounds = Math.ceil(Math.log2(pool.length));
+  const matches = [];
+  // First round: pair Pokémon. Odd one gets a BYE (auto-advances).
+  for(let i=0; i<pool.length; i+=2){
+    if(i+1<pool.length){
+      matches.push([pool[i], pool[i+1]]);
+    }
+    // odd one is added directly to winners (BYE)
+  }
+  const byeWinner = pool.length%2===1 ? [pool[pool.length-1]] : [];
+  return {
+    roundIndex: 0,
+    totalRounds,
+    currentMatchIndex: 0,
+    matches,
+    winners: byeWinner,           // winners advancing to next round
+    survivors: [...byeWinner],    // all survivors of current round (so far)
+    initialPool: pool.slice(),    // for restart
+  };
+}
+
+// Get current pair for the battle UI
+function bracketCurrentPair(b){
+  if(!b||!b.matches) return null;
+  return b.matches[b.currentMatchIndex] || null;
+}
+
+// Total picks in this bracket — sum of all matches across all rounds (excluding byes)
+function bracketTotalMatches(initialSize){
+  // each round halves with possible bye; total picks = initialSize - 1
+  return initialSize - 1;
+}
+
+// How many picks done so far across all rounds
+function bracketPicksDone(b){
+  if(!b) return 0;
+  // matches done in previous rounds + matches done in current round
+  // we don't track previous — but: total picks done = (initial - currentSurvivorsAndWaiting)
+  // simpler: track explicitly. Add a 'totalPicks' counter.
+  return b.totalPicks||0;
+}
+
+// Round labels: SEMI, FINAL, etc. or ROUND N
+function bracketRoundLabel(b){
+  if(!b) return '';
+  const remaining = b.totalRounds - b.roundIndex;
+  if(remaining===1) return 'FINAL';
+  if(remaining===2) return 'SEMIFINAL';
+  if(remaining===3) return 'QUARTERFINAL';
+  // For early rounds, show "ROUND N OF M"
+  return 'ROUND '+(b.roundIndex+1)+'/'+b.totalRounds;
+}
+
+// Advance to next round (or finish)
+function bracketAdvanceRound(b){
+  // current matches all done; b.winners has all survivors of this round
+  if(b.winners.length<=1) return; // end
+  const survivors = b.winners.slice();
+  const nextMatches = [];
+  for(let i=0; i<survivors.length; i+=2){
+    if(i+1<survivors.length){
+      nextMatches.push([survivors[i], survivors[i+1]]);
+    }
+  }
+  const byeWinner = survivors.length%2===1 ? [survivors[survivors.length-1]] : [];
+  b.roundIndex++;
+  b.matches = nextMatches;
+  b.currentMatchIndex = 0;
+  b.winners = byeWinner;
+  b.survivors = [...byeWinner];
+}
+
+async function startGame(mode,ft){
+  // check for saved session first — registered users only
+  if(S.user&&!S.isGuest){
+    const ft2=(ft||'__none__');
+    const {data:rows} = await sb.from('pokemon_sessions')
+      .select('*').eq('user_id',S.user.id).eq('gen',S.gen).eq('mode',mode).eq('filter_type',ft2).limit(1);
+    const existing = rows && rows.length > 0 ? rows[0] : null;
+    if(existing && existing.pool){
+      const isBracket = typeof existing.pool==='object' && !Array.isArray(existing.pool) && existing.pool.__bracket;
+      const hasMore = isBracket ? (existing.pool.__bracket.winners.length+ (existing.pool.__bracket.matches.length-existing.pool.__bracket.currentMatchIndex)*2 > 1) : existing.pool.length > 1;
+      if(hasMore){
+        await resumeSession(existing);
+        return;
+      }
+    }
+  }
+  // no session — start fresh. Clear the previous champion for this run so the card becomes empty while replaying.
+  const cat=categoryFor(mode,ft);
+  await clearFavorite(cat);
+  const pkm=currentPKM();
+  const pool=ft?shuffle(pkm.filter(p=>p.types.includes(ft))):shuffle([...pkm]);
+  if(pool.length===0){
+    alert('No Pokémon of this type in this generation.');
+    return;
+  }
+  if(pool.length===1){
+    // only one — auto-win
+    Object.assign(S,{mode,filterType:ft||null,pool,round:0,total:0,streak:0,maxStreak:0,winner:pool[0],screen:'result',currentView:'game',history:[]});
+    await autoSave(cat,pool[0]);
+    render();
+    return;
+  }
+  if(useBracketFor(pool.length,mode)){
+    // BRACKET MODE
+    const bracket=buildBracket(pool);
+    bracket.totalPicks=0;
+    Object.assign(S,{
+      mode,filterType:ft||null,
+      pool, // kept for backwards-compat with session restore
+      round:0,total:bracketTotalMatches(pool.length),
+      streak:0,maxStreak:0,winner:null,
+      screen:'battle',currentView:'game',history:[],
+      bracket,
+    });
+  } else {
+    // LINEAR MODE
+    Object.assign(S,{mode,filterType:ft||null,pool,round:0,total:pool.length-1,streak:0,maxStreak:0,winner:null,screen:'battle',currentView:'game',history:[],bracket:null});
+  }
+  render();
+}
+
+async function choose(idx){
+  if(S.busy)return;S.busy=true;
+  // BRACKET MODE
+  if(S.bracket){
+    return chooseBracket(idx);
+  }
+  // LINEAR MODE
+  const chosen=S.pool[idx];
+  S.history=[{pool:S.pool.slice(),round:S.round,streak:S.streak,maxStreak:S.maxStreak,winner:S.winner,clickedIdx:idx}];
+  const cards=document.querySelectorAll('.pokemon-card');
+  cards[idx].classList.add('winner');
+  cards[1-idx].classList.add('loser');
+  const footer=document.querySelector('.battle-footer-text');
+  if(footer) footer.innerHTML='▶ '+chosen.name+' ADVANCES!<span class="battle-helper-text">NEXT MATCH LOADING…</span>';
+  S.streak++;if(S.streak>S.maxStreak)S.maxStreak=S.streak;
+  S.round++;
+  const rest=S.pool.slice(2);
+  const nextChallenger=rest.length>0?rest[0]:null;
+  const remaining=rest.slice(1);
+  if(nextChallenger){
+    const newPool=[];
+    newPool[idx]=chosen;
+    newPool[1-idx]=nextChallenger;
+    S.pool=[...newPool, ...remaining];
+  } else {
+    S.pool=[chosen];
+  }
+  if(S.mode!=='challenge'&&!S.isGuest) saveSession();
+  if(S.round%10===0&&S.pool.length>1){
+    const cat=S.mode==='challenge'?'ch_'+S.filterType:(genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall'));
+    autoSave(cat,chosen);
+  }
+  await new Promise(r=>setTimeout(r,300));
+  if(S.pool.length===1){
+    S.winner=S.pool[0];
+    const cat=S.mode==='challenge'?'ch_'+S.filterType:(genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall'));
+    autoSave(cat,S.pool[0]);
+    if(S.mode!=='challenge'&&!S.isGuest){
+      deleteSession().then(()=>{
+        S.activeSessions=S.activeSessions.filter(s=>!(s.gen===S.gen&&s.mode===S.mode&&(s.filter_type||'__none__')===(S.filterType||'__none__')));
+      });
+    }
+    S.screen='result';
+    S.busy=false;render();
+    return;
+  }
+  async function chooseBracket(idx){
+  const b=S.bracket;
+  const pair=b.matches[b.currentMatchIndex];
+  if(!pair) { S.busy=false; return; }
+  const chosen=pair[idx];
+  const loser=pair[1-idx];
+
+  // save snapshot for undo
+  S.history=[{
+    bracket:JSON.parse(JSON.stringify(b)),
+    round:S.round,streak:S.streak,maxStreak:S.maxStreak,winner:S.winner,clickedIdx:idx,
+  }];
+
+  // animate
+  const cards=document.querySelectorAll('.pokemon-card');
+  if(cards[idx]) cards[idx].classList.add('winner');
+  if(cards[1-idx]) cards[1-idx].classList.add('loser');
+  const footer=document.querySelector('.battle-footer-text');
+  if(footer) footer.innerHTML='▶ '+chosen.name+' ADVANCES!<span class="battle-helper-text">NEXT MATCH LOADING…</span>';
+
+  S.streak++;if(S.streak>S.maxStreak)S.maxStreak=S.streak;
+  S.round++;
+  b.totalPicks=(b.totalPicks||0)+1;
+  b.winners.push(chosen);
+  b.survivors.push(chosen);
+  b.currentMatchIndex++;
+
+  // periodic autosave
+  if(S.round%10===0){
+    const cat=genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall');
+    autoSave(cat,chosen);
+  }
+  if(!S.isGuest) saveSession();
+
+  await new Promise(r=>setTimeout(r,300));
+
+  // round complete?
+  if(b.currentMatchIndex>=b.matches.length){
+    // advance round
+    if(b.winners.length===1){
+      // CHAMPION!
+      S.winner=b.winners[0];
+      S.bracket=null;
+      const cat=genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall');
+      autoSave(cat,S.winner);
+      if(!S.isGuest){
+        deleteSession().then(()=>{
+          S.activeSessions=S.activeSessions.filter(s=>!(s.gen===S.gen&&s.mode===S.mode&&(s.filter_type||'__none__')===(S.filterType||'__none__')));
+        });
+      }
+      S.screen='result';
+      S.busy=false;render();
+      return;
+    }
+    bracketAdvanceRound(b);
+  }
+  S.busy=false;
+  render();
+}
+
+// surgical DOM update — only swap card content, no full re-render
+  const g=S.gen;
+  const p0=S.pool[0],p1=S.pool[1];
+  const prog=S.total>0?(S.round/S.total*100):0;
+  const pf=document.querySelector('.progress-fill');
+  if(pf) pf.style.width=prog+'%';
+  const bc=document.querySelector('.battle-count');
+  if(bc) bc.textContent=S.round+' / '+S.total;
+  const bs=document.querySelector('.battle-streak');
+  if(bs) bs.textContent='STREAK: '+S.streak;
+  function updateCard(card, p){
+    const img=card.querySelector('.poke-sprite');
+    const num=card.querySelector('.poke-num');
+    const name=card.querySelector('.poke-name');
+    const type=card.querySelector('.poke-type');
+    const genBadge=card.querySelector('.poke-gen-badge');
+    if(num) num.textContent='#'+String(p.id).padStart(3,'0');
+    if(name) name.textContent=p.name;
+    if(type) type.innerHTML=typeIconsHTML(p.types,18,S.mode==='challenge'&&p.gen?p.gen:null);
+    if(genBadge) genBadge.textContent='GEN '+(p.gen===1?'I':p.gen===2?'II':'III');
+    if(img){
+      const useGen=S.mode==='challenge'&&p.gen?p.gen:g;
+      img.src=sprite(p.id,useGen);
+      img.setAttribute('data-fallbacks',(SPRITE_SOURCES[useGen]||SPRITE_SOURCES[1]).slice(1).map(fn=>fn(p.id)).join('|'));
+      img.onerror=function(){spriteFallback(this);};
+    }
+    card.classList.remove('winner','loser');
+  }
+  if(cards[0]&&cards[1]){
+    updateCard(cards[0],p0);
+    updateCard(cards[1],p1);
+    cards[0].onclick=()=>choose(0);
+    cards[1].onclick=()=>choose(1);
+  } else {
+    render();
+  }
+  if(footer) footer.textContent='▶ CLICK YOUR FAVOURITE';
+  // swap placeholder/floating undo button if needed
+  const placeholder=document.querySelector('.battle-undo-placeholder');
+  const floating=document.querySelector('.battle-undo-floating');
+  if(S.history&&S.history.length>0&&placeholder&&!floating){
+    const btn=document.createElement('button');
+    btn.className='battle-undo-floating';
+    btn.innerHTML='&#8630; UNDO LAST PICK';
+    btn.onclick=undoLastPick;
+    placeholder.replaceWith(btn);
+  }
+  S.busy=false;
+}
+
+// ── LEADERBOARD ──
+let _lbReqId=0;
+async function openLeaderboard(scope){
+  S.currentView='leaderboard';
+  S.lbScope=scope; // 'gen' or 'challenge'
+  if(scope==='gen'){
+    // default to pokemon view, overall mode
+    if(S.lbView!=='pokemon'&&S.lbView!=='trainer') S.lbView='pokemon';
+    if(!S.lbMode) S.lbMode='overall';
+    S.section='generations';
+  } else {
+    if(S.lbView!=='challenge_pkm'&&S.lbView!=='challenge_trainer') S.lbView='challenge_pkm';
+    if(!S.lbChallenge) S.lbChallenge='starters';
+    S.section='challenges';
+  }
+  S.lbData=null;S.trainerData=null;
+  render();
+  const view=S.lbView;
+  console.log('[LB] Loading:',scope,view,S.lbChallenge||S.lbMode);
+  let result=[];
+  try {
+    if(view==='pokemon') result=await loadPokemonLb(S.lbMode);
+    else if(view==='trainer') result=await loadTrainerLb();
+    else if(view==='challenge_pkm') result=await loadChallengeLb(S.lbChallenge);
+    else if(view==='challenge_trainer') result=await loadChallengeTrainerLb();
+    console.log('[LB] Got '+(result?result.length:0)+' results');
+  } catch(e){
+    console.error('[LB] Load error:',e);
+    result=[];
+  }
+  if(S.currentView!=='leaderboard') return;
+  if(view==='trainer'||view==='challenge_trainer') S.trainerData=result||[];
+  else S.lbData=result||[];
+  render();
+}
+
+// keep alias for back-compat
+const showLeaderboard=openLeaderboard;
+
+async function switchLbView(v){
+  S.lbView=v;S.lbData=null;S.trainerData=null;
+  render();
+  console.log('[LB] Switch to:',v);
+  let result=[];
+  try {
+    if(v==='pokemon') result=await loadPokemonLb(S.lbMode);
+    else if(v==='trainer') result=await loadTrainerLb();
+    else if(v==='challenge_pkm') result=await loadChallengeLb(S.lbChallenge||'starters');
+    else if(v==='challenge_trainer') result=await loadChallengeTrainerLb();
+    console.log('[LB] Switch got '+(result?result.length:0)+' results');
+  } catch(e){
+    console.error('[LB] Switch error:',e);
+    result=[];
+  }
+  if(S.lbView!==v) return;
+  if(v==='trainer'||v==='challenge_trainer') S.trainerData=result||[];
+  else S.lbData=result||[];
+  render();
+}
+
+async function switchLbChallenge(slug){
+  S.lbChallenge=slug;S.lbData=null;render();
+  try {
+    const result=await loadChallengeLb(slug);
+    if(S.lbChallenge!==slug) return;
+    S.lbData=result;render();
+  } catch(e){console.error('LB ch error:',e);render();}
+}
+
+async function switchLbTab(mode){
+  S.lbMode=mode;S.lbData=null;render();
+  try {
+    const result=await loadPokemonLb(mode);
+    if(S.lbMode!==mode) return;
+    S.lbData=result;render();
+  } catch(e){console.error('LB tab error:',e);render();}
+}
+
+// ── LANDING ──
+function renderLanding(app){
+  const s1=[25,6,9,150,39,94,143,131].map(id=>spriteWithFallback(id,1,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
+  const s2=[249,250,197,196,245,248,243,244].map(id=>spriteWithFallback(id,2,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
+  const s3=[257,260,282,373,376,384,380,381].map(id=>spriteWithFallback(id,3,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
+  const s4=[392,395,448,468,470,471,483,491].map(id=>spriteWithFallback(id,4,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
+
+  // Mini sprite sets for each challenge card preview
+  const makeSpr=(arr)=>arr.map(p=>spriteWithFallback(p.id,p.gen,'','width:28px;height:28px;image-rendering:pixelated;opacity:0.9')).join('');
+
+  const comingSoon=[
+    {gen:'GEN IV',region:'SINNOH',count:'107'},
+    {gen:'GEN V',region:'UNOVA',count:'156'},
+    {gen:'GEN VI',region:'KALOS',count:'72'},
+    {gen:'GEN VII',region:'ALOLA',count:'88'},
+    {gen:'GEN VIII',region:'GALAR',count:'89'},
+    {gen:'GEN IX',region:'PALDEA',count:'120'},
+  ];
+  const comingHtml=comingSoon.map(g=>'<div class="landing-coming-item">'
+    +'<div class="landing-coming-gen">'+g.gen+'</div>'
+    +'<div class="landing-coming-region">'+g.region+'</div>'
+    +'<div class="landing-coming-count">'+g.count+' PKMN</div>'
+    +'<div class="landing-coming-badge">COMING SOON</div>'
+    +'</div>').join('');
+
+  // Challenges showcase
+  const chSprites={
+    starters:STARTERS.slice(0,5),
+    legendaries:LEGENDARIES.filter(p=>[150,249,250,384,386].includes(p.id)),
+    eevee:EEVEELUTIONS,
+    pseudo:PSEUDO_LEGENDS,
+  };
+  const chHtml=Object.values(CHALLENGES).filter(c=>c.available).map(c=>{
+    const sprArr=chSprites[c.slug]||c.pool.slice(0,4);
+    return '<div class="landing-challenge-card">'
+      +'<div class="landing-challenge-card-name">'+c.title+'</div>'
+      +'<div class="landing-challenge-card-meta">'+c.eyebrow+'</div>'
+      +'<div class="landing-challenge-sprites">'+makeSpr(sprArr)+'</div>'
+      +'</div>';
+  }).join('');
+
+  // Three states: anonymous (no user), guest, registered
+  const isGuest=S.user&&S.isGuest;
+  const isRegistered=S.user&&!S.isGuest;
+
+  let loggedCta='', footerCta='', footerNote='';
+  if(isRegistered){
+    loggedCta = '<button class="landing-btn" onclick="goAppHome()">▶ CONTINUE PLAYING</button>'
+      +'<button class="landing-btn ghost" onclick="switchSection(\'challenges\')">OPEN CHALLENGES</button>'
+      +'<button class="landing-btn ghost" onclick="showLeaderboard(\'gen\')">VIEW LEADERBOARD</button>';
+    footerCta = '<button class="landing-btn big" onclick="goAppHome()">▶ CONTINUE PLAYING</button>'
+      +'<button class="landing-btn ghost" onclick="showLeaderboard(\'gen\')">VIEW LEADERBOARD</button>';
+    footerNote = 'YOU ARE LOGGED IN · YOUR PICKS ARE SAVED AUTOMATICALLY';
+  } else if(isGuest){
+    loggedCta = '<button class="landing-btn" onclick="goAppHome()">▶ CONTINUE PLAYING</button>'
+      +'<button class="landing-btn ghost" onclick="goRegisterFromGuest()">SAVE PICKS — CREATE ACCOUNT</button>'
+      +'<button class="landing-btn ghost" onclick="goLoginFromGuest()">LOG IN</button>';
+    footerCta = '<button class="landing-btn big" onclick="goRegisterFromGuest()">▶ SAVE YOUR PICKS — CREATE ACCOUNT</button>'
+      +'<button class="landing-btn ghost" onclick="goLoginFromGuest()">LOG IN TO EXISTING ACCOUNT</button>';
+    footerNote = '★ PLAYING AS GUEST · YOUR PICKS ARE KEPT ON THIS DEVICE';
+  } else {
+    loggedCta = '<button class="landing-btn" onclick="S.screen=\'auth\';S.authMode=\'register\';render()">▶ START NOW — FREE</button>'
+      +'<button class="landing-btn ghost" onclick="continueAsGuest()">PLAY AS GUEST</button>'
+      +'<button class="landing-btn ghost" onclick="S.screen=\'auth\';S.authMode=\'login\';render()">ALREADY HAVE AN ACCOUNT</button>';
+    footerCta = '<button class="landing-btn big" onclick="S.screen=\'auth\';S.authMode=\'register\';render()">▶ CREATE YOUR TRAINER PROFILE — FREE</button>'
+      +'<button class="landing-btn ghost" onclick="continueAsGuest()">PLAY AS GUEST</button>';
+    footerNote = 'GUEST VOTES COUNT IN POKÉMON LEADERBOARDS · SIGN UP TO SAVE YOUR PICKS';
+  }
+
+  app.innerHTML=''
+    +'<div class="landing">'
+
+    // HERO
+    +'<div class="landing-hero">'
+    +'<div class="landing-eyebrow">★ FIND YOUR FAVOURITE ★</div>'
+    +'<div class="landing-title">YOUR<br>FAVOURITE<br>POKÉMON</div>'
+    +'<div class="landing-sub">TWO POKÉMON. ONE CHOICE.<br>BATTLE THROUGH AN ENTIRE GENERATION<br>OR JOIN A CROSS-GEN CHALLENGE.</div>'
+    +'<div class="landing-stat-row">'
+    +'<div class="landing-stat"><div class="landing-stat-num">493</div><div class="landing-stat-label">POKÉMON</div></div>'
+    +'<div class="landing-stat"><div class="landing-stat-num">4</div><div class="landing-stat-label">GENERATIONS</div></div>'
+    +'<div class="landing-stat"><div class="landing-stat-num">4</div><div class="landing-stat-label">CHALLENGES</div></div>'
+    +'</div>'
+    +'<div class="landing-cta">'+loggedCta+'</div>'
+    +'</div>'
+
+    // GENS
+    +'<div class="landing-gens">'
+    +'<div class="landing-gen gen1-card">'
+    +'<div class="landing-gen-eyebrow">GAME BOY · 1996 · AVAILABLE NOW</div>'
+    +'<div class="landing-gen-title">GEN I<br>KANTO</div>'
+    +'<div class="landing-gen-count">151 POKÉMON</div>'
+    +'<div class="landing-gen-sprites">'+s1+'</div>'
+    +'<div class="landing-gen-desc">The original. Green monochrome palette. Bulbasaur to Mew — who is your #1?</div>'
+    +'</div>'
+    +'<div class="landing-gen gen2-card">'
+    +'<div class="landing-gen-eyebrow">GAME BOY COLOR · 1999 · AVAILABLE NOW</div>'
+    +'<div class="landing-gen-title">GEN II<br>JOHTO</div>'
+    +'<div class="landing-gen-count">100 POKÉMON</div>'
+    +'<div class="landing-gen-sprites">'+s2+'</div>'
+    +'<div class="landing-gen-desc">Colour arrives. GBC indigo & gold palette. Chikorita to Celebi — pick your champion.</div>'
+    +'</div>'
+    +'<div class="landing-gen gen3-card">'
+    +'<div class="landing-gen-eyebrow">GAME BOY ADVANCE · 2002 · AVAILABLE NOW</div>'
+    +'<div class="landing-gen-title">GEN III<br>HOENN</div>'
+    +'<div class="landing-gen-count">135 POKÉMON</div>'
+    +'<div class="landing-gen-sprites">'+s3+'</div>'
+    +'<div class="landing-gen-desc">The leap to GBA. Crimson palette. Treecko to Deoxys — a whole new region.</div>'
+    +'</div>'
+    +'<div class="landing-gen gen4-card">'
+    +'<div class="landing-gen-eyebrow">NINTENDO DS · 2006 · AVAILABLE NOW</div>'
+    +'<div class="landing-gen-title">GEN IV<br>SINNOH</div>'
+    +'<div class="landing-gen-count">107 POKÉMON</div>'
+    +'<div class="landing-gen-sprites">'+s4+'</div>'
+    +'<div class="landing-gen-desc">Dual-screen DS debut. Glacial steel palette. Turtwig to Arceus — myths reborn.</div>'
+    +'</div>'
+    +'</div>'
+
+    // CHALLENGES SHOWCASE
+    +'<div class="landing-challenges">'
+    +'<div class="landing-challenges-eyebrow">CROSS-GENERATION TOURNAMENTS</div>'
+    +'<div class="landing-challenges-title">CHALLENGES</div>'
+    +'<div class="landing-challenges-sub">Themed brackets that mix Pokémon from every generation. Pick a category, fight 1v1, find your favourite.</div>'
+    +'<div class="landing-challenges-grid">'+chHtml+'</div>'
+    +'</div>'
+
+    // COMING SOON
+    +'<div class="landing-coming">'
+    +'<div class="landing-coming-title">MORE GENERATIONS · COMING SOON</div>'
+    +'<div class="landing-coming-row">'+comingHtml+'</div>'
+    +'</div>'
+
+    // FEATURES
+    +'<div class="landing-features">'
+    +'<div class="landing-feature"><div class="landing-feature-icon">⚔</div><div class="landing-feature-title">1 VS 1 BATTLE</div><div class="landing-feature-desc">Two Pokémon at a time. Pick your favourite. Winner advances until only one remains.</div></div>'
+    +'<div class="landing-feature"><div class="landing-feature-icon">◎</div><div class="landing-feature-title">SAVE & RESUME</div><div class="landing-feature-desc">Every pick is saved automatically. Close anytime, resume exactly where you left off.</div></div>'
+    +'<div class="landing-feature"><div class="landing-feature-icon"><svg width="14" height="16" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:var(--accent)"><path d="M5 1L5 7M5 1L2.5 3.5M5 1L7.5 3.5M1 6V11H9V6" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></div><div class="landing-feature-title">SHARE STORY</div><div class="landing-feature-desc">Get a custom 9:16 image of your favourite. Share it on Instagram, WhatsApp or wherever.</div></div>'
+    +'<div class="landing-feature"><div class="landing-feature-icon">▦</div><div class="landing-feature-title">COMMUNITY</div><div class="landing-feature-desc">See what other Trainers chose. Per-generation and cross-challenge leaderboards.</div></div>'
+    +'</div>'
+
+    // FOOTER CTA
+    +'<div class="landing-footer-cta">'+footerCta+(footerNote?'<div class="landing-footer-note">'+footerNote+'</div>':'')+'</div>'
+    +'<div class="landing-legal">'
+      +'<div class="landing-legal-links">'
+        +'<button class="landing-legal-link" onclick="openLegalPage(\'privacy\')">PRIVACY</button>'
+        +'<button class="landing-legal-link" onclick="openLegalPage(\'terms\')">TERMS</button>'
+        +'<button class="landing-legal-link" onclick="openLegalPage(\'about\')">ABOUT</button>'
+      +'</div>'
+      +'<div class="landing-legal-disclaimer">POKÉMON IS A TRADEMARK OF NINTENDO, GAME FREAK, AND THE POKÉMON COMPANY. THIS IS A NON-COMMERCIAL FAN PROJECT, NOT AFFILIATED WITH THEM. ALL POKÉMON NAMES AND SPRITES BELONG TO THEIR RESPECTIVE OWNERS.</div>'
+    +'</div>'
+
+    +'</div>';
+}
+
+
+// ── RENDER HEADER ──
+function renderHeader(){
+  const hu=document.getElementById('header-user');
+  const hn=document.getElementById('header-nav');
+  const isApp = S.screen!=='auth' && S.screen!=='loading' && S.screen!=='landing';
+  const isHome = S.currentView==='game' && ((S.section==='generations' && S.screen==='menu') || (S.section==='challenges' && S.screen==='challenges_menu'));
+
+  if(hu){
+    if(S.user){
+      const isGuest=S.isGuest;
+      const name=isGuest?'GUEST':(S.profile?.display_name||S.user.email.split('@')[0]).toUpperCase();
+      hu.innerHTML='<button class="user-trigger'+(S.userMenuOpen?' open':'')+'" onclick="toggleUserMenu(event)">'
+        +'<span class="user-trigger-name">★ '+name+'</span>'
+        +'<span class="user-trigger-caret">▼</span>'
+        +'</button>'
+        +(S.userMenuOpen?renderUserMenu():'');
+    } else {
+      hu.innerHTML='';
+    }
+  }
+
+  if(hn){
+    if(S.user && isApp && !isHome){
+      hn.innerHTML='<button class="nav-btn" onclick="goHome()">HOME</button>';
+    } else {
+      hn.innerHTML='';
+    }
+  }
+}
+
+// ── SHARE STORY (canvas 1080x1920) ──
+async function shareStory(){
+  const winner=S.winner;if(!winner) return;
+  const useGen=S.mode==='challenge'&&winner.gen?winner.gen:S.gen;
+  const W=1080,H=1920;
+  const canvas=document.createElement('canvas');
+  canvas.width=W;canvas.height=H;
+  const ctx=canvas.getContext('2d');
+  ctx.imageSmoothingEnabled=false;
+
+  // theme colors based on gen
+  const themes={
+    1:{bg:'#0a0f0a',bg2:'#1a3a1a',accent:'#c8ff00',fg:'#9bbc0f',fg4:'#3d8c3d'},
+    2:{bg:'#0d0b1a',bg2:'#1e1b3a',accent:'#ffe040',fg:'#e8c800',fg4:'#6a5acd'},
+    3:{bg:'#0f0a08',bg2:'#3a1a08',accent:'#ff4800',fg:'#f09038',fg4:'#c05020'},
+    ch:{bg:'#08101a',bg2:'#15264a',accent:'#ffd060',fg:'#e0b860',fg4:'#5570a0'}
+  };
+  const t=S.mode==='challenge'?themes.ch:themes[useGen];
+
+  // background
+  ctx.fillStyle=t.bg;ctx.fillRect(0,0,W,H);
+
+  // scanline overlay
+  ctx.fillStyle='rgba(0,0,0,0.12)';
+  for(let y=0;y<H;y+=6){ctx.fillRect(0,y,W,3);}
+
+  // border frame
+  ctx.strokeStyle=t.accent;ctx.lineWidth=8;
+  ctx.strokeRect(40,40,W-80,H-80);
+  // double frame
+  ctx.lineWidth=2;
+  ctx.strokeRect(60,60,W-120,H-120);
+
+  // helper: draw centered text
+  function txt(text,y,color,size,letterSpacing){
+    ctx.fillStyle=color;
+    ctx.font='bold '+size+'px "Press Start 2P", monospace';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    if(letterSpacing){
+      // manual letter spacing
+      const chars=text.split('');
+      const widths=chars.map(c=>ctx.measureText(c).width);
+      const total=widths.reduce((a,b)=>a+b,0)+letterSpacing*(chars.length-1);
+      let x=W/2-total/2;
+      chars.forEach((c,i)=>{ctx.fillText(c,x+widths[i]/2,y);x+=widths[i]+letterSpacing;});
+    } else {
+      ctx.fillText(text,W/2,y);
+    }
+  }
+
+  // ── HEADER ──
+  txt('★ MY FAVOURITE ★',180,t.fg4,32,8);
+  txt('POKÉMON',260,t.accent,68,6);
+
+  // ── SUBTITLE ──
+  const sub=S.mode==='challenge'?(CHALLENGES[S.filterType]?CHALLENGES[S.filterType].title:'CHALLENGE'):
+    (S.mode==='type'?'GEN '+(useGen===1?'I':useGen===2?'II':'III')+' · '+S.filterType.toUpperCase():'GEN '+(useGen===1?'I':useGen===2?'II':'III'));
+  txt(sub,360,t.fg,24,4);
+
+  // ── SPRITE ──
+  // load image and draw centered
+  const img=new Image();
+  img.crossOrigin='anonymous';
+  await new Promise((resolve)=>{
+    img.onload=resolve;
+    img.onerror=resolve; // continue even if fails
+    img.src=sprite(winner.id,useGen);
+  });
+
+  // sprite: large, centered
+  const spriteSize=480;
+  const sx=W/2-spriteSize/2;
+  const sy=H/2-spriteSize/2-100;
+  // sprite background panel
+  ctx.fillStyle=t.bg2;
+  ctx.fillRect(W/2-spriteSize/2-40,sy-40,spriteSize+80,spriteSize+80);
+  ctx.strokeStyle=t.fg4;ctx.lineWidth=4;
+  ctx.strokeRect(W/2-spriteSize/2-40,sy-40,spriteSize+80,spriteSize+80);
+  if(img.complete && img.naturalWidth>0){
+    ctx.drawImage(img,sx,sy,spriteSize,spriteSize);
+  } else {
+    ctx.fillStyle=t.fg4;ctx.font='bold 200px "Press Start 2P", monospace';
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('?',W/2,sy+spriteSize/2);
+  }
+
+  // ── POKEMON INFO ──
+  const num='#'+String(winner.id).padStart(3,'0');
+  txt(num,sy+spriteSize+100,t.fg4,28,4);
+  txt(winner.name,sy+spriteSize+180,t.accent,72,4);
+  txt(winner.types.join(' / ').toUpperCase(),sy+spriteSize+260,t.fg,22,4);
+
+  // ── FOOTER (URL) ──
+  txt('YOUR FAVOURITE POKÉMON',H-160,t.fg,18,3);
+  txt('TIGREDICARTA-POKE.STATIC.HF.SPACE',H-110,t.fg4,14,2);
+
+  // ── SHARE / DOWNLOAD ──
+  const filename='my-favourite-'+winner.name.toLowerCase()+'.png';
+  const isMobile=/Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.userAgent);
+  canvas.toBlob(async (blob)=>{
+    if(!blob){fallbackDownload();return;}
+    const file=new File([blob],filename,{type:'image/png'});
+    // only use Web Share API on actual mobile devices
+    if(isMobile && navigator.canShare && navigator.canShare({files:[file]})){
+      try {
+        await navigator.share({
+          files:[file],
+          title:'My Favourite Pokémon',
+          text:'I picked '+winner.name+' as my favourite — what is yours?'
+        });
+        return;
+      } catch(e) {
+        if(e.name!=='AbortError') fallbackDownload();
+        return;
+      }
+    }
+    // desktop: always download
+    fallbackDownload();
+    function fallbackDownload(){
+      const link=document.createElement('a');
+      link.download=filename;
+      link.href=canvas.toDataURL('image/png');
+      link.click();
+    }
+  },'image/png');
+}
+
+// ── MAIN RENDER ──
+function topNavHTML(){
+  return '<div class="top-nav">'
+    +'<button class="top-nav-tab'+(S.section==='generations'?' active':'')+'" onclick="switchSection(\'generations\')">★ GENERATIONS</button>'
+    +'<button class="top-nav-tab'+(S.section==='challenges'?' active':'')+'" onclick="switchSection(\'challenges\')">★ CHALLENGES</button>'
+    +'</div>';
+}
+
+function genSwitcherHTML(){
+  // only show when section = generations
+  if(S.section!=='generations') return topNavHTML();
+  return topNavHTML()
+    +'<div class="gen-switcher">'
+    +'<span class="gen-switcher-label">GENERATION</span>'
+    +'<button class="gen-tab'+(S.gen===1?' active':'')+'" onclick="switchGen(1)">GEN I — KANTO</button>'
+    +'<button class="gen-tab'+(S.gen===2?' active':'')+'" onclick="switchGen(2)">GEN II — JOHTO</button>'
+    +'<button class="gen-tab'+(S.gen===3?' active':'')+'" onclick="switchGen(3)">GEN III — HOENN</button>'
+    +'<button class="gen-tab'+(S.gen===4?' active':'')+'" onclick="switchGen(4)">GEN IV — SINNOH</button>'
+    +'</div>';
+}
+
+function updateLogoSubtitle(){
+  const sub=document.getElementById('logo-sub');
+  if(!sub) return;
+  if(S.section==='challenges'){
+    sub.textContent=' · CHALLENGES MODE · v2.3';
+  } else {
+    const map={1:['I','151'],2:['II','100'],3:['III','135'],4:['IV','107']};
+    const [gen,count]=map[S.gen]||map[1];
+    sub.textContent=' · GEN '+gen+' · '+count+' POKÉMON · v2.3';
+  }
+}
+
+function switchSection(sec){
+  if(S.section===sec) return;
+  S.section=sec;
+  S.currentView='game';
+  S.lbData=null; S.trainerData=null;
+  if(sec==='challenges'){
+    document.body.className='challenges';
+    S.screen='challenges_menu';
+  } else {
+    document.body.className=S.gen===1?'gen1':S.gen===2?'gen2':S.gen===3?'gen3':'gen4';
+    S.screen='menu';
+  }
+  updateLogoSubtitle();
+  render();
+}
+
+async function startChallenge(slug){
+  const ch=CHALLENGES[slug];
+  if(!ch||!ch.available) return;
+  S.challenge=slug;
+  await clearFavorite(categoryFor('challenge',slug));
+  const pool=shuffle([...ch.pool]);
+  Object.assign(S,{mode:'challenge',filterType:slug,pool,round:0,total:pool.length-1,
+    streak:0,maxStreak:0,winner:null,screen:'battle',currentView:'game',history:[]});
+  render();
+}
+
+function renderChallengesMenu(app){
+  let html='<div class="challenges-wrap">'
+    +'<div class="challenges-title">★ CHALLENGES</div>'
+    +'<div class="challenges-sub">Cross-generation tournaments. Pick a theme, fight 1v1, find your favourite.</div>'
+    +'<div class="challenges-grid">';
+  Object.values(CHALLENGES).forEach(ch=>{
+    const isAvail=ch.available;
+    const click=isAvail?'onclick="startChallenge(\''+ch.slug+'\')"':'';
+    const cls='challenge-card'+(isAvail?'':' disabled');
+    const badge=isAvail?'':'<div class="challenge-badge">SOON</div>';
+    html+='<button class="'+cls+'" '+click+'>'
+      +badge
+      +'<div class="challenge-card-body">'
+        +'<div class="challenge-card-eyebrow">'+ch.eyebrow+'</div>'
+        +'<div class="challenge-card-title">'+ch.title+'</div>'
+        +'<div class="challenge-card-desc">'+ch.desc+'</div>'
+      +'</div>'
+      +'<div class="challenge-card-footer">'
+        +pickPreviewHTML(S.favorites['ch_'+ch.slug],'challenge-pick-preview','',S.favorites['ch_'+ch.slug]&&S.favorites['ch_'+ch.slug].gen)
+      +'</div>'
+      +'</button>';
+  });
+  html+='</div>'
+    +'<div class="lb-card" role="button" tabindex="0" onclick="openLeaderboard(\'challenge\')">'
+      +'<div class="lb-card-body">'
+      +'<div class="lb-card-eyebrow">★ COMMUNITY</div>'
+      +'<div class="lb-card-title">CHALLENGES LEADERBOARD</div>'
+      +'</div>'
+      +'<div class="lb-card-cta">▶</div>'
+      +'</div>'
+    +'</div>';
+  app.innerHTML=topNavHTML()+html;
+}
+
+function render(){
+  const app=document.getElementById('app');if(!app)return;
+  renderHeader();
+
+  const g=S.gen;
+
+  if(S.screen==='loading'){
+    app.innerHTML='<div class="loading-wrap"><div class="pixel-cursor"></div><span>LOADING...</span></div>';return;
+  }
+
+  if(S.currentView==='leaderboard'){renderLeaderboard(app);return;}
+
+  if(S.screen==='challenges_menu'){
+    renderChallengesMenu(app);return;
+  }
+
+  if(S.screen==='landing'){
+    renderLanding(app);return;
+  }
+
+  if(S.screen==='privacy'){renderPrivacyPolicy(app);return;}
+  if(S.screen==='terms'){renderTerms(app);return;}
+  if(S.screen==='about'){renderAbout(app);return;}
+  if(S.screen==='account'){renderAccountSettings(app);return;}
+
+  if(S.screen==='auth'){
+    const isL=S.authMode==='login';
+    app.innerHTML='<div class="auth-wrap"><div class="auth-box">'
+      +'<button class="back-link" style="margin-bottom:20px" onclick="cancelAuth()">◀ BACK</button>'
+      +'<div class="auth-title">'+(isL?'LOGIN':'REGISTER')+'</div>'
+      +'<div class="auth-sub">'+(isL?'Welcome back, Trainer.':'Create your Trainer profile.')+'</div>'
+      +(!isL?'<label class="field-label">NICKNAME</label><input class="field-input" id="auth-nick" type="text" placeholder="TrainerRed" maxlength="20" onkeydown="if(event.key===\'Enter\')doAuth()">':'')
+      +'<label class="field-label">EMAIL</label>'
+      +'<input class="field-input" id="auth-email" type="email" placeholder="trainer@email.com" onkeydown="if(event.key===\'Enter\')doAuth()">'
+      +'<label class="field-label">PASSWORD</label>'
+      +'<input class="field-input" id="auth-pass" type="password" placeholder="••••••••" onkeydown="if(event.key===\'Enter\')doAuth()">'
+      +(!isL?'<div class="terms-row"><input type="checkbox" id="auth-terms"><label for="auth-terms">I agree to the <button class="landing-legal-link" style="display:inline;padding:0;font-size:inherit" onclick="event.preventDefault();event.stopPropagation();openLegalPage(\'terms\')">Terms</button> and <button class="landing-legal-link" style="display:inline;padding:0;font-size:inherit" onclick="event.preventDefault();event.stopPropagation();openLegalPage(\'privacy\')">Privacy Policy</button>. I am at least 13 years old.</label></div>':'')
+      +'<div class="auth-msg" id="auth-msg"></div>'
+      +'<button class="btn-primary" onclick="doAuth()">▶ '+(isL?'LOGIN':'CREATE ACCOUNT')+'</button>'
+      +(isL?'<button class="btn-primary dark guest-cta" onclick="continueAsGuest()">▶ PLAY AS GUEST</button><div class="guest-note">Play without an account. Use SAVE PICKS later to attach your choices.</div>':'')
+      +'<div class="auth-toggle" onclick="S.authMode=S.authMode===\'login\'?\'register\':\'login\';render()">'
+      +(isL?'▷ No account? Register':'▷ Already have an account? Login')
+      +'</div></div></div>';
+    return;
+  }
+
+
+  if(S.screen==='menu'){
+    const prefix=genPrefix();
+    const favs=Object.entries(S.favorites).filter(([k])=>k.startsWith(prefix));
+    const savedListHtml=favs.length
+      ?favs.map(([k,p])=>{
+          const label=k.replace(prefix,'').replace('overall','OVERALL').replace('type_','').toUpperCase();
+          return '<div class="saved-item">'
+            +spriteWithFallback(p.id,g,'saved-sprite','')
+            +'<div><div class="saved-cat">'+label+'</div>'
+            +'<div class="saved-name">'+p.name+'</div>'
+            +'<div class="saved-type">'+((p.types||[]).join(' / '))+'</div></div>'
+            +'</div>';
+        }).join('')
+      :'<div class="no-saved">NO<br>FAVOURITES<br>YET.</div>';
+    const savedHtml=S.isGuest
+      ?'<div class="guest-save-note">★ Guest picks stay visible here.<br>Use SAVE PICKS to attach them to your account.</div>'+savedListHtml
+      :savedListHtml;
+    const genLabel = g===1 ? 'KANTO' : g===2 ? 'JOHTO' : g===3 ? 'HOENN' : 'SINNOH';
+    const count=g===1?151:g===2?100:g===3?135:107;
+    app.innerHTML=genSwitcherHTML()+'<div class="menu-wrap">'
+      +'<div class="menu-left">'
+      +'<div class="menu-hero">WHAT IS YOUR<br>FAVOURITE<br>POKÉMON?</div>'
+      +'<div class="menu-sub">GEN '+(g===1?'I — KANTO':g===2?'II — JOHTO':g===3?'III — HOENN':'IV — SINNOH')+' · 1 VS 1 BATTLE · WINNER ADVANCES UNTIL ONE REMAINS</div>'
+      +'<button class="menu-btn" onclick="startGame(\'overall\',null)">OVERALL<small>'+count+' POKÉMON — FULL '+genLabel+'</small></button>'
+      +'<button class="menu-btn" onclick="S.screen=\'typeselect\';render()">BY TYPE<small>FIND THE BEST BY TYPE</small></button>'
+      +'<div class="lb-card" role="button" tabindex="0" onclick="openLeaderboard(\'gen\')">'
+        +'<div class="lb-card-body">'
+        +'<div class="lb-card-eyebrow">★ COMMUNITY</div>'
+        +'<div class="lb-card-title">GEN '+(g===1?'I':g===2?'II':g===3?'III':'IV')+' LEADERBOARD</div>'
+        +'</div>'
+        +'<div class="lb-card-cta">▶</div>'
+        +'</div>'
+      +'</div>'
+      +'<div class="menu-right"><div class="saved-title">★ YOUR CHAMPIONS — GEN '+(g===1?'I':g===2?'II':g===3?'III':'IV')+'</div>'+savedHtml+'</div>'
+      +'</div>';
+    return;
+  }
+
+  if(S.screen==='typeselect'){
+    const pkm=currentPKM();
+    const relevantTypes=TYPES.filter(t=>pkm.some(p=>p.types.includes(t)));
+    const btns=relevantTypes.filter(t=>pkm.filter(p=>p.types.includes(t)).length>=2).map(t=>{
+      const count=pkm.filter(p=>p.types.includes(t)).length;
+      return '<button class="type-btn" onclick="startGame(\'type\',\''+t+'\')">'
+        +'<div class="type-btn-head">'
+          +'<div class="type-btn-meta">'
+            +'<span class="type-tag" data-type="'+t+'" style="display:inline-flex"><img src="'+typeIconUrl(t)+'" alt="" style="height:22px;width:auto;image-rendering:auto" onerror="this.parentNode.innerHTML=this.parentNode.dataset.type.toUpperCase()"></span>'
+            +'<small>'+count+' POKÉMON</small>'
+          +'</div>'
+        +'</div>'
+        +pickPreviewHTML(S.favorites[genPrefix()+'type_'+t],'type-pick-preview','')
+        +'</button>';
+    }).join('');
+    app.innerHTML=genSwitcherHTML()+'<div class="typesel-wrap">'
+      +'<button class="back-link" onclick="S.screen=\'menu\';render()">◀ BACK</button>'
+      +'<div class="typesel-title">CHOOSE TYPE</div>'
+      +'<div class="typesel-sub">GEN '+(g===1?'I':g===2?'II':g===3?'III':'IV')+' — FIND THE BEST BY TYPE</div>'
+      +'<div class="type-grid">'+btns+'</div>'
+      +'</div>';
+    return;
+  }
+
+  if(S.screen==='battle'){
+    const prog=S.total>0?(S.round/S.total*100):0;
+    const ml=S.mode==='type'?S.filterType.toUpperCase():'OVERALL';
+    const inBracket=!!S.bracket;
+    let p0, p1, bracketHeader='', survivorsPanel='';
+    if(inBracket){
+      const b=S.bracket;
+      const pair=bracketCurrentPair(b);
+      if(pair){
+        p0=pair[0]; p1=pair[1];
+      } else {
+        // shouldn't happen but fallback to first survivor
+        p0=b.survivors[0]; p1=b.survivors[1]||b.survivors[0];
+      }
+      // Round label and match counter
+      const matchLabel = bracketRoundLabel(b);
+      const totalMatchesThisRound = b.matches.length;
+      const matchInRound = b.currentMatchIndex+1;
+      bracketHeader='<div class="bracket-round-label">★ '+matchLabel+' · MATCH '+matchInRound+' / '+totalMatchesThisRound+'</div>';
+      // Survivors side panel: winners of this round so far + remaining (still to fight) + current
+      const upcomingPairs=b.matches.slice(b.currentMatchIndex+1).flat();
+      const winners=b.winners; // includes byes
+      survivorsPanel='<aside class="bracket-side">'
+        +'<div class="bracket-side-title">★ '+matchLabel+'</div>'
+        +'<div class="bracket-side-sub">'+winners.length+' ADVANCED · '+upcomingPairs.length+' WAITING</div>'
+        +'<div class="bracket-side-group">'
+          +'<div class="bracket-side-group-label">ADVANCED</div>'
+          +'<div class="bracket-side-grid">'
+            +(winners.length===0?'<div class="bracket-side-empty">—</div>':winners.map(p=>'<div class="bracket-side-cell advanced" title="'+p.name+'">'+spriteWithFallback(p.id,p.gen||g,'bracket-side-sprite','')+'</div>').join(''))
+          +'</div>'
+        +'</div>'
+        +'<div class="bracket-side-group">'
+          +'<div class="bracket-side-group-label">WAITING</div>'
+          +'<div class="bracket-side-grid">'
+            +(upcomingPairs.length===0?'<div class="bracket-side-empty">—</div>':upcomingPairs.map(p=>'<div class="bracket-side-cell waiting" title="'+p.name+'">'+spriteWithFallback(p.id,p.gen||g,'bracket-side-sprite','')+'</div>').join(''))
+          +'</div>'
+        +'</div>'
+        +'</aside>';
+    } else {
+      p0=S.pool[0]; p1=S.pool[1];
+    }
+    app.innerHTML=genSwitcherHTML()+'<div class="battle-wrap">'
+      +'<div class="battle-topbar">'
+      +'<div class="battle-streak">STREAK: '+S.streak+'</div>'
+      +'<div class="battle-topbar-center">'
+      +'<div class="battle-mode-label">'+(S.mode==='challenge'?'★ '+(CHALLENGES[S.filterType]?CHALLENGES[S.filterType].title:'CHALLENGE'):('GEN '+(g===1?'I':g===2?'II':g===3?'III':'IV')+' · '+ml))+'</div>'
+      +'<div class="progress-track"><div class="progress-fill" style="width:'+prog+'%"></div></div>'
+      +'<div class="battle-count">'+S.round+' / '+S.total+'</div>'
+      +'</div>'
+      +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;min-width:80px">'
+      +'<div class="battle-streak battle-streak-r">MAX: '+S.maxStreak+'</div>'
+      +'<div class="autosave-badge" id="autosave-badge">★ SAVED</div>'
+      +'</div></div>'
+      +(S.isGuest?'<div class="guest-battle-banner">★ GUEST MODE — <button onclick="goRegisterFromGuest()">SAVE PICKS TO ACCOUNT</button></div>':'')
+      +bracketHeader
+      +'<div class="battle-body">'
+      +survivorsPanel
+      +'<div class="battle-arena">'
+      +'<div class="pokemon-card is-loading" onclick="choose(0)">'
+      +(S.mode==='challenge'?spriteByOriginGen(p0,'poke-sprite',''):spriteWithFallback(p0.id,g,'poke-sprite',''))
+      +'<div class="poke-info">'
+      +'<div class="poke-num">#'+String(p0.id).padStart(3,'0')+'</div>'
+      +'<div class="poke-name">'+p0.name+'</div>'
+      +'<div class="poke-type">'+typeIconsHTML(p0.types,18,S.mode==='challenge'&&p0.gen?p0.gen:null)+'</div>'
+      +(S.mode==='challenge'&&p0.gen?'<div class="poke-gen-badge">GEN '+(p0.gen===1?'I':p0.gen===2?'II':'III')+'</div>':'')
+      +'</div>'
+      +'</div>'
+      +'<div class="vs-divider"><div class="vs-text">VS</div></div>'
+      +'<div class="pokemon-card is-loading" onclick="choose(1)">'
+      +(S.mode==='challenge'?spriteByOriginGen(p1,'poke-sprite',''):spriteWithFallback(p1.id,g,'poke-sprite',''))
+      +'<div class="poke-info">'
+      +'<div class="poke-num">#'+String(p1.id).padStart(3,'0')+'</div>'
+      +'<div class="poke-name">'+p1.name+'</div>'
+      +'<div class="poke-type">'+typeIconsHTML(p1.types,18,S.mode==='challenge'&&p1.gen?p1.gen:null)+'</div>'
+      +(S.mode==='challenge'&&p1.gen?'<div class="poke-gen-badge">GEN '+(p1.gen===1?'I':p1.gen===2?'II':'III')+'</div>':'')
+      +'</div>'
+      +'</div></div>'
+      +'</div>'
+      +'<div class="battle-footer">'
+      +'<button class="battle-exit-btn" onclick="exitBattle()">&#8962; HOME</button>'
+      +'<span class="battle-footer-text">&#9658; TAP YOUR FAVOURITE<span class="battle-helper-text">'+(S.isGuest?'FINAL VOTE GOES TO POKÉMON LEADERBOARD':'PROGRESS AUTOSAVES DURING THE RUN')+'</span></span>'
+      +'<button class="battle-restart-btn" onclick="restartGame()">&#8635; RESTART RUN</button>'
+      +'</div>'
+      +(S.history&&S.history.length>0?'<button class="battle-undo-floating" onclick="undoLastPick()">&#8630; UNDO LAST PICK</button>':'<div class="battle-undo-placeholder"></div>')
+      +'</div>';
+    // attach sprite-loaded listener to remove .is-loading once loaded (fade-in)
+    setTimeout(()=>{
+      document.querySelectorAll('.pokemon-card.is-loading').forEach(card=>{
+        const img=card.querySelector('.poke-sprite');
+        if(!img) return;
+        const reveal=()=>card.classList.remove('is-loading');
+        if(img.complete && img.naturalWidth>0) reveal();
+        else { img.addEventListener('load',reveal,{once:true}); img.addEventListener('error',reveal,{once:true}); }
+      });
+    },0);
+    return;
+  }
+
+  if(S.screen==='result'){
+    const p=S.winner;
+    const ml=S.mode==='type'?'TYPE '+S.filterType.toUpperCase():'OVERALL';
+    app.innerHTML=genSwitcherHTML()+'<div class="result-wrap">'
+      +'<div class="result-left">'
+      +'<div class="result-eyebrow">'+(S.mode==='challenge'?'★ CHAMPION · '+(CHALLENGES[S.filterType]?CHALLENGES[S.filterType].title:'CHALLENGE'):('★ CHAMPION GEN '+(g===1?'I':g===2?'II':g===3?'III':'IV')+' · '+ml))+'</div>'
+      +(S.mode==='challenge'?spriteByOriginGen(p,'result-sprite',''):spriteWithFallback(p.id,g,'result-sprite',''))
+      +'<div class="result-name">'+p.name+'</div>'
+      +'<div class="result-num">#'+String(p.id).padStart(3,'0')+'</div>'
+      +'<div class="result-badge">'+p.types.join(' / ')+'</div>'
+      +'</div>'
+      +'<div class="result-right">'
+      +'<div class="result-actions">'
+      +(S.isGuest?'<div class="guest-save-note">'+(S.guestLocalOnly?'★ Local guest mode: enable Anonymous Sign-ins in Supabase to save votes in the Pokémon leaderboard.':'★ Pick kept in your guest profile.<br>Use SAVE PICKS to attach it to your account.')+'</div>':'')
+      +(function(){
+        const isMobile=/Android|iPhone|iPad|iPod|Mobile|Tablet/i.test(navigator.userAgent);
+        const useShare=isMobile && navigator.canShare && navigator.canShare({files:[new File([],'x.png',{type:'image/png'})]});
+        const svg=useShare?'<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px"><path d="M5 1L5 7M5 1L2.5 3.5M5 1L7.5 3.5M1 6V11H9V6" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>':'<svg width="10" height="12" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="vertical-align:middle;margin-right:4px"><path d="M5 7L5 1M5 7L2.5 4.5M5 7L7.5 4.5M1 9V11H9V9" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>';
+        const label=useShare?'SHARE STORY':'DOWNLOAD STORY';
+        return '<button class="btn-primary" onclick="shareStory()" id="share-btn">'+svg+label+'</button>';
+      })()
+      +'<button class="btn-primary dark" onclick="openLeaderboard(\''+(S.mode==='challenge'?'challenge':'gen')+'\')">▦ VIEW LEADERBOARD</button>'
+      +'<button class="btn-primary dark" onclick="'+(S.mode==='challenge'?'switchSection(\'challenges\')':'goHome()')+'">⌂ HOME</button>'
+      +'<button class="btn-primary dark" onclick="'+(S.mode==='challenge'?'startChallenge(S.filterType)':'startGame(S.mode,S.filterType)')+'">↺ PLAY AGAIN</button>'
+      +'</div></div></div>';
+    return;
+  }
+}
+
+// ── LEADERBOARD RENDER ──
+function renderLeaderboard(app){
+  const g=S.gen;
+  const pkm=currentPKM();
+  const relevantTypes=TYPES.filter(t=>pkm.some(p=>p.types.includes(t)));
+
+  let viewTabsHtml='';
+  if(S.lbScope==='gen'){
+    viewTabsHtml='<div class="lb-view-tabs">'
+      +'<button class="lb-view-tab '+(S.lbView==='pokemon'?'active':'')+'" onclick="switchLbView(\'pokemon\')">★ BY POKÉMON</button>'
+      +'<button class="lb-view-tab '+(S.lbView==='trainer'?'active':'')+'" onclick="switchLbView(\'trainer\')">★ BY TRAINER</button>'
+      +'</div>';
+  } else if(S.lbScope==='challenge'){
+    viewTabsHtml='<div class="lb-view-tabs">'
+      +'<button class="lb-view-tab '+(S.lbView==='challenge_pkm'?'active':'')+'" onclick="switchLbView(\'challenge_pkm\')">★ BY POKÉMON</button>'
+      +'<button class="lb-view-tab '+(S.lbView==='challenge_trainer'?'active':'')+'" onclick="switchLbView(\'challenge_trainer\')">★ BY TRAINER</button>'
+      +'</div>';
+  }
+
+  let filterTabsHtml='';
+  if(S.lbScope==='gen'&&S.lbView==='pokemon'){
+    const tabs=[{key:'overall',label:'OVERALL'},...relevantTypes.map(t=>({key:t,label:t.toUpperCase()}))];
+    filterTabsHtml='<div class="lb-filter-tabs">'+tabs.map(t=>'<button class="lb-tab '+(S.lbMode===t.key?'active':'')+'" onclick="switchLbTab(\''+t.key+'\')">'+t.label+'</button>').join('')+'</div>';
+  } else if(S.lbScope==='challenge'&&S.lbView==='challenge_pkm'){
+    const availChs=Object.values(CHALLENGES).filter(c=>c.available);
+    filterTabsHtml='<div class="lb-filter-tabs">'+availChs.map(c=>'<button class="lb-tab '+(S.lbChallenge===c.slug?'active':'')+'" onclick="switchLbChallenge(\''+c.slug+'\')">'+c.title+'</button>').join('')+'</div>';
+  }
+
+  let contentHtml='';
+
+  if(S.lbView==='pokemon'||S.lbView==='challenge_pkm'){
+    // for challenges: lookup pokemon's origin gen for sprite (cross-gen)
+    // for pokemon: use S.gen
+    const isCh=S.lbView==='challenge_pkm';
+    const findOriginGen=(id)=>{
+      if(id<=151) return 1;
+      if(id<=251) return 2;
+      return 3;
+    };
+    if(!S.lbData){
+      contentHtml='<div class="lb-loading">▶ LOADING...</div>';
+    } else if(S.lbData.length===0){
+      contentHtml='<div class="lb-empty">NO VOTES<br>FOR THIS '+(isCh?'CHALLENGE':'CATEGORY')+' YET.</div>';
+    } else {
+      const maxV=S.lbData[0].votes;
+      const rows=S.lbData.map((p,i)=>{
+        const isTop=i===0;
+        const rankCls=isTop?'lb-rank top':'lb-rank';
+        const barCls=isTop?'lb-bar-fill top':'lb-bar-fill';
+        const pct=maxV>0?(p.votes/maxV*100):0;
+        const spriteGen=isCh?findOriginGen(p.id):g;
+        const genBadge=isCh?' · GEN '+(spriteGen===1?'I':spriteGen===2?'II':'III'):'';
+        return '<tr>'
+          +'<td class="'+rankCls+'">'+(i+1)+'</td>'
+          +'<td>'+spriteWithFallback(p.id,spriteGen,'lb-sprite','')+'</td>'
+          +'<td><div class="lb-pkm-name">'+p.name+'</div><div class="lb-pkm-num">#'+String(p.id).padStart(3,'0')+genBadge+'</div><div class="lb-pkm-type">'+((p.types||[]).join(' / '))+'</div></td>'
+          +'<td class="lb-bar-cell"><div class="lb-bar-track"><div class="'+barCls+'" style="width:'+pct+'%"></div></div></td>'
+          +'<td class="lb-votes">'+p.votes+' votes</td>'
+          +'</tr>';
+      }).join('');
+      contentHtml='<div class="lb-table-wrap"><table class="lb-table">'
+        +'<thead><tr><th>#</th><th></th><th>POKÉMON</th><th></th><th style="text-align:right">VOTES</th></tr></thead>'
+        +'<tbody>'+rows+'</tbody></table></div>';
+    }
+  } else {
+    // TRAINER VIEW (gen or challenge)
+    const isChTrainer=S.lbView==='challenge_trainer';
+    if(!S.trainerData){
+      contentHtml='<div class="lb-loading">▶ LOADING...</div>';
+    } else if(S.trainerData.length===0){
+      contentHtml='<div class="lb-empty">NO TRAINERS YET.</div>';
+    } else {
+      let catOrder, catLabels;
+      if(isChTrainer){
+        const availChs=Object.values(CHALLENGES).filter(c=>c.available);
+        catOrder=availChs.map(c=>c.slug);
+        catLabels=Object.fromEntries(availChs.map(c=>[c.slug,c.title]));
+      } else {
+        catOrder=['overall',...relevantTypes.map(t=>'type_'+t)];
+        catLabels={overall:'OVERALL',...Object.fromEntries(relevantTypes.map(t=>['type_'+t,t.toUpperCase()]))};
+      }
+      const findOriginGen=(id)=>id<=151?1:id<=251?2:id<=386?3:4;
+      const headerCells=catOrder.map(c=>'<th>'+catLabels[c]+'</th>').join('');
+      const rows=S.trainerData.map(trainer=>{
+        const isMe=S.user&&trainer.user_id===S.user.id;
+        const name=trainer.display_name||(isMe?(S.user.email.split('@')[0]).toUpperCase():'TRAINER_'+trainer.user_id.slice(-4).toUpperCase());
+        const pickCells=catOrder.map(cat=>{
+          const p=trainer.picks[cat];
+          if(!p) return '<td class="lb-trainer-empty">—</td>';
+          const spriteGen=isChTrainer?findOriginGen(p.id):g;
+          return '<td><div class="trainer-pick '+(isMe?'is-mine':'')+'">'+spriteWithFallback(p.id,spriteGen,'trainer-pick-sprite','')+'<div class="trainer-pick-cat">'+catLabels[cat]+'</div><div class="trainer-pick-name">'+p.name+'</div></div></td>';
+        }).join('');
+        return '<tr><td><div class="trainer-name">'+name+(isMe?'<span class="me-badge">YOU</span>':'')+'</div></td>'+pickCells+'</tr>';
+      }).join('');
+      contentHtml='<div class="lb-table-wrap"><table class="lb-table lb-trainer-table">'
+        +'<thead><tr><th>TRAINER</th>'+headerCells+'</tr></thead>'
+        +'<tbody>'+rows+'</tbody></table></div>';
+    }
+  }
+
+  app.innerHTML=genSwitcherHTML()+'<div class="lb-wrap">'
+    +'<button class="back-link" style="margin-bottom:20px" onclick="leaderboardBack()">◀ BACK</button>'
+    +'<div class="lb-top"><div>'
+    +'<div class="lb-title">'+(S.lbScope==='challenge'?'CHALLENGES<br>LEADERBOARD':'GEN '+(g===1?'I':g===2?'II':g===3?'III':'IV')+'<br>LEADERBOARD')+'</div>'
+    +'<div class="lb-sub">'+(S.lbScope==='challenge'?'CROSS-GEN CHALLENGE · '+(CHALLENGES[S.lbChallenge]?CHALLENGES[S.lbChallenge].title:''):('GEN '+(g===1?'I — KANTO':g===2?'II — JOHTO':g===3?'III — HOENN':'IV — SINNOH')+' · WHAT OTHER TRAINERS CHOSE'))+'</div>'
+    +'</div></div>'
+    +viewTabsHtml
+    +filterTabsHtml
+    +contentHtml
+    +'</div>';
+}
+
+function undoLastPick(){
+  if(!S.history||S.history.length===0||S.busy) return;
+  const snap=S.history.pop();
+  if(snap.bracket){
+    // Bracket undo: restore full bracket snapshot
+    S.bracket=snap.bracket;
+  } else {
+    S.pool=snap.pool;
+  }
+  S.round=snap.round;
+  S.streak=snap.streak;
+  S.maxStreak=snap.maxStreak;
+  S.winner=snap.winner;
+  if(S.screen==='result') S.screen='battle';
+  if(S.mode!=='challenge'&&!S.isGuest) saveSession();
+  render();
+}
+
+async function restartGame(){
+  if(!confirm('Restart from scratch? Current progress will be lost.')) return;
+  if(S.mode!=='challenge'){
+    await deleteSession();
+    S.activeSessions=S.activeSessions.filter(s=>!(s.gen===S.gen&&s.mode===S.mode&&(s.filter_type||'__none__')===(S.filterType||'__none__')));
+  }
+  let pool;
+  if(S.mode==='challenge'){
+    const ch=CHALLENGES[S.filterType];
+    pool=shuffle([...(ch?ch.pool:[])]);
+  } else {
+    const pkm=currentPKM();
+    const ft=S.filterType;
+    pool=ft?shuffle(pkm.filter(p=>p.types.includes(ft))):shuffle([...pkm]);
+  }
+  if(useBracketFor(pool.length,S.mode)){
+    const bracket=buildBracket(pool);
+    bracket.totalPicks=0;
+    Object.assign(S,{pool,round:0,total:bracketTotalMatches(pool.length),streak:0,maxStreak:0,winner:null,screen:'battle',history:[],bracket});
+  } else {
+    Object.assign(S,{pool,round:0,total:pool.length-1,streak:0,maxStreak:0,winner:null,screen:'battle',history:[],bracket:null});
+  }
+  render();
+}
+
+function goHome(){
+  S.currentView='game';
+  if(S.section==='challenges' || S.mode==='challenge'){
+    S.section='challenges';
+    S.screen='challenges_menu';
+    document.body.className='challenges';
+  } else {
+    S.section='generations';
+    S.screen='menu';
+    document.body.className=S.gen===1?'gen1':S.gen===2?'gen2':S.gen===3?'gen3':'gen4';
+  }
+  S.mode=null;
+  S.filterType=null;
+  S.pool=[];
+  S.history=[];
+  updateLogoSubtitle();
+  if(S.user && !S.isGuest) loadActiveSessions(S.user.id).then(s=>{S.activeSessions=s;render();});
+  render();
+}
+
+function goLanding(){
+  // Landing is only the public entry page. Logged-in users always go to the real app HOME.
+  if(S.user){goHome();return;}
+  S.currentView='game';
+  S.screen='landing';
+  document.body.className=S.section==='challenges'?'challenges':(S.gen===1?'gen1':S.gen===2?'gen2':'gen3');
+  updateLogoSubtitle();
+  render();
+}
+
+function goAppHome(){
+  goHome();
+}
+
+function leaderboardBack(){
+  goHome();
+}
+
+function exitBattle(){
+  goHome();
+}
+
+function confirmAbandon(sess){
+  if(confirm('Abandon this challenge? Progress will be lost.')){
+    S.mode=sess.mode; S.filterType=sess.filter_type==='__none__'?null:sess.filter_type; S.gen=sess.gen;
+    abandonSession();
+  }
+}
+
+// ── INIT ──
+async function init(){
+  // don't render loading flash — resolve session first, then render once
+  const {data:{session}}=await sb.auth.getSession();
+  if(session?.user){
+    S.user=session.user;
+    S.isGuest=!!(S.user.is_anonymous||!S.user.email);
+    if(S.isGuest){
+      S.profile=null; S.favorites=loadGuestPicks(); S.activeSessions=[];
+    } else {
+      S.profile=await loadProfile(S.user.id);
+      S.favorites=await loadFavs(S.user.id);
+      S.activeSessions=await loadActiveSessions(S.user.id);
+    }
+    S.screen='menu';S.currentView='game';
+  } else {S.screen='landing';}
+  render();
+  sb.auth.onAuthStateChange(async(ev,sess)=>{
+    if(ev==='SIGNED_IN'&&sess?.user){
+      S.user=sess.user;
+      S.isGuest=!!(S.user.is_anonymous||!S.user.email);
+      if(S.isGuest){S.profile=null;S.favorites=loadGuestPicks();S.activeSessions=[];S.screen='menu';S.currentView='game';render();return;}
+      // save pending nickname if present (from registration)
+      try{
+        const nick=localStorage.getItem('pending_nick');
+        if(nick){await upsertProfile(S.user.id,nick);localStorage.removeItem('pending_nick');}
+      }catch(e){}
+      [S.profile, S.favorites, S.activeSessions] = await Promise.all([
+        loadProfile(S.user.id),
+        loadFavs(S.user.id),
+        loadActiveSessions(S.user.id)
+      ]);
+      if(!S.profile || !S.profile.display_name){
+        const autoNick = S.user.email.split('@')[0].toUpperCase();
+        await upsertProfile(S.user.id, autoNick);
+        S.profile = await loadProfile(S.user.id);
+      }
+      S.screen='menu';S.currentView='game';render();
+    }
+    if(ev==='SIGNED_OUT'){if(S.screen==='auth'&&S.guestAuthReturn){return;}S.user=null;S.profile=null;S.favorites={};S.isGuest=false;S.guestLocalOnly=false;S.guestAuthReturn=null;S.screen='landing';render();}
+  });}
+
+init();
+</script>
+</body>
+</html>
