@@ -287,7 +287,7 @@ body.gen2::after {
   accent-color:var(--accent);
 }
 .terms-row label { cursor:pointer; }
-.terms-row a { color:var(--accent); text-decoration:underline; }
+.terms-row a, .terms-link { color:var(--accent); text-decoration:underline; cursor:pointer; }
 
 /* ── LANDING LEGAL FOOTER ── */
 .landing-legal {
@@ -3134,7 +3134,7 @@ function render(){
       +'<input class="field-input" id="auth-email" type="email" placeholder="trainer@email.com" onkeydown="if(event.key===\'Enter\')doAuth()">'
       +'<label class="field-label">PASSWORD</label>'
       +'<input class="field-input" id="auth-pass" type="password" placeholder="••••••••" onkeydown="if(event.key===\'Enter\')doAuth()">'
-      +(!isL?'<div class="terms-row"><input type="checkbox" id="auth-terms"><label for="auth-terms">I agree to the <button class="landing-legal-link" style="display:inline;padding:0;font-size:inherit" onclick="event.preventDefault();event.stopPropagation();openLegalPage(&quot;terms&quot;)">Terms</button> and <button class="landing-legal-link" style="display:inline;padding:0;font-size:inherit" onclick="event.preventDefault();event.stopPropagation();openLegalPage(&quot;privacy&quot;)">Privacy Policy</button>. I am at least 13 years old.</label></div>':'')
+      +(!isL?'<div class="terms-row"><input type="checkbox" id="auth-terms"><label for="auth-terms">I agree to the <a href="#" class="terms-link" onclick="event.preventDefault();event.stopPropagation();openLegalPage(&quot;terms&quot;);return false;">Terms</a> and <a href="#" class="terms-link" onclick="event.preventDefault();event.stopPropagation();openLegalPage(&quot;privacy&quot;);return false;">Privacy Policy</a>. I am at least 13 years old.</label></div>':'')
       +'<div class="auth-msg" id="auth-msg"></div>'
       +'<button class="btn-primary" onclick="doAuth()">▶ '+(isL?'LOGIN':'CREATE ACCOUNT')+'</button>'
       +(isL?'<div class="auth-toggle" style="margin-top:6px;font-size:6px;cursor:pointer" onclick="forgotPassword()">▷ Forgot password?</div>'
