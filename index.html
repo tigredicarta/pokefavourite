@@ -1836,7 +1836,15 @@ async function forgotPassword(){
     if(error) throw error;
     if(msg){msg.innerHTML='▶ IF AN ACCOUNT EXISTS FOR THIS EMAIL,<br>A PASSWORD RESET LINK HAS BEEN SENT.';msg.className='auth-msg';}
   } catch(e){
-    if(msg){msg.textContent='▶ '+(e.message||'ERROR').toUpperCase();msg.className='auth-msg error';}
+    if(msg){
+      let em=(e.message||'').toUpperCase();
+      if(em.includes('RATE LIMIT')||em.includes('TOO MANY')||em.includes('429')){
+        msg.innerHTML='▶ TOO MANY REQUESTS.<br>PLEASE WAIT A FEW MINUTES.';
+      } else {
+        msg.textContent='▶ '+(em||'ERROR');
+      }
+      msg.className='auth-msg error';
+    }
   }
 }
 
@@ -1888,12 +1896,18 @@ async function doAuth() {
   if(error){
     if(wasGuest){S.user={id:'local-guest'};S.isGuest=true;S.favorites=guestPicks||loadGuestPicks();}
     let errMsg=(error.message||'').toUpperCase();
-    if(errMsg.includes('NOT CONFIRMED')||errMsg.includes('CONFIRMATION')){
+    if(errMsg.includes('RATE LIMIT')||errMsg.includes('TOO MANY')||errMsg.includes('429')){
+      msg.innerHTML='▶ TOO MANY REQUESTS.<br>PLEASE WAIT A MOMENT BEFORE TRYING AGAIN.';
+    } else if(errMsg.includes('NOT CONFIRMED')||errMsg.includes('CONFIRMATION')){
       msg.innerHTML='▶ EMAIL NOT CONFIRMED YET.<br>CHECK YOUR INBOX FOR THE CONFIRMATION LINK.';
     } else if(errMsg.includes('INVALID') && errMsg.includes('CREDENTIAL')){
       msg.textContent='▶ INVALID EMAIL OR PASSWORD';
-    } else if(errMsg.includes('USER ALREADY')){
+    } else if(errMsg.includes('USER ALREADY')||errMsg.includes('ALREADY REGISTERED')){
       msg.textContent='▶ AN ACCOUNT WITH THIS EMAIL ALREADY EXISTS. TRY LOGGING IN.';
+    } else if(errMsg.includes('PASSWORD') && errMsg.includes('SHORT')){
+      msg.textContent='▶ PASSWORD TOO SHORT (MIN 6 CHARACTERS)';
+    } else if(errMsg.includes('INVALID') && errMsg.includes('EMAIL')){
+      msg.textContent='▶ INVALID EMAIL ADDRESS';
     } else {
       msg.textContent='▶ '+(errMsg||'ERROR');
     }
