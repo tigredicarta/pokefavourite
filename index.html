@@ -1834,7 +1834,7 @@ async function forgotPassword(){
     const redirectTo = window.location.origin;
     const {error} = await sb.auth.resetPasswordForEmail(email, {redirectTo});
     if(error) throw error;
-    if(msg){msg.innerHTML='▶ IF AN ACCOUNT EXISTS FOR THIS EMAIL,<br>A PASSWORD RESET LINK HAS BEEN SENT.';msg.className='auth-msg';}
+    if(msg){msg.innerHTML='▶ IF AN ACCOUNT EXISTS FOR THIS EMAIL,<br>A PASSWORD RESET LINK HAS BEEN SENT.<br><br>★ CHECK YOUR SPAM FOLDER TOO.';msg.className='auth-msg';}
   } catch(e){
     if(msg){
       let em=(e.message||'').toUpperCase();
@@ -1884,7 +1884,7 @@ async function doAuth() {
           S.profile=await loadProfile(S.user.id);S.favorites=await loadFavs(S.user.id);S.activeSessions=await loadActiveSessions(S.user.id);
           clearGuestPicks();S.screen='menu';S.currentView='game';S.guestAuthReturn=null;S.busy=false;render();return;
         }
-        msg.innerHTML='▶ ACCOUNT CREATED!<br>CHECK YOUR INBOX FOR A CONFIRMATION EMAIL. CLICK THE LINK, THEN LOG IN.';msg.className='auth-msg';S.busy=false;return;
+        msg.innerHTML='▶ ACCOUNT CREATED!<br><br>CHECK YOUR INBOX FOR A CONFIRMATION EMAIL.<br>★ CHECK SPAM FOLDER TOO — FIRST EMAILS OFTEN LAND THERE.<br><br>CLICK THE LINK, THEN LOG IN.';msg.className='auth-msg';S.busy=false;return;
       }
     } else {
       const r=await sb.auth.signInWithPassword({email,password:pass});
@@ -1899,7 +1899,7 @@ async function doAuth() {
     if(errMsg.includes('RATE LIMIT')||errMsg.includes('TOO MANY')||errMsg.includes('429')){
       msg.innerHTML='▶ TOO MANY REQUESTS.<br>PLEASE WAIT A MOMENT BEFORE TRYING AGAIN.';
     } else if(errMsg.includes('NOT CONFIRMED')||errMsg.includes('CONFIRMATION')){
-      msg.innerHTML='▶ EMAIL NOT CONFIRMED YET.<br>CHECK YOUR INBOX FOR THE CONFIRMATION LINK.';
+      msg.innerHTML='▶ EMAIL NOT CONFIRMED YET.<br><br>CHECK YOUR INBOX (AND SPAM FOLDER)<br>FOR THE CONFIRMATION LINK.';
     } else if(errMsg.includes('INVALID') && errMsg.includes('CREDENTIAL')){
       msg.textContent='▶ INVALID EMAIL OR PASSWORD';
     } else if(errMsg.includes('USER ALREADY')||errMsg.includes('ALREADY REGISTERED')){
@@ -3155,7 +3155,7 @@ function render(){
     app.innerHTML='<div class="auth-wrap"><div class="auth-box">'
       +'<button class="back-link" style="margin-bottom:20px" onclick="cancelAuth()">◀ BACK</button>'
       +'<div class="auth-title">'+(isL?'LOGIN':'REGISTER')+'</div>'
-      +'<div class="auth-sub">'+(isL?'Welcome back, Trainer.':'Create your Trainer profile.')+'</div>'
+      +'<div class="auth-sub">'+(isL?'Welcome back, Trainer.':'Create your Trainer profile. We send a confirmation email — check your spam folder if it doesn\'t arrive.')+'</div>'
       +(!isL?'<label class="field-label">NICKNAME</label><input class="field-input" id="auth-nick" type="text" placeholder="TrainerRed" maxlength="20" onkeydown="if(event.key===\'Enter\')doAuth()">':'')
       +'<label class="field-label">EMAIL</label>'
       +'<input class="field-input" id="auth-email" type="email" placeholder="trainer@email.com" onkeydown="if(event.key===\'Enter\')doAuth()">'
