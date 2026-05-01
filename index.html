@@ -2609,9 +2609,9 @@ function renderLanding(app){
     +'<div class="landing-footer-cta">'+footerCta+(footerNote?'<div class="landing-footer-note">'+footerNote+'</div>':'')+'</div>'
     +'<div class="landing-legal">'
       +'<div class="landing-legal-links">'
-        +'<button class="landing-legal-link" onclick="openLegalPage(\'privacy\')">PRIVACY</button>'
-        +'<button class="landing-legal-link" onclick="openLegalPage(\'terms\')">TERMS</button>'
-        +'<button class="landing-legal-link" onclick="openLegalPage(\'about\')">ABOUT</button>'
+        +'<button class="landing-legal-link" onclick="openLegalPage(&quot;privacy&quot;)">PRIVACY</button>'
+        +'<button class="landing-legal-link" onclick="openLegalPage(&quot;terms&quot;)">TERMS</button>'
+        +'<button class="landing-legal-link" onclick="openLegalPage(&quot;about&quot;)">ABOUT</button>'
       +'</div>'
       +'<div class="landing-legal-disclaimer">POKÉMON IS A TRADEMARK OF NINTENDO, GAME FREAK, AND THE POKÉMON COMPANY. THIS IS A NON-COMMERCIAL FAN PROJECT, NOT AFFILIATED WITH THEM. ALL POKÉMON NAMES AND SPRITES BELONG TO THEIR RESPECTIVE OWNERS.</div>'
     +'</div>'
@@ -2872,6 +2872,220 @@ function renderChallengesMenu(app){
   app.innerHTML=topNavHTML()+html;
 }
 
+// ── LEGAL PAGE RENDERERS ──
+function renderPrivacyPolicy(app){
+  app.innerHTML='<div class="legal-wrap"><div class="legal-box">'
+    +'<button class="legal-back" onclick="goBackFromLegal()">◀ BACK</button>'
+    +'<div class="legal-title">PRIVACY POLICY</div>'
+    +'<div class="legal-sub">LAST UPDATED: '+LEGAL_LAST_UPDATED+'</div>'
+    +'<div class="legal-h2">WHO WE ARE</div>'
+    +'<div class="legal-p">YOUR FAVOURITE POKÉMON is a non-commercial fan project ("the Service") operated by an individual creator. We are not affiliated with, endorsed by, or sponsored by Nintendo, Game Freak, The Pokémon Company, or any related entities.</div>'
+    +'<div class="legal-h2">WHAT WE COLLECT</div>'
+    +'<div class="legal-p">We collect the minimum data needed to run the Service:</div>'
+    +'<ul class="legal-list">'
+    +'<li><strong>Account data</strong> — your email address (used only for sign-in and password recovery) and a public nickname (visible to other users in the leaderboard).</li>'
+    +'<li><strong>Game data</strong> — your Pokémon picks for each category, in-progress tournament sessions, and timestamps of activity.</li>'
+    +'<li><strong>Anonymous guest data</strong> — if you play as guest, we store an anonymous session ID and your picks in your browser localStorage. No personal data is collected.</li>'
+    +'<li><strong>Technical data</strong> — basic logs from our infrastructure provider such as IP address and browser type, used only for operational diagnostics.</li>'
+    +'</ul>'
+    +'<div class="legal-p"><strong>We do not collect:</strong> location, payment details, contacts, advertising identifiers, or behavioural tracking data. We do not use third-party analytics or advertising trackers.</div>'
+    +'<div class="legal-h2">HOW WE USE IT</div>'
+    +'<ul class="legal-list">'
+    +'<li>To authenticate your account and let you save and retrieve picks across devices</li>'
+    +'<li>To display anonymized aggregate leaderboards (your nickname, never your email)</li>'
+    +'<li>To resume in-progress tournament sessions</li>'
+    +'<li>To prevent abuse (rate limiting, anti-spam)</li>'
+    +'</ul>'
+    +'<div class="legal-h2">WHO CAN SEE YOUR DATA</div>'
+    +'<div class="legal-p"><strong>Public:</strong> your nickname, your picks per category, and your aggregated stats appear in community leaderboards.</div>'
+    +'<div class="legal-p"><strong>Private (only you):</strong> your email address, password, and in-progress sessions. Email is never shown to other users.</div>'
+    +'<div class="legal-p"><strong>Service providers:</strong> we use Supabase as our authentication and database backend. Their privacy practices apply to data they process on our behalf.</div>'
+    +'<div class="legal-h2">DATA RETENTION</div>'
+    +'<div class="legal-p">Your account data is stored as long as your account exists. You can delete it at any time from the account settings page. Guest data in your browser localStorage is removed when you clear browser data.</div>'
+    +'<div class="legal-h2">YOUR RIGHTS (GDPR)</div>'
+    +'<div class="legal-p">If you are in the European Economic Area or the UK, under the GDPR you have the right to:</div>'
+    +'<ul class="legal-list">'
+    +'<li><strong>Access</strong> the personal data we hold about you</li>'
+    +'<li><strong>Rectify</strong> inaccurate data (you can edit your nickname any time)</li>'
+    +'<li><strong>Delete</strong> your account and all associated data</li>'
+    +'<li><strong>Export</strong> your data in a portable format</li>'
+    +'<li><strong>Object</strong> to processing or withdraw consent</li>'
+    +'<li><strong>Lodge a complaint</strong> with your national data protection authority</li>'
+    +'</ul>'
+    +'<div class="legal-p">Most of these can be done from the in-app account settings. For other requests email <strong>'+CONTACT_EMAIL+'</strong>.</div>'
+    +'<div class="legal-h2">COOKIES AND LOCAL STORAGE</div>'
+    +'<div class="legal-p">We do not use tracking cookies. We use your browser localStorage strictly to store your sign-in session token and (for guest mode) your picks. No data is shared with third parties.</div>'
+    +'<div class="legal-h2">CHILDREN</div>'
+    +'<div class="legal-p">The Service is not directed at children under 13. We do not knowingly collect personal data from children under 13. If you believe a child has registered, contact us at '+CONTACT_EMAIL+' and we will delete the account.</div>'
+    +'<div class="legal-h2">CHANGES</div>'
+    +'<div class="legal-p">We may update this policy. Material changes will be notified through the Service. Continued use after a change means acceptance of the new policy.</div>'
+    +'<div class="legal-h2">CONTACT</div>'
+    +'<div class="legal-p">Questions about this policy? Email <strong>'+CONTACT_EMAIL+'</strong>.</div>'
+    +'<div class="legal-meta">VERSION 1.0 · '+LEGAL_LAST_UPDATED+'</div>'
+    +'</div></div>';
+}
+
+function renderTerms(app){
+  app.innerHTML='<div class="legal-wrap"><div class="legal-box">'
+    +'<button class="legal-back" onclick="goBackFromLegal()">◀ BACK</button>'
+    +'<div class="legal-title">TERMS OF USE</div>'
+    +'<div class="legal-sub">LAST UPDATED: '+LEGAL_LAST_UPDATED+'</div>'
+    +'<div class="legal-h2">WHAT THIS IS</div>'
+    +'<div class="legal-p">YOUR FAVOURITE POKÉMON ("the Service") is a free, non-commercial fan project that lets users vote for their favourite Pokémon through a 1v1 tournament format. Pokémon names, images, and related properties are the intellectual property of Nintendo, Game Freak, and The Pokémon Company. This Service is not affiliated with, endorsed by, or sponsored by them.</div>'
+    +'<div class="legal-h2">YOUR ACCOUNT</div>'
+    +'<ul class="legal-list">'
+    +'<li>You must be at least 13 years old (or the minimum digital-consent age in your country) to register</li>'
+    +'<li>You are responsible for keeping your password secure</li>'
+    +'<li>One person, one account — no automated registrations or bots</li>'
+    +'<li>Your nickname must not be offensive, deceptive, or impersonate another person; we reserve the right to remove or change it</li>'
+    +'</ul>'
+    +'<div class="legal-h2">ACCEPTABLE USE</div>'
+    +'<div class="legal-p">Don\'t do anything that could break or abuse the Service. Specifically:</div>'
+    +'<ul class="legal-list">'
+    +'<li>Don\'t attempt to access other users accounts or data</li>'
+    +'<li>Don\'t reverse engineer, scrape, or overload the Service</li>'
+    +'<li>Don\'t use the Service to distribute malware or spam</li>'
+    +'<li>Don\'t inflate leaderboards with fake accounts or automated voting</li>'
+    +'</ul>'
+    +'<div class="legal-h2">CONTENT</div>'
+    +'<div class="legal-p">Your picks and nickname are content you provide. By using the Service, you grant us a non-exclusive licence to display them in public leaderboards. You can delete this content at any time by removing your account.</div>'
+    +'<div class="legal-h2">INTELLECTUAL PROPERTY</div>'
+    +'<div class="legal-p">Pokémon, Pokémon character names, and Pokémon sprites are trademarks and copyrighted works of Nintendo, Game Freak, and The Pokémon Company. They are used here under fair use for non-commercial fan engagement. If you are a rights holder and want this Service to remove or modify any content, contact <strong>'+CONTACT_EMAIL+'</strong>.</div>'
+    +'<div class="legal-h2">NO WARRANTY</div>'
+    +'<div class="legal-p">The Service is provided "as is" without warranty of any kind. It may be unavailable, change, or terminate at any time. We are not liable for any loss of data or service interruption.</div>'
+    +'<div class="legal-h2">CHANGES AND TERMINATION</div>'
+    +'<div class="legal-p">We may suspend or terminate accounts that violate these terms. We may modify or discontinue the Service at any time. You can stop using it any time and delete your account.</div>'
+    +'<div class="legal-h2">GOVERNING LAW</div>'
+    +'<div class="legal-p">These terms are governed by the laws of Italy. Disputes will be settled in the courts of the operator residence, unless mandatory consumer protection law of your country says otherwise.</div>'
+    +'<div class="legal-h2">CONTACT</div>'
+    +'<div class="legal-p">Questions? Email <strong>'+CONTACT_EMAIL+'</strong>.</div>'
+    +'<div class="legal-meta">VERSION 1.0 · '+LEGAL_LAST_UPDATED+'</div>'
+    +'</div></div>';
+}
+
+function renderAbout(app){
+  app.innerHTML='<div class="legal-wrap"><div class="legal-box">'
+    +'<button class="legal-back" onclick="goBackFromLegal()">◀ BACK</button>'
+    +'<div class="legal-title">ABOUT</div>'
+    +'<div class="legal-sub">A FAN PROJECT BY A POKÉMON FAN</div>'
+    +'<div class="legal-h2">THE IDEA</div>'
+    +'<div class="legal-p">YOUR FAVOURITE POKÉMON answers a question every fan has asked: <em>which one is really my favourite?</em> Instead of guessing, you fight a 1v1 tournament — pair after pair, until one Pokémon stands. Across all generations, by type, or in cross-gen Challenges.</div>'
+    +'<div class="legal-h2">THE TECH</div>'
+    +'<div class="legal-p">A single HTML file. Press Start 2P typeface. CRT scanlines. Sprites pulled from PokeAPI. Auth and leaderboard powered by Supabase.</div>'
+    +'<div class="legal-h2">DISCLAIMER</div>'
+    +'<div class="legal-p"><strong>Pokémon is a trademark of Nintendo, Game Freak, and The Pokémon Company.</strong> This is a non-commercial fan project, not affiliated with or endorsed by them. All character names, images, and sprites belong to their respective owners and are used here under fair use for fan engagement.</div>'
+    +'<div class="legal-h2">CONTACT</div>'
+    +'<div class="legal-p">Found a bug? Want to suggest a feature? Email <strong>'+CONTACT_EMAIL+'</strong>.</div>'
+    +'<div class="legal-meta">v2.3 · MADE WITH ♥</div>'
+    +'</div></div>';
+}
+
+function renderAccountSettings(app){
+  if(!S.user || S.isGuest){ S.screen='landing'; render(); return; }
+  const name=(S.profile?.display_name||S.user.email.split('@')[0]).toUpperCase();
+  app.innerHTML='<div class="legal-wrap"><div class="legal-box">'
+    +'<button class="legal-back" onclick="goBackFromLegal()">◀ BACK</button>'
+    +'<div class="legal-title">ACCOUNT</div>'
+    +'<div class="legal-sub">YOUR DATA AND CONTROLS</div>'
+    +'<div class="account-section">'
+      +'<div class="account-h3">PROFILE</div>'
+      +'<div class="account-row"><span class="account-row-label">NICKNAME</span><span class="account-row-value">'+name+'</span></div>'
+      +'<div class="account-row"><span class="account-row-label">EMAIL</span><span class="account-row-value">'+S.user.email+'</span></div>'
+    +'</div>'
+    +'<div class="account-section">'
+      +'<div class="account-h3">YOUR DATA</div>'
+      +'<div class="account-row" style="font-size:7px;line-height:2">Download all your data (profile, picks, sessions) in JSON format.</div>'
+      +'<button class="btn-primary dark" style="margin-top:10px" onclick="exportUserData()">▼ EXPORT MY DATA</button>'
+    +'</div>'
+    +'<div class="account-section">'
+      +'<div class="account-h3">DELETE ACCOUNT</div>'
+      +'<div class="account-row" style="font-size:7px;line-height:2">Permanently delete your account, profile, picks, and sessions. This cannot be undone.</div>'
+      +'<button class="btn-danger" onclick="confirmDeleteAccount()">✕ DELETE MY ACCOUNT</button>'
+    +'</div>'
+    +'<div class="legal-meta">YOU CAN ALSO REQUEST DATA OPERATIONS BY EMAILING '+CONTACT_EMAIL+'</div>'
+    +'</div></div>';
+}
+
+function goBackFromLegal(){
+  if(S.user){
+    if(typeof goHome==='function') goHome();
+    else { S.screen='menu'; S.currentView='game'; render(); }
+  } else {
+    S.screen='landing'; S.currentView='game'; render();
+  }
+}
+
+function openLegalPage(page){
+  S.userMenuOpen=false;
+  S.legalPrev={screen:S.screen, currentView:S.currentView, section:S.section};
+  S.screen=page;
+  S.currentView='legal';
+  render();
+}
+
+async function exportUserData(){
+  if(!S.user || S.isGuest) return;
+  try {
+    const [profRes, favRes, sessRes] = await Promise.all([
+      sb.from('profiles').select('*').eq('id',S.user.id).single(),
+      sb.from('pokemon_favorites').select('*').eq('user_id',S.user.id),
+      sb.from('pokemon_sessions').select('*').eq('user_id',S.user.id),
+    ]);
+    const data={
+      exported_at: new Date().toISOString(),
+      account: { id: S.user.id, email: S.user.email },
+      profile: profRes.data || null,
+      favorites: favRes.data || [],
+      sessions: sessRes.data || [],
+      service: 'YOUR FAVOURITE POKÉMON',
+      service_version: 'v2.3',
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'my-pokemon-data-'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  } catch(e){
+    alert('Export failed: '+(e.message||e));
+  }
+}
+
+function confirmDeleteAccount(){
+  showConfirm({
+    title:'DELETE ACCOUNT?',
+    message:'THIS WILL PERMANENTLY DELETE YOUR PROFILE, ALL YOUR PICKS, AND ALL YOUR SESSIONS. THIS CANNOT BE UNDONE.',
+    confirmLabel:'DELETE',
+    cancelLabel:'CANCEL',
+    onConfirm: ()=>deleteAccount(),
+  });
+}
+
+async function deleteAccount(){
+  if(!S.user || S.isGuest) return;
+  try {
+    const uid=S.user.id;
+    await sb.from('pokemon_favorites').delete().eq('user_id',uid);
+    await sb.from('pokemon_sessions').delete().eq('user_id',uid);
+    await sb.from('profiles').delete().eq('id',uid);
+    await sb.auth.signOut();
+    S.user=null;S.profile=null;S.favorites={};S.activeSessions=[];
+    S.isGuest=false;S.guestLocalOnly=false;
+    S.screen='landing';S.currentView='game';
+    showConfirm({
+      title:'DELETED',
+      message:'YOUR DATA HAS BEEN ERASED FROM OUR DATABASE. TO ALSO DELETE THE AUTHENTICATION RECORD, WRITE TO '+CONTACT_EMAIL+'.',
+      confirmLabel:'OK',
+      cancelLabel:'OK',
+      onConfirm: ()=>{},
+    });
+    render();
+  } catch(e){
+    alert('Delete failed: '+(e.message||e));
+  }
+}
+
 function render(){
   const app=document.getElementById('app');if(!app)return;
   renderHeader();
@@ -2908,7 +3122,7 @@ function render(){
       +'<input class="field-input" id="auth-email" type="email" placeholder="trainer@email.com" onkeydown="if(event.key===\'Enter\')doAuth()">'
       +'<label class="field-label">PASSWORD</label>'
       +'<input class="field-input" id="auth-pass" type="password" placeholder="••••••••" onkeydown="if(event.key===\'Enter\')doAuth()">'
-      +(!isL?'<div class="terms-row"><input type="checkbox" id="auth-terms"><label for="auth-terms">I agree to the <button class="landing-legal-link" style="display:inline;padding:0;font-size:inherit" onclick="event.preventDefault();event.stopPropagation();openLegalPage(\'terms\')">Terms</button> and <button class="landing-legal-link" style="display:inline;padding:0;font-size:inherit" onclick="event.preventDefault();event.stopPropagation();openLegalPage(\'privacy\')">Privacy Policy</button>. I am at least 13 years old.</label></div>':'')
+      +(!isL?'<div class="terms-row"><input type="checkbox" id="auth-terms"><label for="auth-terms">I agree to the <button class="landing-legal-link" style="display:inline;padding:0;font-size:inherit" onclick="event.preventDefault();event.stopPropagation();openLegalPage(&quot;terms&quot;)">Terms</button> and <button class="landing-legal-link" style="display:inline;padding:0;font-size:inherit" onclick="event.preventDefault();event.stopPropagation();openLegalPage(&quot;privacy&quot;)">Privacy Policy</button>. I am at least 13 years old.</label></div>':'')
       +'<div class="auth-msg" id="auth-msg"></div>'
       +'<button class="btn-primary" onclick="doAuth()">▶ '+(isL?'LOGIN':'CREATE ACCOUNT')+'</button>'
       +(isL?'<button class="btn-primary dark guest-cta" onclick="continueAsGuest()">▶ PLAY AS GUEST</button><div class="guest-note">Play without an account. Use SAVE PICKS later to attach your choices.</div>':'')
