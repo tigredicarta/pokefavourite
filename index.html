@@ -73,6 +73,22 @@ body.challenges::after {
   border:1px solid var(--bg3); padding:3px 7px; letter-spacing:2px;
 }
 .challenge-badge.new { color:var(--accent); border-color:var(--accent); }
+.challenge-badge.mega-badge {
+  background:linear-gradient(135deg, #ffd060, #ff8030);
+  color:#1a0f00; border:none; font-weight:bold;
+  font-size:5px; padding:5px 10px;
+  box-shadow:0 0 8px rgba(255,200,80,0.4);
+}
+.challenge-card.mega {
+  background:linear-gradient(135deg, rgba(255,208,96,0.08), rgba(255,128,48,0.08));
+  border:2px solid #ffd060;
+}
+.challenge-card.mega .challenge-card-title { color:#ffd060; font-size:11px; }
+.challenge-card.mega .challenge-card-eyebrow { color:#e0b860; }
+@media (min-width:700px){
+  .challenge-card.mega { grid-column: 1 / -1; }
+  .challenge-card.mega .challenge-card-title { font-size:14px; }
+}
 
 /* gen badge under sprite in challenge battle */
 .poke-gen-badge {
@@ -772,7 +788,7 @@ input, textarea, select { font-size:16px; }
 .inprog-dot { display:inline-block; width:5px; height:5px; background:var(--accent); margin-left:6px; vertical-align:middle; animation:blink 1s infinite; }
 
 /* ── LANDING ── */
-.landing { flex:1; display:flex; flex-direction:column; }
+.landing { flex:1; display:flex; flex-direction:column; overflow-x:hidden; max-width:100%; }
 
 .landing-hero {
   background:var(--bg1); border-bottom:1px solid var(--border);
@@ -830,10 +846,11 @@ input, textarea, select { font-size:16px; }
 
 /* CHALLENGES SHOWCASE on landing */
 .landing-challenges {
-  padding:32px 20px;
+  padding:32px 14px;
   background:linear-gradient(180deg, #0d1430 0%, #08101a 100%);
   border-top:1px solid var(--border);
   border-bottom:1px solid var(--border);
+  overflow:hidden;
 }
 .landing-challenges-eyebrow {
   font-size:5px; color:#5570a0; letter-spacing:3px; margin-bottom:8px;
@@ -850,7 +867,7 @@ input, textarea, select { font-size:16px; }
   margin-left:auto; margin-right:auto;
 }
 .landing-challenges-grid {
-  display:grid; grid-template-columns:1fr 1fr; gap:8px;
+  display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px;
   max-width:600px; margin:0 auto;
 }
 .landing-challenge-card {
@@ -859,6 +876,7 @@ input, textarea, select { font-size:16px; }
   border-left:3px solid #ffd060;
   padding:14px 12px;
   display:flex; flex-direction:column; gap:6px;
+  min-width:0; overflow:hidden;
 }
 .landing-challenge-card-name {
   font-size:7px; color:#e0b860; letter-spacing:1px; line-height:1.6;
@@ -867,10 +885,79 @@ input, textarea, select { font-size:16px; }
   font-size:5px; color:#5570a0; letter-spacing:1px;
 }
 .landing-challenge-sprites {
-  display:flex; gap:2px; margin-top:4px;
+  display:flex; gap:2px; margin-top:4px; flex-wrap:wrap;
 }
 .landing-challenge-sprites img {
-  width:28px; height:28px; image-rendering:pixelated; opacity:0.85;
+  width:24px; height:24px; image-rendering:pixelated; opacity:0.85;
+  flex-shrink:0;
+}
+@media (min-width:480px){
+  .landing-challenge-sprites img { width:28px; height:28px; }
+}
+
+/* MEGA hero card */
+.landing-mega-card {
+  background:linear-gradient(135deg, rgba(255,208,96,0.12), rgba(255,128,48,0.08));
+  border:2px solid #ffd060;
+  padding:20px 18px;
+  display:flex; flex-direction:column; gap:10px;
+  margin-bottom:14px;
+  max-width:600px; margin-left:auto; margin-right:auto;
+  box-shadow:0 0 24px rgba(255,200,80,0.15);
+  position:relative; overflow:hidden;
+}
+.landing-mega-card::before {
+  content:''; position:absolute; top:-50%; left:-50%;
+  width:200%; height:200%;
+  background:radial-gradient(circle, rgba(255,208,96,0.08) 0%, transparent 50%);
+  pointer-events:none;
+}
+.landing-mega-eyebrow {
+  font-size:5px; color:#e0b860; letter-spacing:3px; text-align:center;
+}
+.landing-mega-title {
+  font-size:14px; color:#ffd060; letter-spacing:3px;
+  text-align:center; line-height:1.6;
+}
+.landing-mega-stats {
+  display:flex; justify-content:space-around;
+  padding:10px 0; border-top:1px solid rgba(255,208,96,0.3);
+  border-bottom:1px solid rgba(255,208,96,0.3);
+  margin:4px 0;
+}
+.landing-mega-stat { text-align:center; }
+.landing-mega-num {
+  font-size:14px; color:#ffd060; line-height:1;
+}
+.landing-mega-label {
+  font-size:5px; color:#a08550; letter-spacing:2px; margin-top:6px;
+}
+.landing-mega-desc {
+  font-size:6px; color:#c8a868; line-height:2.2; letter-spacing:1px;
+  text-align:center; padding:0 8px;
+}
+.landing-mega-sprites {
+  display:flex; gap:4px; justify-content:center; flex-wrap:wrap; margin-top:4px;
+}
+.landing-mega-sprites img {
+  width:32px; height:32px; image-rendering:pixelated; opacity:0.9;
+  flex-shrink:0;
+}
+@media (min-width:480px){
+  .landing-mega-card { padding:28px 24px; gap:14px; margin-bottom:18px; }
+  .landing-mega-title { font-size:18px; }
+  .landing-mega-num { font-size:18px; }
+  .landing-mega-label { font-size:6px; }
+  .landing-mega-desc { font-size:7px; }
+  .landing-mega-sprites img { width:38px; height:38px; }
+}
+@media (min-width:700px){
+  .landing-mega-card { max-width:none; padding:36px 40px; }
+  .landing-mega-eyebrow { font-size:7px; }
+  .landing-mega-title { font-size:24px; }
+  .landing-mega-num { font-size:22px; }
+  .landing-mega-label { font-size:7px; }
+  .landing-mega-desc { font-size:9px; max-width:500px; margin:0 auto; }
 }
 
 .landing-features {
@@ -1080,7 +1167,7 @@ input, textarea, select { font-size:16px; }
 <!-- SITE HEADER -->
 <header class="site-header">
   <div class="logo">
-    YOUR FAVOURITE POKÉMON<span id="logo-sub"> · GEN I · 151 POKÉMON · v2.3</span>
+    YOUR FAVOURITE POKÉMON<span id="logo-sub"> · GEN I · 151 POKÉMON · v2.4</span>
   </div>
   <div class="header-right">
     <div class="header-nav" id="header-nav"></div>
@@ -1426,6 +1513,17 @@ const PSEUDO_LEGENDS = [
   {id:445,name:"GARCHOMP",types:["dragon","ground"],gen:4},
 ];
 
+// WORLD CHAMPIONSHIP — all 493 Pokémon across all 4 generations.
+// Each Pokémon needs its origin gen for sprite fallbacks.
+const WORLD_CHAMPIONSHIP = (() => {
+  const all = [];
+  PKM1.forEach(p => all.push({...p, gen:1}));
+  PKM2.forEach(p => all.push({...p, gen:2}));
+  PKM3.forEach(p => all.push({...p, gen:3}));
+  PKM4.forEach(p => all.push({...p, gen:4}));
+  return all;
+})();
+
 const CHALLENGES = {
   starters: {
     slug:'starters',
@@ -1458,6 +1556,15 @@ const CHALLENGES = {
     desc:'Dragonite, Tyranitar, Salamence, Metagross, Garchomp. The 600-stat club.',
     pool:PSEUDO_LEGENDS,
     available:true,
+  },
+  worldchamp: {
+    slug:'worldchamp',
+    title:'WORLD CHAMPIONSHIP',
+    eyebrow:'★ MEGA TOURNAMENT · 493 POKÉMON',
+    desc:'Every Pokémon from Gen I to Gen IV in a single bracket. ~9 rounds, 492 matches, one true favourite. For the bravest trainers only.',
+    pool:WORLD_CHAMPIONSHIP,
+    available:true,
+    mega:true,
   },
 };
 
@@ -1671,7 +1778,9 @@ async function autoSave(cat, p) {
 
 // ── SESSION PERSISTENCE
 async function saveSession() {
-  if(!S.user||S.isGuest||S.mode==='challenge') return;
+  if(!S.user||S.isGuest) return;
+  // Skip saving for small linear challenges, but keep mega-bracket challenges saved
+  if(S.mode==='challenge' && !S.bracket) return;
   // For bracket mode: persist S.bracket inside pool field as a wrapper {__bracket:{...}}
   // For linear mode: persist S.pool as before
   let payload;
@@ -2118,7 +2227,9 @@ async function continueAsGuest(){
 // Challenges always use linear (small pools).
 const BRACKET_THRESHOLD = 10;
 function useBracketFor(poolLen, mode){
-  return mode!=='challenge' && poolLen>BRACKET_THRESHOLD;
+  // Bracket activates for any pool >10 except small challenges (which stay linear).
+  // The startChallenge function handles its own decision.
+  return poolLen>BRACKET_THRESHOLD;
 }
 
 // Build initial bracket state from a shuffled pool
@@ -2328,7 +2439,7 @@ async function choose(idx){
 
   // periodic autosave
   if(S.round%10===0){
-    const cat=genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall');
+    const cat=S.mode==='challenge'?'ch_'+S.filterType:(genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall'));
     autoSave(cat,chosen);
   }
   if(!S.isGuest) saveSession();
@@ -2342,7 +2453,7 @@ async function choose(idx){
       // CHAMPION!
       S.winner=b.winners[0];
       S.bracket=null;
-      const cat=genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall');
+      const cat=S.mode==='challenge'?'ch_'+S.filterType:(genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall'));
       autoSave(cat,S.winner);
       if(!S.isGuest){
         deleteSession().then(()=>{
@@ -2519,12 +2630,38 @@ function renderLanding(app){
     eevee:EEVEELUTIONS,
     pseudo:PSEUDO_LEGENDS,
   };
-  const chHtml=Object.values(CHALLENGES).filter(c=>c.available).map(c=>{
+  const regularChallenges = Object.values(CHALLENGES).filter(c=>c.available && !c.mega);
+  const megaChallenges = Object.values(CHALLENGES).filter(c=>c.available && c.mega);
+  const chHtml=regularChallenges.map(c=>{
     const sprArr=chSprites[c.slug]||c.pool.slice(0,4);
     return '<div class="landing-challenge-card">'
       +'<div class="landing-challenge-card-name">'+c.title+'</div>'
       +'<div class="landing-challenge-card-meta">'+c.eyebrow+'</div>'
       +'<div class="landing-challenge-sprites">'+makeSpr(sprArr)+'</div>'
+      +'</div>';
+  }).join('');
+  // Mega challenges get a hero card above the regular grid
+  const megaSpr=[
+    {id:6,gen:1},     // Charizard
+    {id:150,gen:1},   // Mewtwo
+    {id:250,gen:2},   // Ho-Oh
+    {id:248,gen:2},   // Tyranitar
+    {id:384,gen:3},   // Rayquaza
+    {id:373,gen:3},   // Salamence
+    {id:448,gen:4},   // Lucario
+    {id:483,gen:4},   // Dialga
+  ];
+  const megaHtml=megaChallenges.map(c=>{
+    return '<div class="landing-mega-card">'
+      +'<div class="landing-mega-eyebrow">★ MEGA TOURNAMENT</div>'
+      +'<div class="landing-mega-title">'+c.title+'</div>'
+      +'<div class="landing-mega-stats">'
+        +'<div class="landing-mega-stat"><div class="landing-mega-num">'+c.pool.length+'</div><div class="landing-mega-label">POKÉMON</div></div>'
+        +'<div class="landing-mega-stat"><div class="landing-mega-num">~9</div><div class="landing-mega-label">ROUNDS</div></div>'
+        +'<div class="landing-mega-stat"><div class="landing-mega-num">1</div><div class="landing-mega-label">TRUE FAVOURITE</div></div>'
+      +'</div>'
+      +'<div class="landing-mega-desc">'+c.desc+'</div>'
+      +'<div class="landing-mega-sprites">'+makeSpr(megaSpr)+'</div>'
       +'</div>';
   }).join('');
 
@@ -2609,6 +2746,7 @@ function renderLanding(app){
     +'<div class="landing-challenges-eyebrow">CROSS-GENERATION TOURNAMENTS</div>'
     +'<div class="landing-challenges-title">CHALLENGES</div>'
     +'<div class="landing-challenges-sub">Themed brackets that mix Pokémon from every generation. Pick a category, fight 1v1, find your favourite.</div>'
+    +megaHtml
     +'<div class="landing-challenges-grid">'+chHtml+'</div>'
     +'</div>'
 
@@ -2824,11 +2962,11 @@ function updateLogoSubtitle(){
   const sub=document.getElementById('logo-sub');
   if(!sub) return;
   if(S.section==='challenges'){
-    sub.textContent=' · CHALLENGES MODE · v2.3';
+    sub.textContent=' · CHALLENGES MODE · v2.4';
   } else {
     const map={1:['I','151'],2:['II','100'],3:['III','135'],4:['IV','107']};
     const [gen,count]=map[S.gen]||map[1];
-    sub.textContent=' · GEN '+gen+' · '+count+' POKÉMON · v2.3';
+    sub.textContent=' · GEN '+gen+' · '+count+' POKÉMON · v2.4';
   }
 }
 
@@ -2855,10 +2993,33 @@ async function startChallenge(slug){
   S.busy=true;
   try {
     S.challenge=slug;
+    // Resume saved session for big challenges (only registered users)
+    if(ch.pool.length>BRACKET_THRESHOLD && S.user && !S.isGuest){
+      const {data:rows} = await sb.from('pokemon_sessions')
+        .select('*').eq('user_id',S.user.id).eq('mode','challenge').eq('filter_type',slug).limit(1);
+      const existing = rows && rows.length>0 ? rows[0] : null;
+      if(existing && existing.pool){
+        const isBracket = typeof existing.pool==='object' && !Array.isArray(existing.pool) && existing.pool.__bracket;
+        const hasMore = isBracket ? (existing.pool.__bracket.winners.length+ (existing.pool.__bracket.matches.length-existing.pool.__bracket.currentMatchIndex)*2 > 1) : false;
+        if(hasMore){
+          await resumeSession(existing);
+          return;
+        }
+      }
+    }
     await clearFavorite(categoryFor('challenge',slug));
     const pool=shuffle([...ch.pool]);
-    Object.assign(S,{mode:'challenge',filterType:slug,pool,round:0,total:pool.length-1,
-      streak:0,maxStreak:0,winner:null,screen:'battle',currentView:'game',history:[]});
+    if(pool.length>BRACKET_THRESHOLD){
+      const bracket=buildBracket(pool);
+      bracket.totalPicks=0;
+      Object.assign(S,{mode:'challenge',filterType:slug,pool,
+        round:0,total:bracketTotalMatches(pool.length),
+        streak:0,maxStreak:0,winner:null,
+        screen:'battle',currentView:'game',history:[],bracket});
+    } else {
+      Object.assign(S,{mode:'challenge',filterType:slug,pool,round:0,total:pool.length-1,
+        streak:0,maxStreak:0,winner:null,screen:'battle',currentView:'game',history:[],bracket:null});
+    }
     render();
   } finally {
     S.busy=false;
@@ -2872,9 +3033,12 @@ function renderChallengesMenu(app){
     +'<div class="challenges-grid">';
   Object.values(CHALLENGES).forEach(ch=>{
     const isAvail=ch.available;
+    const isMega=ch.mega;
     const click=isAvail?'onclick="startChallenge(\''+ch.slug+'\')"':'';
-    const cls='challenge-card'+(isAvail?'':' disabled');
-    const badge=isAvail?'':'<div class="challenge-badge">SOON</div>';
+    const cls='challenge-card'+(isAvail?'':' disabled')+(isMega?' mega':'');
+    let badge='';
+    if(!isAvail) badge='<div class="challenge-badge">SOON</div>';
+    else if(isMega) badge='<div class="challenge-badge mega-badge">★ MEGA</div>';
     html+='<button class="'+cls+'" '+click+'>'
       +badge
       +'<div class="challenge-card-body">'
@@ -3003,7 +3167,7 @@ function renderAbout(app){
     +'<div class="legal-p"><strong>Pokémon is a trademark of Nintendo, Game Freak, and The Pokémon Company.</strong> This is a non-commercial fan project, not affiliated with or endorsed by them. All character names, images, and sprites belong to their respective owners and are used here under fair use for fan engagement.</div>'
     +'<div class="legal-h2">CONTACT</div>'
     +'<div class="legal-p">Found a bug? Want to suggest a feature? Email <strong>'+CONTACT_EMAIL+'</strong>.</div>'
-    +'<div class="legal-meta">v2.3 · MADE WITH ♥</div>'
+    +'<div class="legal-meta">v2.4 · MADE WITH ♥</div>'
     +'</div></div>';
 }
 
@@ -3077,7 +3241,7 @@ async function exportUserData(){
       favorites: favRes.data || [],
       sessions: sessRes.data || [],
       service: 'YOUR FAVOURITE POKÉMON',
-      service_version: 'v2.3',
+      service_version: 'v2.4',
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
