@@ -670,6 +670,131 @@ input, textarea, select { font-size:16px; }
 .guest-save-note { font-size:6px; color:var(--fg4); line-height:2.2; margin-bottom:14px; border:1px solid var(--bg3); padding:12px; }
 .result-actions { display:flex; flex-direction:column; gap:8px; margin-top:20px; }
 
+/* ── TEAM REVEAL ── */
+.team-reveal-wrap {
+  flex:1; display:flex; flex-direction:column; align-items:center;
+  padding:32px 18px 80px; gap:14px; text-align:center;
+}
+.team-reveal-eyebrow {
+  font-size:6px; color:var(--fg4); letter-spacing:4px;
+}
+.team-reveal-title {
+  font-size:18px; color:var(--accent); letter-spacing:3px; line-height:1.6;
+}
+.team-reveal-sub {
+  font-size:6px; color:var(--fg5); letter-spacing:2px; line-height:1.8;
+}
+.team-reveal-grid {
+  display:grid; grid-template-columns:repeat(3, 1fr); gap:10px;
+  margin:18px 0 8px; width:100%; max-width:360px;
+}
+.team-slot {
+  background:var(--bg1); border:1px solid var(--border);
+  padding:10px 6px;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  position:relative;
+}
+.team-slot-num {
+  position:absolute; top:4px; left:6px;
+  font-size:5px; color:var(--bg3); letter-spacing:1px;
+}
+.team-slot-sprite {
+  width:48px; height:48px; image-rendering:pixelated; margin-top:4px;
+}
+.team-slot-name {
+  font-size:6px; color:var(--accent); letter-spacing:1px;
+  max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.team-slot-num-id {
+  font-size:5px; color:var(--fg4); letter-spacing:1px;
+}
+.team-reveal-msg {
+  font-size:6px; color:var(--fg5); line-height:2; letter-spacing:1px;
+  max-width:280px; margin:14px 0;
+}
+.btn-primary.big {
+  padding:18px 28px; font-size:9px;
+}
+
+/* Saved team strip — under OVERALL champion in menu */
+.saved-info { flex:1; min-width:0; }
+.saved-team-strip {
+  margin:10px 0 6px;
+  padding:8px 0 0;
+  border-top:1px solid var(--bg2);
+  display:flex; flex-direction:column; gap:6px;
+  width:100%;
+}
+.saved-team-label {
+  font-size:5px; color:var(--bg3); letter-spacing:2px;
+}
+.saved-team-row {
+  display:flex; gap:4px; flex-wrap:wrap;
+}
+.saved-team-cell {
+  width:28px; height:28px;
+  background:var(--bg1); border:1px solid var(--bg3);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.saved-team-cell.ace { border-color:var(--accent); border-width:2px; }
+.saved-team-sprite { width:24px; height:24px; image-rendering:pixelated; }
+.saved-item.has-team { flex-wrap:wrap; }
+
+@media (min-width:700px){
+  .saved-team-cell { width:34px; height:34px; }
+  .saved-team-sprite { width:28px; height:28px; }
+  /* Desktop: inline a fianco — niente wrap, niente border-top */
+  .saved-item.has-team { flex-wrap:nowrap; }
+  .saved-item.has-team .saved-team-strip {
+    margin:0 0 0 auto;
+    padding:0;
+    border-top:none;
+    border-left:1px solid var(--bg2);
+    padding-left:16px;
+    width:auto;
+    flex-shrink:0;
+  }
+}
+
+/* Result team strip — small row of all 6 with ace highlighted */
+.result-team-strip {
+  margin-top:18px; padding-top:14px;
+  border-top:1px solid var(--border);
+  display:flex; flex-direction:column; gap:8px; align-items:center;
+}
+.result-team-label {
+  font-size:5px; color:var(--bg3); letter-spacing:2px;
+}
+.result-team-row {
+  display:flex; gap:5px; flex-wrap:wrap; justify-content:center;
+}
+.result-team-cell {
+  width:34px; height:34px;
+  background:var(--bg1); border:1px solid var(--bg3);
+  display:flex; align-items:center; justify-content:center;
+}
+.result-team-cell.ace {
+  border-color:var(--accent); border-width:2px;
+}
+.result-team-sprite {
+  width:28px; height:28px; image-rendering:pixelated;
+}
+
+@media (min-width:700px){
+  .team-reveal-wrap { padding:64px 32px 96px; }
+  .team-reveal-title { font-size:28px; }
+  .team-reveal-sub { font-size:8px; }
+  .team-reveal-grid { grid-template-columns:repeat(6, 1fr); max-width:600px; gap:12px; }
+  .team-slot { padding:14px 8px; }
+  .team-slot-sprite { width:56px; height:56px; }
+  .team-slot-name { font-size:7px; }
+  .team-slot-num-id { font-size:6px; }
+  .team-reveal-msg { font-size:8px; }
+  .result-team-cell { width:42px; height:42px; }
+  .result-team-sprite { width:34px; height:34px; }
+}
+
 /* ── LEADERBOARD ── */
 .lb-wrap { flex:1; padding:20px 16px; }
 .lb-top { margin-bottom:20px; }
@@ -1104,7 +1229,7 @@ input, textarea, select { font-size:16px; }
 <!-- SITE HEADER -->
 <header class="site-header">
   <div class="logo">
-    YOUR FAVOURITE POKÉMON<span id="logo-sub"> · GEN I · 151 POKÉMON · v2.6</span>
+    YOUR FAVOURITE POKÉMON<span id="logo-sub"> · GEN I · 151 POKÉMON · v2.7</span>
   </div>
   <div class="header-right">
     <div class="header-nav" id="header-nav"></div>
@@ -1622,6 +1747,11 @@ let S = {
   lbView:'pokemon', lbMode:'overall',
   lbData:null,
   activeSessions:[], // in-progress sessions from DB
+  bracket:null,
+  team:null,
+  teamPhase:false,
+  teams:{},  // category → array of 6 members
+  legalPrev:null,
 };
 
 function currentPKM() { return S.gen===1 ? PKM1 : S.gen===2 ? PKM2 : S.gen===3 ? PKM3 : PKM4; }
@@ -1655,6 +1785,21 @@ async function clearFavorite(cat){
 
 async function migrateGuestPicksToUser(uid, picks){
   for(const [cat,p] of Object.entries(picks||{}).filter(([,p])=>p&&p.id)) await saveFav(uid,cat,p);
+  // also migrate guest teams (cached in localStorage)
+  try {
+    const guestTeams = loadGuestTeams();
+    for(const [cat, members] of Object.entries(guestTeams||{})){
+      if(Array.isArray(members) && members.length>1){
+        await sb.from('pokemon_teams').upsert({
+          user_id: uid,
+          category: cat,
+          members: members,
+          updated_at: new Date().toISOString(),
+        }, {onConflict:'user_id,category'});
+      }
+    }
+    clearGuestTeams();
+  } catch(e){ console.warn('migrate teams failed:', e); }
 }
 
 
@@ -1671,6 +1816,15 @@ function switchGen(g) {
 }
 
 // ── SUPABASE ──
+async function loadTeams(uid) {
+  const {data,error} = await sb.from('pokemon_teams')
+    .select('category,members').eq('user_id',uid);
+  if(error) { console.warn('loadTeams error:', error.message); return {}; }
+  const out = {};
+  (data||[]).forEach(r => { out[r.category] = r.members; });
+  return out;
+}
+
 async function loadFavs(uid) {
   const {data} = await sb.from('pokemon_favorites').select('*').eq('user_id',uid);
   const f={};
@@ -1885,8 +2039,8 @@ async function doAuth() {
         }
         if(r.data.session&&r.data.user){
           S.user=r.data.user;S.isGuest=false;S.guestLocalOnly=false;
-          S.profile=await loadProfile(S.user.id);S.favorites=await loadFavs(S.user.id);S.activeSessions=await loadActiveSessions(S.user.id);
-          clearGuestPicks();S.screen='menu';S.currentView='game';S.guestAuthReturn=null;S.busy=false;render();return;
+          S.profile=await loadProfile(S.user.id);S.favorites=await loadFavs(S.user.id);S.teams=await loadTeams(S.user.id);S.activeSessions=await loadActiveSessions(S.user.id);
+          clearGuestPicks();clearGuestTeams();S.screen='menu';S.currentView='game';S.guestAuthReturn=null;S.busy=false;render();return;
         }
         msg.innerHTML='▶ ACCOUNT CREATED!<br><br>CHECK YOUR INBOX FOR A CONFIRMATION EMAIL.<br>★ CHECK SPAM FOLDER TOO — FIRST EMAILS OFTEN LAND THERE.<br><br>CLICK THE LINK, THEN LOG IN.';msg.className='auth-msg';S.busy=false;return;
       }
@@ -1918,8 +2072,8 @@ async function doAuth() {
     msg.className='auth-msg error';return;
   }
   try{const nick=localStorage.getItem('pending_nick');if(nick){await upsertProfile(S.user.id,nick);localStorage.removeItem('pending_nick');}}catch(e){}
-  S.profile=await loadProfile(S.user.id);S.favorites=await loadFavs(S.user.id);S.activeSessions=await loadActiveSessions(S.user.id);
-  clearGuestPicks();S.screen='menu';S.currentView='game';S.guestAuthReturn=null;render();
+  S.profile=await loadProfile(S.user.id);S.favorites=await loadFavs(S.user.id);S.teams=await loadTeams(S.user.id);S.activeSessions=await loadActiveSessions(S.user.id);
+  clearGuestPicks();clearGuestTeams();S.screen='menu';S.currentView='game';S.guestAuthReturn=null;render();
 }
 
 function cancelAuth(){
@@ -2019,24 +2173,30 @@ function handleLogout(){
 // Unified logout — cleans up Supabase session and resets all user state.
 // Guest picks remain in localStorage (recovered on next continueAsGuest or login).
 async function exitToLanding(){
-  if(S.user && !S.guestLocalOnly){
+  if(S.user){
     try { await sb.auth.signOut(); } catch(e){}
   }
   S.user=null;
   S.profile=null;
   S.favorites={};
+  S.teams={};
   S.activeSessions=[];
   S.isGuest=false;
   S.guestLocalOnly=false;
   S.userMenuOpen=false;
   S.confirmDialog=null;
   S.guestAuthReturn=null;
-  // Reset navigation
+  S.guestTransfer=null;
+  // Reset navigation + battle state
   S.screen='landing';
   S.currentView='game';
   S.section='generations';
   S.lbData=null;S.lbScope=null;
   S.pool=[];S.round=0;S.total=0;S.streak=0;S.maxStreak=0;S.winner=null;S.history=[];
+  S.bracket=null;S.team=null;S.teamPhase=false;
+  S.mode=null;S.filterType=null;S.challenge=null;
+  // Body class to landing default
+  document.body.className=S.gen===1?'gen1':S.gen===2?'gen2':S.gen===3?'gen3':'gen4';
   render();
 }
 
@@ -2093,6 +2253,7 @@ async function continueAsGuest(){
     S.user=session.user;
     S.profile=null;
     S.favorites=loadGuestPicks();
+    S.teams=loadGuestTeams();
     S.activeSessions=[];
     S.isGuest=true;
     S.guestLocalOnly=false;
@@ -2121,6 +2282,14 @@ async function continueAsGuest(){
 // Use bracket mode when pool > 10 (more than 10 Pokémon makes linear elimination tedious).
 // Challenges always use linear (small pools).
 const BRACKET_THRESHOLD = 10;
+const TEAM_SIZE = 6;
+// Modes that activate the "build team of 6" flow before final 1-on-1.
+// Type battles stay single-winner. Small challenges stay linear.
+function useTeamFlowFor(mode, filterType){
+  if(mode === 'overall') return true;
+  if(mode === 'challenge' && filterType === 'worldchamp') return true;
+  return false;
+}
 function useBracketFor(poolLen, mode){
   // Bracket activates for any pool >10 except small challenges (which stay linear).
   // The startChallenge function handles its own decision.
@@ -2187,18 +2356,49 @@ function bracketAdvanceRound(b){
   // current matches all done; b.winners has all survivors of this round
   if(b.winners.length<=1) return; // end
   const survivors = b.winners.slice();
+  const N = survivors.length;
+  
+  // TEAM MODE: when about to drop below TEAM_SIZE+1, build a custom round
+  // that produces EXACTLY TEAM_SIZE survivors (instead of N/2).
+  const inTeamMode = useTeamFlowFor(S.mode, S.filterType);
+  if(inTeamMode && N > TEAM_SIZE && N <= TEAM_SIZE*2){
+    // We need (N - TEAM_SIZE) matches and (2*TEAM_SIZE - N) byes to land exactly on TEAM_SIZE.
+    const matchesNeeded = N - TEAM_SIZE;
+    const byesNeeded = N - 2*matchesNeeded;
+    // Pair the first 2*matchesNeeded survivors into matchesNeeded matches; the rest go BYE.
+    const nextMatches = [];
+    for(let i=0; i<2*matchesNeeded; i+=2){
+      nextMatches.push([survivors[i], survivors[i+1]]);
+    }
+    const byes = survivors.slice(2*matchesNeeded);
+    b.roundIndex++;
+    b.matches = nextMatches;
+    b.currentMatchIndex = 0;
+    b.winners = byes.slice();        // BYE survivors auto-advance
+    b.survivors = byes.slice();
+    return;
+  }
+  
+  // STANDARD: pair adjacent survivors; odd one gets a BYE.
   const nextMatches = [];
-  for(let i=0; i<survivors.length; i+=2){
-    if(i+1<survivors.length){
+  for(let i=0; i<N; i+=2){
+    if(i+1<N){
       nextMatches.push([survivors[i], survivors[i+1]]);
     }
   }
-  const byeWinner = survivors.length%2===1 ? [survivors[survivors.length-1]] : [];
+  const byeWinner = N%2===1 ? [survivors[N-1]] : [];
   b.roundIndex++;
   b.matches = nextMatches;
   b.currentMatchIndex = 0;
   b.winners = byeWinner;
   b.survivors = [...byeWinner];
+}
+
+// In team mode, check if we've reached the team size exactly.
+// We freeze when winners.length == TEAM_SIZE (or fewer if BYE forced it lower).
+function bracketShouldFreezeAsTeam(b){
+  if(b.winners.length<=1) return false; // can't freeze with 1 — that's just the champion
+  return b.winners.length<=TEAM_SIZE;
 }
 
 async function startGame(mode,ft){
@@ -2259,6 +2459,68 @@ async function startGame(mode,ft){
   }
 }
 
+// ── TEAM PHASE ── linear elimination of the 6 chosen pokémon to find the ace
+function startTeamPhase(){
+  console.log('[startTeamPhase] called, team:', S.team, 'busy:', S.busy, 'screen:', S.screen);
+  // Reset busy flag (might be lingering from chooseBracket)
+  S.busy=false;
+  if(!S.team || S.team.length<2){
+    console.warn('[startTeamPhase] no/small team, returning');
+    if(S.team && S.team.length===1){
+      S.winner=S.team[0];
+      const cat=S.mode==='challenge'?'ch_'+S.filterType:(genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall'));
+      autoSave(cat,S.winner);
+      S.screen='result';
+      render();
+      return;
+    }
+    console.warn('startTeamPhase called but no team');
+    return;
+  }
+  S.teamPhase=true;
+  // Setup linear elimination over the team — shuffle so order isn't predictable
+  const pool=shuffle([...S.team]);
+  S.pool=pool;
+  S.round=0;
+  S.total=pool.length-1;
+  S.streak=0;
+  S.maxStreak=0;
+  S.winner=null;
+  S.history=[];
+  S.bracket=null;
+  S.screen='battle';
+  S.currentView='game';
+  render();
+}
+
+async function saveTeam(category, team){
+  // Always cache locally first so UI updates immediately
+  const members = team.map(p => ({id:p.id, name:p.name, types:p.types, gen:p.gen||genFromId(p.id)}));
+  if(!S.teams) S.teams={};
+  S.teams[category] = members;
+  // Persist to localStorage for guests (so they survive reload)
+  if(S.isGuest) saveGuestTeams();
+  // Save to DB if we have a user (registered or anonymous-signed-in guest)
+  if(!S.user || S.guestLocalOnly) return;
+  try {
+    const {error} = await sb.from('pokemon_teams').upsert({
+      user_id: S.user.id,
+      category: category,
+      members: members,
+      updated_at: new Date().toISOString(),
+    }, {onConflict:'user_id,category'});
+    if(error) console.warn('saveTeam DB error:', error.message);
+  } catch(e){
+    console.warn('saveTeam failed:', e);
+  }
+}
+
+// Persist guest teams to localStorage
+function guestTeamsKey(){ return 'poke_guest_teams_v1'; }
+function loadGuestTeams(){ try{return JSON.parse(localStorage.getItem(guestTeamsKey())||'{}')||{};}catch(e){return {};} }
+function saveGuestTeams(){ if(!S.isGuest) return; try{localStorage.setItem(guestTeamsKey(), JSON.stringify(S.teams||{}));}catch(e){} }
+function clearGuestTeams(){ try{localStorage.removeItem(guestTeamsKey());}catch(e){} }
+
 async function choose(idx){
   if(S.busy)return;S.busy=true;
   // BRACKET MODE
@@ -2301,6 +2563,8 @@ async function choose(idx){
         S.activeSessions=S.activeSessions.filter(s=>!(s.gen===S.gen&&s.mode===S.mode&&(s.filter_type||'__none__')===(S.filterType||'__none__')));
       });
     }
+    // If we were in the team phase (linear elimination of 6 chosen ones), reset
+    if(S.teamPhase){ S.teamPhase=false; }
     S.screen='result';
     S.busy=false;render();
     return;
@@ -2356,6 +2620,20 @@ async function choose(idx){
         });
       }
       S.screen='result';
+      S.busy=false;render();
+      return;
+    }
+    // TEAM MODE: when survivors ≤ 6, freeze team and show interstitial
+    if(useTeamFlowFor(S.mode, S.filterType) && bracketShouldFreezeAsTeam(b)){
+      S.team = b.winners.slice(); // 2..6 survivors become the team
+      S.bracket = null;
+      // Save team to DB (overwrites any previous team for this category)
+      const cat=S.mode==='challenge'?'ch_'+S.filterType:(genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall'));
+      saveTeam(cat, S.team);
+      if(!S.isGuest){
+        // Don't delete session yet — we still need to save the linear team-phase progress
+      }
+      S.screen='team_reveal';
       S.busy=false;render();
       return;
     }
@@ -2786,9 +3064,49 @@ async function shareStory(){
   txt(winner.name,sy+spriteSize+180,t.accent,72,4);
   txt(winner.types.join(' / ').toUpperCase(),sy+spriteSize+260,t.fg,22,4);
 
+  // ── TEAM STRIP (if a team exists for this category) ──
+  let teamRowBottomY = sy+spriteSize+340; // default: where the next content would start
+  const cat=S.mode==='challenge'?'ch_'+S.filterType:(genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall'));
+  const team=(S.teams||{})[cat];
+  if(team && team.length>1){
+    // Load all team sprites in parallel
+    const teamImgs = await Promise.all(team.map(p => new Promise(resolve => {
+      const im = new Image();
+      im.crossOrigin = 'anonymous';
+      im.onload = () => resolve({img:im, p});
+      im.onerror = () => resolve({img:null, p});
+      im.src = sprite(p.id, p.gen||genFromId(p.id));
+    })));
+    // Layout: team label + row of 6 cells centered
+    const labelY = sy+spriteSize+340;
+    txt('★ YOUR TEAM ★', labelY, t.fg4, 22, 4);
+    const cellSize = 130;
+    const gap = 14;
+    const totalWidth = teamImgs.length*cellSize + (teamImgs.length-1)*gap;
+    const startX = W/2 - totalWidth/2;
+    const rowY = labelY + 70;
+    teamImgs.forEach((entry, i) => {
+      const cx = startX + i*(cellSize+gap);
+      const isAce = entry.p.id === winner.id;
+      // cell background
+      ctx.fillStyle = t.bg2;
+      ctx.fillRect(cx, rowY, cellSize, cellSize);
+      // cell border (thicker if ace)
+      ctx.strokeStyle = isAce ? t.accent : t.fg4;
+      ctx.lineWidth = isAce ? 6 : 2;
+      ctx.strokeRect(cx, rowY, cellSize, cellSize);
+      // sprite
+      if(entry.img && entry.img.complete && entry.img.naturalWidth>0){
+        const pad = 12;
+        ctx.drawImage(entry.img, cx+pad, rowY+pad, cellSize-pad*2, cellSize-pad*2);
+      }
+    });
+    teamRowBottomY = rowY + cellSize;
+  }
+
   // ── FOOTER (URL) ──
   txt('YOUR FAVOURITE POKÉMON',H-160,t.fg,18,3);
-  txt('TIGREDICARTA-POKE.STATIC.HF.SPACE',H-110,t.fg4,14,2);
+  txt('POKEFAVOURITE.VERCEL.APP',H-110,t.fg4,14,2);
 
   // ── SHARE / DOWNLOAD ──
   const filename='my-favourite-'+winner.name.toLowerCase()+'.png';
@@ -2846,11 +3164,11 @@ function updateLogoSubtitle(){
   const sub=document.getElementById('logo-sub');
   if(!sub) return;
   if(S.section==='challenges'){
-    sub.textContent=' · CHALLENGES MODE · v2.6';
+    sub.textContent=' · CHALLENGES MODE · v2.7';
   } else {
     const map={1:['I','151'],2:['II','100'],3:['III','135'],4:['IV','107']};
     const [gen,count]=map[S.gen]||map[1];
-    sub.textContent=' · GEN '+gen+' · '+count+' POKÉMON · v2.6';
+    sub.textContent=' · GEN '+gen+' · '+count+' POKÉMON · v2.7';
   }
 }
 
@@ -3051,7 +3369,7 @@ function renderAbout(app){
     +'<div class="legal-p"><strong>Pokémon is a trademark of Nintendo, Game Freak, and The Pokémon Company.</strong> This is a non-commercial fan project, not affiliated with or endorsed by them. All character names, images, and sprites belong to their respective owners and are used here under fair use for fan engagement.</div>'
     +'<div class="legal-h2">CONTACT</div>'
     +'<div class="legal-p">Found a bug? Want to suggest a feature? Email <strong>'+CONTACT_EMAIL+'</strong>.</div>'
-    +'<div class="legal-meta">v2.6 · MADE WITH ♥</div>'
+    +'<div class="legal-meta">v2.7 · MADE WITH ♥</div>'
     +'</div></div>';
 }
 
@@ -3125,7 +3443,7 @@ async function exportUserData(){
       favorites: favRes.data || [],
       sessions: sessRes.data || [],
       service: 'YOUR FAVOURITE POKÉMON',
-      service_version: 'v2.6',
+      service_version: 'v2.7',
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
@@ -3225,14 +3543,30 @@ function render(){
   if(S.screen==='menu'){
     const prefix=genPrefix();
     const favs=Object.entries(S.favorites).filter(([k])=>k.startsWith(prefix));
+    // Get team for overall, if exists
+    const overallTeamCat=prefix+'overall';
+    const overallTeam=(S.teams||{})[overallTeamCat];
+    const teamStripHtml=(overallTeam && overallTeam.length>1)
+      ? '<div class="saved-team-strip"><div class="saved-team-label">★ YOUR TEAM</div><div class="saved-team-row">'
+        +overallTeam.map(p=>{
+          const useGen=p.gen||genFromId(p.id);
+          // Mark the ace if it matches the favorite
+          const ace=S.favorites[overallTeamCat];
+          const isAce=ace && ace.id===p.id;
+          return '<div class="saved-team-cell'+(isAce?' ace':'')+'">'+spriteWithFallback(p.id,useGen,'saved-team-sprite','')+'</div>';
+        }).join('')
+        +'</div></div>'
+      : '';
     const savedListHtml=favs.length
       ?favs.map(([k,p])=>{
           const label=k.replace(prefix,'').replace('overall','OVERALL').replace('type_','').toUpperCase();
-          return '<div class="saved-item">'
+          const showTeam=(k===overallTeamCat) && teamStripHtml;
+          return '<div class="saved-item'+(showTeam?' has-team':'')+'">'
             +spriteWithFallback(p.id,g,'saved-sprite','')
-            +'<div><div class="saved-cat">'+label+'</div>'
+            +'<div class="saved-info"><div class="saved-cat">'+label+'</div>'
             +'<div class="saved-name">'+p.name+'</div>'
             +'<div class="saved-type">'+((p.types||[]).join(' / '))+'</div></div>'
+            +(showTeam?teamStripHtml:'')
             +'</div>';
         }).join('')
       :'<div class="no-saved">NO<br>FAVOURITES<br>YET.</div>';
@@ -3382,6 +3716,30 @@ function render(){
     return;
   }
 
+  if(S.screen==='team_reveal'){
+    const team=S.team||[];
+    const ml=S.mode==='type'?'TYPE '+S.filterType.toUpperCase():(S.mode==='challenge'?(CHALLENGES[S.filterType]?CHALLENGES[S.filterType].title:'CHALLENGE'):'OVERALL');
+    const trainerName=(S.profile?.display_name||(S.user?S.user.email.split('@')[0]:'TRAINER')).toUpperCase();
+    const teamCardsHtml=team.map((p,i)=>{
+      const useGen=p.gen||genFromId(p.id);
+      return '<div class="team-slot">'
+        +'<div class="team-slot-num">0'+(i+1)+'</div>'
+        +spriteWithFallback(p.id,useGen,'team-slot-sprite','')
+        +'<div class="team-slot-name">'+p.name+'</div>'
+        +'<div class="team-slot-num-id">#'+String(p.id).padStart(3,'0')+'</div>'
+        +'</div>';
+    }).join('');
+    app.innerHTML=genSwitcherHTML()+'<div class="team-reveal-wrap">'
+      +'<div class="team-reveal-eyebrow">★ TRAINER CARD</div>'
+      +'<div class="team-reveal-title">YOUR TEAM</div>'
+      +'<div class="team-reveal-sub">'+trainerName+' · '+ml+'</div>'
+      +'<div class="team-reveal-grid">'+teamCardsHtml+'</div>'
+      +'<div class="team-reveal-msg">YOU MADE IT TO THE TOP '+team.length+'.<br>NOW CROWN YOUR ACE — ONE LAST BATTLE.</div>'
+      +'<button class="btn-primary big" onclick="console.log(\'[btn click] CROWN YOUR ACE clicked\');startTeamPhase()">▶ CROWN YOUR ACE</button>'
+      +'</div>';
+    return;
+  }
+
   if(S.screen==='result'){
     const p=S.winner;
     const ml=S.mode==='type'?'TYPE '+S.filterType.toUpperCase():'OVERALL';
@@ -3392,6 +3750,14 @@ function render(){
       +'<div class="result-name">'+p.name+'</div>'
       +'<div class="result-num">#'+String(p.id).padStart(3,'0')+'</div>'
       +'<div class="result-badge">'+p.types.join(' / ')+'</div>'
+      +(S.team&&S.team.length>1?'<div class="result-team-strip">'
+        +'<div class="result-team-label">★ YOUR FULL TEAM</div>'
+        +'<div class="result-team-row">'+S.team.map(tp=>{
+          const useGen=tp.gen||genFromId(tp.id);
+          const isAce=tp.id===p.id;
+          return '<div class="result-team-cell'+(isAce?' ace':'')+'">'+spriteWithFallback(tp.id,useGen,'result-team-sprite','')+'</div>';
+        }).join('')+'</div>'
+      +'</div>':'')
       +'</div>'
       +'<div class="result-right">'
       +'<div class="result-actions">'
@@ -3535,6 +3901,7 @@ function goHome(){
   S.filterType=null;
   S.pool=[];
   S.history=[];
+  S.bracket=null;S.team=null;S.teamPhase=false;
   updateLogoSubtitle();
   if(S.user && !S.isGuest) loadActiveSessions(S.user.id).then(s=>{S.activeSessions=s;render();});
   render();
@@ -3581,6 +3948,7 @@ async function init(){
     } else {
       S.profile=await loadProfile(S.user.id);
       S.favorites=await loadFavs(S.user.id);
+      S.teams=await loadTeams(S.user.id);
       S.activeSessions=await loadActiveSessions(S.user.id);
     }
     S.screen='menu';S.currentView='game';
