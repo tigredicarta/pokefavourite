@@ -59,7 +59,7 @@ body.challenges::after {
   position:relative; -webkit-appearance:none; border-radius:0;
   font-family:var(--px); color:var(--fg6); text-align:left;
   transition:background 0.1s, border-color 0.1s;
-  min-height:130px; justify-content:space-between;
+  min-height:170px; justify-content:space-between;
 }
 .challenge-card-body { display:flex; flex-direction:column; gap:6px; }
 .challenge-card-footer { margin-top:10px; }
@@ -433,10 +433,9 @@ input, textarea, select { font-size:16px; }
 .menu-btn:active { background:var(--bg2); border-color:var(--fg5); color:var(--accent); }
 .menu-btn small { display:block; font-size:6px; color:var(--fg4); margin-top:8px; letter-spacing:1px; }
 .menu-pick-preview {
-  display:flex; align-items:center; gap:10px; margin-top:12px; padding-top:10px;
-  border-top:1px solid var(--bg2); min-height:34px;
+  display:flex; align-items:center; gap:6px; margin-top:6px;
 }
-.menu-pick-preview .preview-sprite { width:34px; height:34px; image-rendering:pixelated; flex-shrink:0; }
+.menu-pick-preview .preview-sprite { width:24px; height:24px; image-rendering:pixelated; flex-shrink:0; }
 .preview-copy { display:flex; flex-direction:column; gap:4px; min-width:0; }
 /* Pick preview — compact pill */
 .preview-name {
@@ -444,14 +443,13 @@ input, textarea, select { font-size:16px; }
   overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
 .type-pick-preview, .challenge-pick-preview {
-  display:inline-flex; align-items:center; gap:8px;
-  background:rgba(0,0,0,0.25); border:1px solid var(--bg3);
-  padding:5px 12px 5px 5px; max-width:100%;
+  display:flex; align-items:center; gap:6px;
+  margin-top:6px; max-width:100%;
 }
 .type-pick-preview.empty, .challenge-pick-preview.empty { display:none; }
 .type-pick-preview .preview-sprite,
 .challenge-pick-preview .preview-sprite {
-  width:34px; height:34px; image-rendering:pixelated; flex-shrink:0;
+  width:24px; height:24px; image-rendering:pixelated; flex-shrink:0;
 }
 
 
@@ -517,7 +515,7 @@ input, textarea, select { font-size:16px; }
   font-family:var(--px); font-size:6px; padding:14px 12px; cursor:pointer;
   text-align:left; -webkit-appearance:none; border-radius:0;
   display:flex; flex-direction:column; gap:8px;
-  min-height:96px;
+  min-height:140px;
 }
 .type-btn-head { display:flex; align-items:center; justify-content:space-between; gap:10px; }
 .type-btn-meta { display:flex; flex-direction:column; gap:6px; flex:1; min-width:0; }
@@ -959,12 +957,12 @@ input, textarea, select { font-size:16px; }
   .menu-btn:hover { background:var(--bg2); border-color:var(--fg5); color:var(--accent); }
   .menu-btn:hover::after { color:var(--accent); }
   .menu-btn small { font-size:6px; }
-  .menu-pick-preview .preview-sprite { width:42px; height:42px; }
+  .menu-pick-preview .preview-sprite { width:32px; height:32px; }
   .preview-label { font-size:5px; }
   .preview-name { font-size:7px; }
-  .type-pick-preview, .challenge-pick-preview { padding:8px 14px 8px 8px; gap:10px; }
+  .type-pick-preview, .challenge-pick-preview { gap:8px; margin-top:8px; }
   .type-pick-preview .preview-sprite,
-  .challenge-pick-preview .preview-sprite { width:44px; height:44px; }
+  .challenge-pick-preview .preview-sprite { width:32px; height:32px; }
   .type-pick-preview .preview-name,
   .challenge-pick-preview .preview-name { font-size:8px; }
 
