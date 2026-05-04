@@ -1627,7 +1627,7 @@ let S = {
 };
 
 function currentPKM() { return S.gen===1 ? PKM1 : S.gen===2 ? PKM2 : S.gen===3 ? PKM3 : PKM4; }
-function genPrefix() { return S.gen===1 ? 'g1_' : S.gen===2 ? 'g2_' : 'g3_'; }
+function genPrefix() { return S.gen===1 ? 'g1_' : S.gen===2 ? 'g2_' : S.gen===3 ? 'g3_' : 'g4_'; }
 function guestStorageKey(){ return 'poke_guest_picks_v1'; }
 function loadGuestPicks(){ try{return JSON.parse(localStorage.getItem(guestStorageKey())||'{}')||{};}catch(e){return {};} }
 function saveGuestPicks(){ if(!S.isGuest) return; try{localStorage.setItem(guestStorageKey(), JSON.stringify(S.favorites||{}));}catch(e){} }
