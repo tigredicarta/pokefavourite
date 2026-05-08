@@ -115,7 +115,18 @@ body.gen3::after {
   --fg4:#5a78a8; --fg5:#8ca8d4; --fg6:#c0d4ec; --accent:#7cc8ff;
   --border:#1a2540; --scanline:rgba(120,180,240,0.06);
 }
+.gen5 {
+  --bg0:#06070a; --bg1:#0e0f14; --bg2:#1d1f28; --bg3:#4a4e58;
+  --fg4:#7c828c; --fg5:#a8aeb8; --fg6:#e8e8ec; --accent:#ff5050;
+  --border:#1d1f28; --scanline:rgba(255,255,255,0.04);
+}
 body.gen4::after {
+  content:''; position:fixed; inset:0; pointer-events:none; z-index:999;
+  background:
+    radial-gradient(ellipse 70% 50% at 30% 30%, rgba(120,180,255,0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 70% at 80% 80%, rgba(180,200,230,0.04) 0%, transparent 60%);
+}
+body.gen5::after {
   content:''; position:fixed; inset:0; pointer-events:none; z-index:999;
   background:
     radial-gradient(ellipse 70% 50% at 30% 30%, rgba(120,180,255,0.07) 0%, transparent 70%),
@@ -421,6 +432,60 @@ input, textarea, select { font-size:16px; }
 /* ── MENU ── */
 .menu-wrap { flex:1; display:flex; flex-direction:column; }
 .menu-left { background:var(--bg1); padding:28px 16px 24px; border-bottom:1px solid var(--border); }
+
+/* Regional showcase */
+.region-showcase {
+  border:1px solid var(--border);
+  background:rgba(0,0,0,0.15);
+  padding:18px 16px;
+  margin-bottom:24px;
+  display:flex; flex-direction:column; gap:12px;
+}
+.region-eyebrow {
+  font-size:7px; color:var(--accent); letter-spacing:4px;
+}
+.region-meta-row {
+  display:flex; gap:24px;
+  border-top:1px solid var(--bg2);
+  border-bottom:1px solid var(--bg2);
+  padding:10px 0;
+}
+.region-meta-stat { display:flex; flex-direction:column; gap:5px; }
+.region-meta-num {
+  font-size:11px; color:var(--accent); letter-spacing:1px;
+}
+.region-meta-label {
+  font-size:5px; color:var(--bg3); letter-spacing:2px;
+}
+.region-games {
+  font-size:6px; color:var(--fg5); letter-spacing:2px; line-height:1.6;
+}
+.region-iconic-label {
+  font-size:5px; color:var(--bg3); letter-spacing:2px; margin-top:4px;
+}
+.region-iconic-row {
+  display:flex; gap:4px; flex-wrap:wrap;
+}
+.region-iconic-cell {
+  width:38px; height:38px;
+  background:var(--bg0); border:1px solid var(--bg2);
+  display:flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.region-iconic-sprite {
+  width:32px; height:32px; image-rendering:pixelated; opacity:0.95;
+}
+@media (min-width:700px){
+  .region-showcase { padding:24px 22px; gap:14px; margin-bottom:32px; }
+  .region-eyebrow { font-size:8px; }
+  .region-meta-row { gap:36px; padding:14px 0; }
+  .region-meta-num { font-size:14px; }
+  .region-meta-label { font-size:6px; }
+  .region-games { font-size:7px; }
+  .region-iconic-label { font-size:6px; }
+  .region-iconic-cell { width:48px; height:48px; }
+  .region-iconic-sprite { width:40px; height:40px; }
+}
 .menu-hero { font-size:10px; color:var(--accent); line-height:2.2; margin-bottom:6px; letter-spacing:1px; }
 .menu-sub { font-size:7px; color:var(--fg4); line-height:2.0; margin-bottom:24px; }
 .menu-btn {
@@ -898,6 +963,7 @@ input, textarea, select { font-size:16px; }
 .gen2-card { background:#0d0b1a; --accent:#ffe040; --fg4:#6a5acd; --fg5:#c8a800; }
 .gen3-card { background:#0f0a08; --accent:#ff4800; --fg4:#c05020; --fg5:#e87828; }
 .gen4-card { background:#080c12; --accent:#7cc8ff; --fg4:#5a78a8; --fg5:#8ca8d4; }
+.gen5-card { background:#0a0608; --accent:#ff5050; --fg4:#a06868; --fg5:#c89898; }
 
 .landing-coming {
   display:flex; flex-direction:column;
@@ -1229,7 +1295,7 @@ input, textarea, select { font-size:16px; }
 <!-- SITE HEADER -->
 <header class="site-header">
   <div class="logo">
-    YOUR FAVOURITE POKÉMON<span id="logo-sub"> · GEN I · 151 POKÉMON · v2.7</span>
+    YOUR FAVOURITE POKÉMON<span id="logo-sub"> · GEN I · 151 POKÉMON · v2.8</span>
   </div>
   <div class="header-right">
     <div class="header-nav" id="header-nav"></div>
@@ -1495,6 +1561,87 @@ const PKM4 = [
   {id:493,name:"ARCEUS",types:["normal"]},
 ];
 
+const PKM5 = [
+  {id:494,name:"VICTINI",types:["psychic","fire"]},
+  {id:495,name:"SNIVY",types:["grass"]},{id:496,name:"SERVINE",types:["grass"]},{id:497,name:"SERPERIOR",types:["grass"]},
+  {id:498,name:"TEPIG",types:["fire"]},{id:499,name:"PIGNITE",types:["fire","fighting"]},{id:500,name:"EMBOAR",types:["fire","fighting"]},
+  {id:501,name:"OSHAWOTT",types:["water"]},{id:502,name:"DEWOTT",types:["water"]},{id:503,name:"SAMUROTT",types:["water"]},
+  {id:504,name:"PATRAT",types:["normal"]},{id:505,name:"WATCHOG",types:["normal"]},
+  {id:506,name:"LILLIPUP",types:["normal"]},{id:507,name:"HERDIER",types:["normal"]},{id:508,name:"STOUTLAND",types:["normal"]},
+  {id:509,name:"PURRLOIN",types:["dark"]},{id:510,name:"LIEPARD",types:["dark"]},
+  {id:511,name:"PANSAGE",types:["grass"]},{id:512,name:"SIMISAGE",types:["grass"]},
+  {id:513,name:"PANSEAR",types:["fire"]},{id:514,name:"SIMISEAR",types:["fire"]},
+  {id:515,name:"PANPOUR",types:["water"]},{id:516,name:"SIMIPOUR",types:["water"]},
+  {id:517,name:"MUNNA",types:["psychic"]},{id:518,name:"MUSHARNA",types:["psychic"]},
+  {id:519,name:"PIDOVE",types:["normal","flying"]},{id:520,name:"TRANQUILL",types:["normal","flying"]},{id:521,name:"UNFEZANT",types:["normal","flying"]},
+  {id:522,name:"BLITZLE",types:["electric"]},{id:523,name:"ZEBSTRIKA",types:["electric"]},
+  {id:524,name:"ROGGENROLA",types:["rock"]},{id:525,name:"BOLDORE",types:["rock"]},{id:526,name:"GIGALITH",types:["rock"]},
+  {id:527,name:"WOOBAT",types:["psychic","flying"]},{id:528,name:"SWOOBAT",types:["psychic","flying"]},
+  {id:529,name:"DRILBUR",types:["ground"]},{id:530,name:"EXCADRILL",types:["ground","steel"]},
+  {id:531,name:"AUDINO",types:["normal"]},
+  {id:532,name:"TIMBURR",types:["fighting"]},{id:533,name:"GURDURR",types:["fighting"]},{id:534,name:"CONKELDURR",types:["fighting"]},
+  {id:535,name:"TYMPOLE",types:["water"]},{id:536,name:"PALPITOAD",types:["water","ground"]},{id:537,name:"SEISMITOAD",types:["water","ground"]},
+  {id:538,name:"THROH",types:["fighting"]},{id:539,name:"SAWK",types:["fighting"]},
+  {id:540,name:"SEWADDLE",types:["bug","grass"]},{id:541,name:"SWADLOON",types:["bug","grass"]},{id:542,name:"LEAVANNY",types:["bug","grass"]},
+  {id:543,name:"VENIPEDE",types:["bug","poison"]},{id:544,name:"WHIRLIPEDE",types:["bug","poison"]},{id:545,name:"SCOLIPEDE",types:["bug","poison"]},
+  {id:546,name:"COTTONEE",types:["grass","fairy"]},{id:547,name:"WHIMSICOTT",types:["grass","fairy"]},
+  {id:548,name:"PETILIL",types:["grass"]},{id:549,name:"LILLIGANT",types:["grass"]},
+  {id:550,name:"BASCULIN",types:["water"]},
+  {id:551,name:"SANDILE",types:["ground","dark"]},{id:552,name:"KROKOROK",types:["ground","dark"]},{id:553,name:"KROOKODILE",types:["ground","dark"]},
+  {id:554,name:"DARUMAKA",types:["fire"]},{id:555,name:"DARMANITAN",types:["fire"]},
+  {id:556,name:"MARACTUS",types:["grass"]},
+  {id:557,name:"DWEBBLE",types:["bug","rock"]},{id:558,name:"CRUSTLE",types:["bug","rock"]},
+  {id:559,name:"SCRAGGY",types:["dark","fighting"]},{id:560,name:"SCRAFTY",types:["dark","fighting"]},
+  {id:561,name:"SIGILYPH",types:["psychic","flying"]},
+  {id:562,name:"YAMASK",types:["ghost"]},{id:563,name:"COFAGRIGUS",types:["ghost"]},
+  {id:564,name:"TIRTOUGA",types:["water","rock"]},{id:565,name:"CARRACOSTA",types:["water","rock"]},
+  {id:566,name:"ARCHEN",types:["rock","flying"]},{id:567,name:"ARCHEOPS",types:["rock","flying"]},
+  {id:568,name:"TRUBBISH",types:["poison"]},{id:569,name:"GARBODOR",types:["poison"]},
+  {id:570,name:"ZORUA",types:["dark"]},{id:571,name:"ZOROARK",types:["dark"]},
+  {id:572,name:"MINCCINO",types:["normal"]},{id:573,name:"CINCCINO",types:["normal"]},
+  {id:574,name:"GOTHITA",types:["psychic"]},{id:575,name:"GOTHORITA",types:["psychic"]},{id:576,name:"GOTHITELLE",types:["psychic"]},
+  {id:577,name:"SOLOSIS",types:["psychic"]},{id:578,name:"DUOSION",types:["psychic"]},{id:579,name:"REUNICLUS",types:["psychic"]},
+  {id:580,name:"DUCKLETT",types:["water","flying"]},{id:581,name:"SWANNA",types:["water","flying"]},
+  {id:582,name:"VANILLITE",types:["ice"]},{id:583,name:"VANILLISH",types:["ice"]},{id:584,name:"VANILLUXE",types:["ice"]},
+  {id:585,name:"DEERLING",types:["normal","grass"]},{id:586,name:"SAWSBUCK",types:["normal","grass"]},
+  {id:587,name:"EMOLGA",types:["electric","flying"]},
+  {id:588,name:"KARRABLAST",types:["bug"]},{id:589,name:"ESCAVALIER",types:["bug","steel"]},
+  {id:590,name:"FOONGUS",types:["grass","poison"]},{id:591,name:"AMOONGUSS",types:["grass","poison"]},
+  {id:592,name:"FRILLISH",types:["water","ghost"]},{id:593,name:"JELLICENT",types:["water","ghost"]},
+  {id:594,name:"ALOMOMOLA",types:["water"]},
+  {id:595,name:"JOLTIK",types:["bug","electric"]},{id:596,name:"GALVANTULA",types:["bug","electric"]},
+  {id:597,name:"FERROSEED",types:["grass","steel"]},{id:598,name:"FERROTHORN",types:["grass","steel"]},
+  {id:599,name:"KLINK",types:["steel"]},{id:600,name:"KLANG",types:["steel"]},{id:601,name:"KLINKLANG",types:["steel"]},
+  {id:602,name:"TYNAMO",types:["electric"]},{id:603,name:"EELEKTRIK",types:["electric"]},{id:604,name:"EELEKTROSS",types:["electric"]},
+  {id:605,name:"ELGYEM",types:["psychic"]},{id:606,name:"BEHEEYEM",types:["psychic"]},
+  {id:607,name:"LITWICK",types:["ghost","fire"]},{id:608,name:"LAMPENT",types:["ghost","fire"]},{id:609,name:"CHANDELURE",types:["ghost","fire"]},
+  {id:610,name:"AXEW",types:["dragon"]},{id:611,name:"FRAXURE",types:["dragon"]},{id:612,name:"HAXORUS",types:["dragon"]},
+  {id:613,name:"CUBCHOO",types:["ice"]},{id:614,name:"BEARTIC",types:["ice"]},
+  {id:615,name:"CRYOGONAL",types:["ice"]},
+  {id:616,name:"SHELMET",types:["bug"]},{id:617,name:"ACCELGOR",types:["bug"]},
+  {id:618,name:"STUNFISK",types:["ground","electric"]},
+  {id:619,name:"MIENFOO",types:["fighting"]},{id:620,name:"MIENSHAO",types:["fighting"]},
+  {id:621,name:"DRUDDIGON",types:["dragon"]},
+  {id:622,name:"GOLETT",types:["ground","ghost"]},{id:623,name:"GOLURK",types:["ground","ghost"]},
+  {id:624,name:"PAWNIARD",types:["dark","steel"]},{id:625,name:"BISHARP",types:["dark","steel"]},
+  {id:626,name:"BOUFFALANT",types:["normal"]},
+  {id:627,name:"RUFFLET",types:["normal","flying"]},{id:628,name:"BRAVIARY",types:["normal","flying"]},
+  {id:629,name:"VULLABY",types:["dark","flying"]},{id:630,name:"MANDIBUZZ",types:["dark","flying"]},
+  {id:631,name:"HEATMOR",types:["fire"]},
+  {id:632,name:"DURANT",types:["bug","steel"]},
+  {id:633,name:"DEINO",types:["dark","dragon"]},{id:634,name:"ZWEILOUS",types:["dark","dragon"]},{id:635,name:"HYDREIGON",types:["dark","dragon"]},
+  {id:636,name:"LARVESTA",types:["bug","fire"]},{id:637,name:"VOLCARONA",types:["bug","fire"]},
+  {id:638,name:"COBALION",types:["steel","fighting"]},{id:639,name:"TERRAKION",types:["rock","fighting"]},{id:640,name:"VIRIZION",types:["grass","fighting"]},
+  {id:641,name:"TORNADUS",types:["flying"]},{id:642,name:"THUNDURUS",types:["electric","flying"]},
+  {id:643,name:"RESHIRAM",types:["dragon","fire"]},{id:644,name:"ZEKROM",types:["dragon","electric"]},
+  {id:645,name:"LANDORUS",types:["ground","flying"]},
+  {id:646,name:"KYUREM",types:["dragon","ice"]},
+  {id:647,name:"KELDEO",types:["water","fighting"]},
+  {id:648,name:"MELOETTA",types:["normal","psychic"]},
+  {id:649,name:"GENESECT",types:["bug","steel"]},
+];
+
+
 
 // ── CHALLENGES DATA ──
 // Each starter knows its origin gen for sprite + badge display
@@ -1511,6 +1658,9 @@ const STARTERS = [
   {id:387,name:"TURTWIG",types:["grass"],gen:4},
   {id:390,name:"CHIMCHAR",types:["fire"],gen:4},
   {id:393,name:"PIPLUP",types:["water"],gen:4},
+  {id:495,name:"SNIVY",types:["grass"],gen:5},
+  {id:498,name:"TEPIG",types:["fire"],gen:5},
+  {id:501,name:"OSHAWOTT",types:["water"],gen:5},
 ];
 
 // Legendaries: all box legendaries + main mythicals from gen I-III
@@ -1553,6 +1703,20 @@ const LEGENDARIES = [
   {id:491,name:"DARKRAI",types:["dark"],gen:4},
   {id:492,name:"SHAYMIN",types:["grass"],gen:4},
   {id:493,name:"ARCEUS",types:["normal"],gen:4},
+  // Gen V
+  {id:494,name:"VICTINI",types:["psychic","fire"],gen:5},
+  {id:638,name:"COBALION",types:["steel","fighting"],gen:5},
+  {id:639,name:"TERRAKION",types:["rock","fighting"],gen:5},
+  {id:640,name:"VIRIZION",types:["grass","fighting"],gen:5},
+  {id:641,name:"TORNADUS",types:["flying"],gen:5},
+  {id:642,name:"THUNDURUS",types:["electric","flying"],gen:5},
+  {id:643,name:"RESHIRAM",types:["dragon","fire"],gen:5},
+  {id:644,name:"ZEKROM",types:["dragon","electric"],gen:5},
+  {id:645,name:"LANDORUS",types:["ground","flying"],gen:5},
+  {id:646,name:"KYUREM",types:["dragon","ice"],gen:5},
+  {id:647,name:"KELDEO",types:["water","fighting"],gen:5},
+  {id:648,name:"MELOETTA",types:["normal","psychic"],gen:5},
+  {id:649,name:"GENESECT",types:["bug","steel"],gen:5},
 ];
 
 // Eevee evolutions available in gen I-III
@@ -1573,9 +1737,10 @@ const PSEUDO_LEGENDS = [
   {id:373,name:"SALAMENCE",types:["dragon","flying"],gen:3},
   {id:376,name:"METAGROSS",types:["steel","psychic"],gen:3},
   {id:445,name:"GARCHOMP",types:["dragon","ground"],gen:4},
+  {id:635,name:"HYDREIGON",types:["dark","dragon"],gen:5},
 ];
 
-// WORLD CHAMPIONSHIP — all 493 Pokémon across all 4 generations.
+// WORLD CHAMPIONSHIP — all 649 Pokémon across 5 generations.
 // Each Pokémon needs its origin gen for sprite fallbacks.
 const WORLD_CHAMPIONSHIP = (() => {
   const all = [];
@@ -1583,6 +1748,7 @@ const WORLD_CHAMPIONSHIP = (() => {
   PKM2.forEach(p => all.push({...p, gen:2}));
   PKM3.forEach(p => all.push({...p, gen:3}));
   PKM4.forEach(p => all.push({...p, gen:4}));
+  PKM5.forEach(p => all.push({...p, gen:5}));
   return all;
 })();
 
@@ -1590,7 +1756,7 @@ const CHALLENGES = {
   starters: {
     slug:'starters',
     title:'STARTERS',
-    eyebrow:'CROSS-GEN · 12 POKÉMON',
+    eyebrow:'CROSS-GEN · 15 POKÉMON',
     desc:'Every first partner from Gen I to Gen IV. Bulbasaur to Piplup — pick one.',
     pool:STARTERS,
     available:true,
@@ -1598,7 +1764,7 @@ const CHALLENGES = {
   legendaries: {
     slug:'legendaries',
     title:'LEGENDARIES',
-    eyebrow:'CROSS-GEN · 34 POKÉMON',
+    eyebrow:'CROSS-GEN · 47 POKÉMON',
     desc:'Mewtwo, Lugia, Rayquaza, Dialga and many more. The most powerful Pokémon from every region.',
     pool:LEGENDARIES,
     available:true,
@@ -1614,16 +1780,16 @@ const CHALLENGES = {
   pseudo: {
     slug:'pseudo',
     title:'PSEUDO-LEGENDARIES',
-    eyebrow:'CROSS-GEN · 5 POKÉMON',
-    desc:'Dragonite, Tyranitar, Salamence, Metagross, Garchomp. The 600-stat club.',
+    eyebrow:'CROSS-GEN · 6 POKÉMON',
+    desc:'Dragonite, Tyranitar, Salamence, Metagross, Garchomp, Hydreigon. The 600-stat club.',
     pool:PSEUDO_LEGENDS,
     available:true,
   },
   worldchamp: {
     slug:'worldchamp',
     title:'WORLD CHAMPIONSHIP',
-    eyebrow:'★ MEGA TOURNAMENT · 493 POKÉMON',
-    desc:'Every Pokémon from Gen I to Gen IV in a single bracket. ~9 rounds, 492 matches, one true favourite. For the bravest trainers only.',
+    eyebrow:'★ MEGA TOURNAMENT · 649 POKÉMON',
+    desc:'Every Pokémon from Gen I to Gen V in a single bracket. ~10 rounds, 648 matches, one true favourite. For the bravest trainers only.',
     pool:WORLD_CHAMPIONSHIP,
     available:true,
     mega:true,
@@ -1653,6 +1819,11 @@ const SPRITE_SOURCES = {
     id => 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-iv/diamond-pearl/'+id+'.png',
     id => 'https://play.pokemonshowdown.com/sprites/gen4/'+getPSName(id)+'.png',
     id => 'https://img.pokemondb.net/sprites/diamond-pearl/normal/'+getPSName(id)+'.png',
+  ],
+  5: [
+    id => 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/'+id+'.png',
+    id => 'https://play.pokemonshowdown.com/sprites/gen5/'+getPSName(id)+'.png',
+    id => 'https://img.pokemondb.net/sprites/black-white/normal/'+getPSName(id)+'.png',
   ]
 };
 
@@ -1754,8 +1925,41 @@ let S = {
   legalPrev:null,
 };
 
-function currentPKM() { return S.gen===1 ? PKM1 : S.gen===2 ? PKM2 : S.gen===3 ? PKM3 : PKM4; }
-function genPrefix() { return S.gen===1 ? 'g1_' : S.gen===2 ? 'g2_' : S.gen===3 ? 'g3_' : 'g4_'; }
+function currentPKM() { return S.gen===1 ? PKM1 : S.gen===2 ? PKM2 : S.gen===3 ? PKM3 : S.gen===4 ? PKM4 : PKM5; }
+
+// Regional info — name, year, games, and iconic Pokémon by gen
+const REGION_INFO = {
+  1: { name:'KANTO',  year:'1996', games:'RED · BLUE · YELLOW',
+       iconic:[{id:25,gen:1},{id:6,gen:1},{id:9,gen:1},{id:150,gen:1},{id:143,gen:1},{id:94,gen:1},{id:130,gen:1},{id:151,gen:1}] },
+  2: { name:'JOHTO',  year:'1999', games:'GOLD · SILVER · CRYSTAL',
+       iconic:[{id:155,gen:2},{id:158,gen:2},{id:152,gen:2},{id:249,gen:2},{id:250,gen:2},{id:196,gen:2},{id:197,gen:2},{id:251,gen:2}] },
+  3: { name:'HOENN',  year:'2002', games:'RUBY · SAPPHIRE · EMERALD',
+       iconic:[{id:257,gen:3},{id:254,gen:3},{id:260,gen:3},{id:384,gen:3},{id:382,gen:3},{id:383,gen:3},{id:373,gen:3},{id:282,gen:3}] },
+  4: { name:'SINNOH', year:'2006', games:'DIAMOND · PEARL · PLATINUM',
+       iconic:[{id:392,gen:4},{id:389,gen:4},{id:395,gen:4},{id:483,gen:4},{id:484,gen:4},{id:487,gen:4},{id:448,gen:4},{id:445,gen:4}] },
+  5: { name:'UNOVA',  year:'2010', games:'BLACK · WHITE · BLACK 2 · WHITE 2',
+       iconic:[{id:497,gen:5},{id:500,gen:5},{id:503,gen:5},{id:643,gen:5},{id:644,gen:5},{id:646,gen:5},{id:609,gen:5},{id:637,gen:5}] },
+};
+
+function regionShowcaseHTML(g){
+  const r = REGION_INFO[g];
+  if(!r) return '';
+  const iconicHtml = r.iconic.map(p =>
+    '<div class="region-iconic-cell">'+spriteWithFallback(p.id,p.gen,'region-iconic-sprite','')+'</div>'
+  ).join('');
+  const count = g===1?151:g===2?100:g===3?135:g===4?107:156;
+  return '<div class="region-showcase">'
+    +'<div class="region-eyebrow">★ '+r.name+' REGION</div>'
+    +'<div class="region-meta-row">'
+      +'<div class="region-meta-stat"><div class="region-meta-num">'+count+'</div><div class="region-meta-label">POKÉMON</div></div>'
+      +'<div class="region-meta-stat"><div class="region-meta-num">'+r.year+'</div><div class="region-meta-label">RELEASE</div></div>'
+    +'</div>'
+    +'<div class="region-games">'+r.games+'</div>'
+    +'<div class="region-iconic-label">★ ICONIC POKÉMON</div>'
+    +'<div class="region-iconic-row">'+iconicHtml+'</div>'
+    +'</div>';
+}
+function genPrefix() { return S.gen===1 ? 'g1_' : S.gen===2 ? 'g2_' : S.gen===3 ? 'g3_' : S.gen===4 ? 'g4_' : 'g5_'; }
 function guestStorageKey(){ return 'poke_guest_picks_v1'; }
 function loadGuestPicks(){ try{return JSON.parse(localStorage.getItem(guestStorageKey())||'{}')||{};}catch(e){return {};} }
 function saveGuestPicks(){ if(!S.isGuest) return; try{localStorage.setItem(guestStorageKey(), JSON.stringify(S.favorites||{}));}catch(e){} }
@@ -1765,7 +1969,7 @@ function categoryFor(mode, ft){
 }
 // Compact pick preview — shown as a corner badge on card buttons
 // Deduce gen from Pokémon ID (1-151 = gen1, 152-251 = gen2, 252-386 = gen3)
-function genFromId(id){ return id<=151?1:id<=251?2:id<=386?3:4; }
+function genFromId(id){ return id<=151?1:id<=251?2:id<=386?3:id<=493?4:5; }
 
 function pickPreviewHTML(p, cls, label, originGen){
   if(!p||!p.id) return '<div class="'+cls+' empty"></div>';
@@ -1931,7 +2135,7 @@ async function resumeSession(sess) {
   S.history=[];
   S.screen='battle';
   S.currentView='game';
-  document.body.className=S.gen===1?'gen1':S.gen===2?'gen2':S.gen===3?'gen3':'gen4';
+  document.body.className=S.gen===1?'gen1':S.gen===2?'gen2':S.gen===3?'gen3':S.gen===4?'gen4':'gen5';
   updateLogoSubtitle();
   render();
 }
@@ -2196,7 +2400,7 @@ async function exitToLanding(){
   S.bracket=null;S.team=null;S.teamPhase=false;
   S.mode=null;S.filterType=null;S.challenge=null;
   // Body class to landing default
-  document.body.className=S.gen===1?'gen1':S.gen===2?'gen2':S.gen===3?'gen3':'gen4';
+  document.body.className=S.gen===1?'gen1':S.gen===2?'gen2':S.gen===3?'gen3':S.gen===4?'gen4':'gen5';
   render();
 }
 
@@ -2766,13 +2970,12 @@ function renderLanding(app){
   const s2=[249,250,197,196,245,248,243,244].map(id=>spriteWithFallback(id,2,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
   const s3=[257,260,282,373,376,384,380,381].map(id=>spriteWithFallback(id,3,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
   const s4=[392,395,448,468,470,471,483,491].map(id=>spriteWithFallback(id,4,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
+  const s5=[497,500,503,571,609,635,637,646].map(id=>spriteWithFallback(id,5,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
 
   // Mini sprite sets for each challenge card preview
   const makeSpr=(arr)=>arr.map(p=>spriteWithFallback(p.id,p.gen,'','width:28px;height:28px;image-rendering:pixelated;opacity:0.9')).join('');
 
   const comingSoon=[
-    {gen:'GEN IV',region:'SINNOH',count:'107'},
-    {gen:'GEN V',region:'UNOVA',count:'156'},
     {gen:'GEN VI',region:'KALOS',count:'72'},
     {gen:'GEN VII',region:'ALOLA',count:'88'},
     {gen:'GEN VIII',region:'GALAR',count:'89'},
@@ -2900,6 +3103,13 @@ function renderLanding(app){
     +'<div class="landing-gen-count">107 POKÉMON</div>'
     +'<div class="landing-gen-sprites">'+s4+'</div>'
     +'<div class="landing-gen-desc">Dual-screen DS debut. Glacial steel palette. Turtwig to Arceus — myths reborn.</div>'
+    +'</div>'
+    +'<div class="landing-gen gen5-card">'
+    +'<div class="landing-gen-eyebrow">NINTENDO DS · 2010 · AVAILABLE NOW</div>'
+    +'<div class="landing-gen-title">GEN V<br>UNOVA</div>'
+    +'<div class="landing-gen-count">156 POKÉMON</div>'
+    +'<div class="landing-gen-sprites">'+s5+'</div>'
+    +'<div class="landing-gen-desc">Black & white duality. Tao trio takes over. Snivy to Genesect — myths reborn under neon skies.</div>'
     +'</div>'
     +'</div>'
 
@@ -3157,6 +3367,7 @@ function genSwitcherHTML(){
     +'<button class="gen-tab'+(S.gen===2?' active':'')+'" onclick="switchGen(2)">GEN II — JOHTO</button>'
     +'<button class="gen-tab'+(S.gen===3?' active':'')+'" onclick="switchGen(3)">GEN III — HOENN</button>'
     +'<button class="gen-tab'+(S.gen===4?' active':'')+'" onclick="switchGen(4)">GEN IV — SINNOH</button>'
+      +'<button class="gen-tab'+(S.gen===5?' active':'')+'" onclick="switchGen(5)">GEN V — UNOVA</button>'
     +'</div>';
 }
 
@@ -3164,11 +3375,11 @@ function updateLogoSubtitle(){
   const sub=document.getElementById('logo-sub');
   if(!sub) return;
   if(S.section==='challenges'){
-    sub.textContent=' · CHALLENGES MODE · v2.7';
+    sub.textContent=' · CHALLENGES MODE · v2.8';
   } else {
     const map={1:['I','151'],2:['II','100'],3:['III','135'],4:['IV','107']};
     const [gen,count]=map[S.gen]||map[1];
-    sub.textContent=' · GEN '+gen+' · '+count+' POKÉMON · v2.7';
+    sub.textContent=' · GEN '+gen+' · '+count+' POKÉMON · v2.8';
   }
 }
 
@@ -3181,7 +3392,7 @@ function switchSection(sec){
     document.body.className='challenges';
     S.screen='challenges_menu';
   } else {
-    document.body.className=S.gen===1?'gen1':S.gen===2?'gen2':S.gen===3?'gen3':'gen4';
+    document.body.className=S.gen===1?'gen1':S.gen===2?'gen2':S.gen===3?'gen3':S.gen===4?'gen4':'gen5';
     S.screen='menu';
   }
   updateLogoSubtitle();
@@ -3369,7 +3580,7 @@ function renderAbout(app){
     +'<div class="legal-p"><strong>Pokémon is a trademark of Nintendo, Game Freak, and The Pokémon Company.</strong> This is a non-commercial fan project, not affiliated with or endorsed by them. All character names, images, and sprites belong to their respective owners and are used here under fair use for fan engagement.</div>'
     +'<div class="legal-h2">CONTACT</div>'
     +'<div class="legal-p">Found a bug? Want to suggest a feature? Email <strong>'+CONTACT_EMAIL+'</strong>.</div>'
-    +'<div class="legal-meta">v2.7 · MADE WITH ♥</div>'
+    +'<div class="legal-meta">v2.8 · MADE WITH ♥</div>'
     +'</div></div>';
 }
 
@@ -3443,7 +3654,7 @@ async function exportUserData(){
       favorites: favRes.data || [],
       sessions: sessRes.data || [],
       service: 'YOUR FAVOURITE POKÉMON',
-      service_version: 'v2.7',
+      service_version: 'v2.8',
     };
     const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
     const url = URL.createObjectURL(blob);
@@ -3573,23 +3784,24 @@ function render(){
     const savedHtml=S.isGuest
       ?'<div class="guest-save-note">★ Guest picks stay visible here.<br>Use SAVE PICKS to attach them to your account.</div>'+savedListHtml
       :savedListHtml;
-    const genLabel = g===1 ? 'KANTO' : g===2 ? 'JOHTO' : g===3 ? 'HOENN' : 'SINNOH';
-    const count=g===1?151:g===2?100:g===3?135:107;
+    const genLabel = g===1 ? 'KANTO' : g===2 ? 'JOHTO' : g===3 ? 'HOENN' : g===4 ? 'SINNOH' : 'UNOVA';
+    const count=g===1?151:g===2?100:g===3?135:g===4?107:156;
     app.innerHTML=genSwitcherHTML()+'<div class="menu-wrap">'
       +'<div class="menu-left">'
+      +regionShowcaseHTML(g)
       +'<div class="menu-hero">WHAT IS YOUR<br>FAVOURITE<br>POKÉMON?</div>'
-      +'<div class="menu-sub">GEN '+(g===1?'I — KANTO':g===2?'II — JOHTO':g===3?'III — HOENN':'IV — SINNOH')+' · 1 VS 1 BATTLE · WINNER ADVANCES UNTIL ONE REMAINS</div>'
+      +'<div class="menu-sub">1 VS 1 BATTLE · WINNER ADVANCES UNTIL ONE REMAINS</div>'
       +'<button class="menu-btn" onclick="startGame(\'overall\',null)">OVERALL<small>'+count+' POKÉMON — FULL '+genLabel+'</small></button>'
       +'<button class="menu-btn" onclick="S.screen=\'typeselect\';render()">BY TYPE<small>FIND THE BEST BY TYPE</small></button>'
       +'<div class="lb-card" role="button" tabindex="0" onclick="openLeaderboard(\'gen\')">'
         +'<div class="lb-card-body">'
         +'<div class="lb-card-eyebrow">★ COMMUNITY</div>'
-        +'<div class="lb-card-title">GEN '+(g===1?'I':g===2?'II':g===3?'III':'IV')+' LEADERBOARD</div>'
+        +'<div class="lb-card-title">GEN '+(g===1?'I':g===2?'II':g===3?'III':g===4?'IV':'V')+' LEADERBOARD</div>'
         +'</div>'
         +'<div class="lb-card-cta">▶</div>'
         +'</div>'
       +'</div>'
-      +'<div class="menu-right"><div class="saved-title">★ YOUR CHAMPIONS — GEN '+(g===1?'I':g===2?'II':g===3?'III':'IV')+'</div>'+savedHtml+'</div>'
+      +'<div class="menu-right"><div class="saved-title">★ YOUR CHAMPIONS — GEN '+(g===1?'I':g===2?'II':g===3?'III':g===4?'IV':'V')+'</div>'+savedHtml+'</div>'
       +'</div>';
     return;
   }
@@ -3612,7 +3824,7 @@ function render(){
     app.innerHTML=genSwitcherHTML()+'<div class="typesel-wrap">'
       +'<button class="back-link" onclick="S.screen=\'menu\';render()">◀ BACK</button>'
       +'<div class="typesel-title">CHOOSE TYPE</div>'
-      +'<div class="typesel-sub">GEN '+(g===1?'I':g===2?'II':g===3?'III':'IV')+' — FIND THE BEST BY TYPE</div>'
+      +'<div class="typesel-sub">GEN '+(g===1?'I':g===2?'II':g===3?'III':g===4?'IV':'V')+' — FIND THE BEST BY TYPE</div>'
       +'<div class="type-grid">'+btns+'</div>'
       +'</div>';
     return;
@@ -3663,7 +3875,7 @@ function render(){
       +'<div class="battle-topbar">'
       +'<div class="battle-streak">STREAK: '+S.streak+'</div>'
       +'<div class="battle-topbar-center">'
-      +'<div class="battle-mode-label">'+(S.mode==='challenge'?'★ '+(CHALLENGES[S.filterType]?CHALLENGES[S.filterType].title:'CHALLENGE'):('GEN '+(g===1?'I':g===2?'II':g===3?'III':'IV')+' · '+ml))+'</div>'
+      +'<div class="battle-mode-label">'+(S.mode==='challenge'?'★ '+(CHALLENGES[S.filterType]?CHALLENGES[S.filterType].title:'CHALLENGE'):('GEN '+(g===1?'I':g===2?'II':g===3?'III':g===4?'IV':'V')+' · '+ml))+'</div>'
       +'<div class="progress-track"><div class="progress-fill" style="width:'+prog+'%"></div></div>'
       +'<div class="battle-count">'+S.round+' / '+S.total+'</div>'
       +'</div>'
@@ -3745,7 +3957,7 @@ function render(){
     const ml=S.mode==='type'?'TYPE '+S.filterType.toUpperCase():'OVERALL';
     app.innerHTML=genSwitcherHTML()+'<div class="result-wrap">'
       +'<div class="result-left">'
-      +'<div class="result-eyebrow">'+(S.mode==='challenge'?'★ CHAMPION · '+(CHALLENGES[S.filterType]?CHALLENGES[S.filterType].title:'CHALLENGE'):('★ CHAMPION GEN '+(g===1?'I':g===2?'II':g===3?'III':'IV')+' · '+ml))+'</div>'
+      +'<div class="result-eyebrow">'+(S.mode==='challenge'?'★ CHAMPION · '+(CHALLENGES[S.filterType]?CHALLENGES[S.filterType].title:'CHALLENGE'):('★ CHAMPION GEN '+(g===1?'I':g===2?'II':g===3?'III':g===4?'IV':'V')+' · '+ml))+'</div>'
       +(S.mode==='challenge'?spriteByOriginGen(p,'result-sprite',''):spriteWithFallback(p.id,g,'result-sprite',''))
       +'<div class="result-name">'+p.name+'</div>'
       +'<div class="result-num">#'+String(p.id).padStart(3,'0')+'</div>'
@@ -3834,8 +4046,8 @@ function renderLeaderboard(app){
   app.innerHTML=genSwitcherHTML()+'<div class="lb-wrap">'
     +'<button class="back-link" style="margin-bottom:20px" onclick="leaderboardBack()">◀ BACK</button>'
     +'<div class="lb-top"><div>'
-    +'<div class="lb-title">'+(S.lbScope==='challenge'?'CHALLENGES<br>LEADERBOARD':'GEN '+(g===1?'I':g===2?'II':g===3?'III':'IV')+'<br>LEADERBOARD')+'</div>'
-    +'<div class="lb-sub">'+(S.lbScope==='challenge'?'CROSS-GEN CHALLENGE · '+(CHALLENGES[S.lbChallenge]?CHALLENGES[S.lbChallenge].title:''):('GEN '+(g===1?'I — KANTO':g===2?'II — JOHTO':g===3?'III — HOENN':'IV — SINNOH')+' · MOST PICKED POKÉMON'))+'</div>'
+    +'<div class="lb-title">'+(S.lbScope==='challenge'?'CHALLENGES<br>LEADERBOARD':'GEN '+(g===1?'I':g===2?'II':g===3?'III':g===4?'IV':'V')+'<br>LEADERBOARD')+'</div>'
+    +'<div class="lb-sub">'+(S.lbScope==='challenge'?'CROSS-GEN CHALLENGE · '+(CHALLENGES[S.lbChallenge]?CHALLENGES[S.lbChallenge].title:''):('GEN '+(g===1?'I — KANTO':g===2?'II — JOHTO':g===3?'III — HOENN':g===4?'IV — SINNOH':'V — UNOVA')+' · MOST PICKED POKÉMON'))+'</div>'
     +'</div></div>'
     +viewTabsHtml
     +filterTabsHtml
@@ -3895,7 +4107,7 @@ function goHome(){
   } else {
     S.section='generations';
     S.screen='menu';
-    document.body.className=S.gen===1?'gen1':S.gen===2?'gen2':S.gen===3?'gen3':'gen4';
+    document.body.className=S.gen===1?'gen1':S.gen===2?'gen2':S.gen===3?'gen3':S.gen===4?'gen4':'gen5';
   }
   S.mode=null;
   S.filterType=null;
