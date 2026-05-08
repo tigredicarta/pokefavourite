@@ -1699,6 +1699,7 @@ const LEGENDARIES = [
   {id:486,name:"REGIGIGAS",types:["normal"],gen:4},
   {id:487,name:"GIRATINA",types:["ghost","dragon"],gen:4},
   {id:488,name:"CRESSELIA",types:["psychic"],gen:4},
+  {id:489,name:"PHIONE",types:["water"],gen:4},
   {id:490,name:"MANAPHY",types:["water"],gen:4},
   {id:491,name:"DARKRAI",types:["dark"],gen:4},
   {id:492,name:"SHAYMIN",types:["grass"],gen:4},
@@ -1719,7 +1720,7 @@ const LEGENDARIES = [
   {id:649,name:"GENESECT",types:["bug","steel"],gen:5},
 ];
 
-// Eevee evolutions available in gen I-III
+// Eevee evolutions available in gen I-V (Sylveon arrives in Gen VI)
 const EEVEELUTIONS = [
   {id:134,name:"VAPOREON",types:["water"],gen:1},
   {id:135,name:"JOLTEON",types:["electric"],gen:1},
@@ -1764,7 +1765,7 @@ const CHALLENGES = {
   legendaries: {
     slug:'legendaries',
     title:'LEGENDARIES',
-    eyebrow:'CROSS-GEN · 47 POKÉMON',
+    eyebrow:'CROSS-GEN · 48 POKÉMON',
     desc:'Mewtwo, Lugia, Rayquaza, Dialga and many more. The most powerful Pokémon from every region.',
     pool:LEGENDARIES,
     available:true,
@@ -3384,10 +3385,15 @@ function updateLogoSubtitle(){
 }
 
 function switchSection(sec){
-  if(S.section===sec) return;
+  // Allow re-entering same section to reset state (e.g. after a battle/result)
   S.section=sec;
   S.currentView='game';
   S.lbData=null;
+  // Reset battle/team state when switching section
+  S.mode=null;S.filterType=null;S.challenge=null;
+  S.pool=[];S.history=[];S.winner=null;
+  S.round=0;S.total=0;S.streak=0;S.maxStreak=0;
+  S.bracket=null;S.team=null;S.teamPhase=false;
   if(sec==='challenges'){
     document.body.className='challenges';
     S.screen='challenges_menu';
@@ -3982,7 +3988,7 @@ function render(){
         return '<button class="btn-primary" onclick="shareStory()" id="share-btn">'+svg+label+'</button>';
       })()
       +'<button class="btn-primary dark" onclick="openLeaderboard(\''+(S.mode==='challenge'?'challenge':'gen')+'\')">▦ VIEW LEADERBOARD</button>'
-      +'<button class="btn-primary dark" onclick="'+(S.mode==='challenge'?'switchSection(\'challenges\')':'goHome()')+'">⌂ HOME</button>'
+      +'<button class="btn-primary dark" onclick="goHome()">⌂ HOME</button>'
       +'<button class="btn-primary dark" onclick="'+(S.mode==='challenge'?'startChallenge(S.filterType)':'startGame(S.mode,S.filterType)')+'">↺ PLAY AGAIN</button>'
       +'</div></div></div>';
     return;
