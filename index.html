@@ -431,7 +431,7 @@ input, textarea, select { font-size:16px; }
 
 /* ── MENU ── */
 .menu-wrap { flex:1; display:flex; flex-direction:column; }
-.menu-left { background:var(--bg1); padding:28px 16px 24px; border-bottom:1px solid var(--border); }
+.menu-left { background:var(--bg1); padding:10px 16px 24px; border-bottom:1px solid var(--border); }
 
 /* ══ REGION CARD — centered showcase style ══ */
 .region-card {
@@ -440,10 +440,10 @@ input, textarea, select { font-size:16px; }
   border:1px solid var(--region-edge, var(--accent));
   border-left-width:3px;
   border-right-width:3px;
-  padding:14px 16px 12px;
-  margin-bottom:18px;
+  padding:10px 16px 8px;
+  margin-bottom:14px;
   overflow:hidden;
-  display:flex; flex-direction:column; gap:8px;
+  display:flex; flex-direction:column; gap:5px;
   text-align:center;
 }
 /* Subtle pixel dot overlay */
@@ -457,29 +457,29 @@ input, textarea, select { font-size:16px; }
 /* Header: name + tagline */
 .region-card-header { position:relative; z-index:1; }
 .region-card-name {
-  font-size:10px; color:var(--region-edge, var(--accent));
+  font-size:12px; color:var(--region-edge, var(--accent));
   letter-spacing:2px; line-height:1.3;
   font-weight:bold;
 }
 .region-card-tagline {
   font-size:4px; color:var(--fg5);
-  letter-spacing:4px; margin-top:5px;
+  letter-spacing:4px; margin-top:3px;
 }
 
 /* Quote */
 .region-card-quote {
   position:relative; z-index:1;
-  padding:2px 8px;
+  padding:0 8px;
 }
 .region-quote-text {
-  font-size:6px; color:var(--fg6);
-  letter-spacing:1px; line-height:1.9;
+  font-size:7px; color:var(--fg6);
+  letter-spacing:1px; line-height:1.7;
   font-style:italic;
-  max-width:280px; margin:0 auto;
+  max-width:300px; margin:0 auto;
 }
 .region-quote-by {
   font-size:4px; color:var(--region-edge, var(--accent));
-  letter-spacing:3px; margin-top:6px;
+  letter-spacing:3px; margin-top:4px;
   font-style:normal;
 }
 
@@ -487,18 +487,18 @@ input, textarea, select { font-size:16px; }
 .region-card-divider {
   height:1px;
   background-image:linear-gradient(to right, transparent 0%, var(--bg3) 40%, var(--bg3) 60%, transparent 100%);
-  margin:2px 0;
+  margin:0;
   position:relative; z-index:1;
 }
 
 /* Meta */
 .region-card-meta {
   position:relative; z-index:1;
-  display:flex; flex-direction:column; gap:3px;
+  display:flex; flex-direction:column; gap:2px;
 }
 .region-card-meta-line {
   font-size:5px; color:var(--fg5); letter-spacing:2px;
-  line-height:1.4;
+  line-height:1.3;
 }
 .region-card-meta-line.games {
   color:var(--region-edge, var(--accent));
@@ -508,12 +508,12 @@ input, textarea, select { font-size:16px; }
 /* Starters — final evolutions in a row */
 .region-card-starters {
   display:flex; justify-content:center; align-items:center; gap:6px;
-  margin-top:4px;
+  margin-top:0;
   position:relative; z-index:1;
 }
 .region-starter-cell {
   display:flex; align-items:center; justify-content:center;
-  width:72px; height:72px;
+  width:68px; height:68px;
   flex-shrink:0;
 }
 .region-starter-sprite {
@@ -533,18 +533,98 @@ input, textarea, select { font-size:16px; }
 .region-card.gen5-card { --region-grad-1:#1a0e10; --region-grad-2:#080406; --region-edge:#ff5050; }
 
 @media (min-width:700px){
-  .region-card { padding:20px 20px 16px; margin-bottom:24px; gap:12px; }
-  .region-card-name { font-size:14px; letter-spacing:3px; }
-  .region-card-tagline { font-size:5px; letter-spacing:5px; }
-  .region-quote-text { font-size:7px; max-width:380px; line-height:2; }
-  .region-quote-by { font-size:5px; }
-  .region-card-meta-line { font-size:6px; }
-  .region-card-meta-line.games { font-size:5px; }
-  .region-card-starters { gap:10px; margin-top:8px; }
-  .region-starter-cell { width:92px; height:92px; }
+  .region-card { padding:18px 22px 16px; margin-bottom:20px; gap:10px; }
+  .region-card-name { font-size:17px; letter-spacing:3px; }
+  .region-card-tagline { font-size:6px; letter-spacing:5px; }
+  .region-quote-text { font-size:8px; max-width:420px; line-height:1.9; }
+  .region-quote-by { font-size:6px; }
+  .region-card-meta-line { font-size:7px; }
+  .region-card-meta-line.games { font-size:6px; }
+  .region-card-starters { gap:12px; margin-top:4px; }
+  .region-starter-cell { width:88px; height:88px; }
 }
-.menu-hero { font-size:10px; color:var(--accent); line-height:2.2; margin-bottom:6px; letter-spacing:1px; }
-.menu-sub { font-size:7px; color:var(--fg4); line-height:2.0; margin-bottom:24px; }
+.menu-hero { font-size:10px; color:var(--accent); line-height:1.6; margin-bottom:5px; letter-spacing:1px; }
+.menu-sub { font-size:7px; color:var(--fg4); line-height:1.6; margin-bottom:18px; }
+
+/* Menu claim — compact title between region card and mode selector */
+.menu-claim {
+  font-size:11px;
+  color:var(--accent);
+  letter-spacing:2px;
+  line-height:1.5;
+  text-align:center;
+  margin:18px 0 8px;
+  padding:0 4px;
+}
+
+/* ══ MODE MENU — Pokémon-style ══ */
+.mode-menu-divider {
+  display:flex; align-items:center; gap:10px;
+  margin:18px 0 16px;
+}
+.mode-menu-divider-line {
+  flex:1; height:1px; background:var(--bg3);
+}
+.mode-menu-divider-text {
+  font-size:6px; color:var(--accent); letter-spacing:3px;
+  white-space:nowrap;
+}
+
+.mode-btn {
+  position:relative;
+  display:flex; align-items:center; gap:12px;
+  background:var(--bg0);
+  border:2px solid var(--bg3);
+  color:var(--fg6);
+  font-family:var(--px);
+  padding:14px 14px 14px 26px;
+  cursor:pointer;
+  width:100%;
+  text-align:left;
+  margin-bottom:12px;
+  transition:all 0.15s;
+  /* Inner border effect — like Pokémon UI window */
+  box-shadow: inset 0 0 0 1px var(--bg1);
+}
+
+.mode-btn-cursor {
+  position:absolute; left:8px; top:50%; transform:translateY(-50%);
+  font-size:8px; color:var(--bg3);
+  transition:color 0.15s;
+}
+.mode-btn-icon {
+  font-size:14px; color:var(--accent);
+  width:24px; text-align:center;
+  flex-shrink:0;
+}
+.mode-btn-text {
+  flex:1; min-width:0;
+  display:flex; flex-direction:column; gap:4px;
+}
+.mode-btn-name {
+  font-size:10px; color:var(--accent); letter-spacing:2px;
+  font-weight:bold;
+}
+.mode-btn-sub {
+  font-size:5px; color:var(--fg4); letter-spacing:2px;
+  line-height:1.4;
+}
+
+.mode-btn:active {
+  background:var(--bg1);
+  border-color:var(--accent);
+}
+.mode-btn:active .mode-btn-cursor {
+  color:var(--accent);
+}
+
+.mode-btn.community {
+  border-color:var(--accent);
+  box-shadow: inset 0 0 0 1px var(--bg1), 0 0 0 0 var(--accent);
+}
+.mode-btn.community .mode-btn-cursor { color:var(--accent); opacity:0.5; }
+
+
 .menu-btn {
   display:block; width:100%; background:transparent; border:1px solid var(--bg3);
   color:var(--fg6); font-family:var(--px); font-size:7px; padding:16px 14px;
@@ -1197,15 +1277,31 @@ input, textarea, select { font-size:16px; }
   .auth-msg { font-size:7px; }
   .auth-toggle { font-size:7px; }
 
-  .menu-wrap { flex-direction:row; flex:1; }
-  .menu-left { flex:1; padding:80px 64px; border-bottom:none; border-right:1px solid var(--border); justify-content:center; }
+  .menu-wrap { flex-direction:row; flex:1; min-height:calc(100svh - 95px); min-height:calc(100dvh - 95px); }
+  .menu-left { flex:1; padding:24px 64px 64px; border-bottom:none; border-right:1px solid var(--border); justify-content:center; }
   .menu-right { flex:1; padding:80px 64px; }
   .menu-hero { font-size:20px; }
-  .menu-sub { font-size:7px; margin-bottom:56px; }
+  .menu-sub { font-size:7px; margin-bottom:36px; }
   .menu-btn { font-size:10px; padding:22px 24px; }
   .menu-btn:hover { background:var(--bg2); border-color:var(--fg5); color:var(--accent); }
   .menu-btn:hover::after { color:var(--accent); }
   .menu-btn small { font-size:6px; }
+
+  .menu-claim { font-size:15px; letter-spacing:3px; margin:22px 0 10px; }
+  .mode-menu-divider { margin:24px 0 20px; }
+  .mode-menu-divider-text { font-size:7px; letter-spacing:4px; }
+  .mode-btn { padding:18px 18px 18px 32px; margin-bottom:12px; gap:16px; }
+  .mode-btn-cursor { left:12px; font-size:10px; }
+  .mode-btn-icon { font-size:18px; width:30px; }
+  .mode-btn-name { font-size:12px; }
+  .mode-btn-sub { font-size:6px; }
+  .mode-btn:hover {
+    background:var(--bg1);
+    border-color:var(--accent);
+    transform:translateX(2px);
+  }
+  .mode-btn:hover .mode-btn-cursor { color:var(--accent); }
+
 
   .preview-label { font-size:5px; }
   .preview-name { font-size:7px; }
@@ -3882,17 +3978,23 @@ function render(){
     app.innerHTML=genSwitcherHTML()+'<div class="menu-wrap">'
       +'<div class="menu-left">'
       +regionShowcaseHTML(g)
-      +'<div class="menu-hero">WHAT IS YOUR<br>FAVOURITE<br>POKÉMON?</div>'
-      +'<div class="menu-sub">1 VS 1 BATTLE · WINNER ADVANCES UNTIL ONE REMAINS</div>'
-      +'<button class="menu-btn" onclick="startGame(\'overall\',null)">OVERALL<small>'+count+' POKÉMON — FULL '+genLabel+'</small></button>'
-      +'<button class="menu-btn" onclick="S.screen=\'typeselect\';render()">BY TYPE<small>FIND THE BEST BY TYPE</small></button>'
-      +'<div class="lb-card" role="button" tabindex="0" onclick="openLeaderboard(\'gen\')">'
-        +'<div class="lb-card-body">'
-        +'<div class="lb-card-eyebrow">★ COMMUNITY</div>'
-        +'<div class="lb-card-title">GEN '+(g===1?'I':g===2?'II':g===3?'III':g===4?'IV':'V')+' LEADERBOARD</div>'
-        +'</div>'
-        +'<div class="lb-card-cta">▶</div>'
-        +'</div>'
+      +'<div class="menu-claim">WHAT IS YOUR<br>FAVOURITE POKÉMON?</div>'
+      +'<div class="mode-menu-divider"><span class="mode-menu-divider-line"></span><span class="mode-menu-divider-text">★ CHOOSE YOUR MODE ★</span><span class="mode-menu-divider-line"></span></div>'
+      +'<button class="mode-btn" onclick="startGame(\'overall\',null)">'
+        +'<div class="mode-btn-cursor">▶</div>'
+        +'<div class="mode-btn-icon">≡</div>'
+        +'<div class="mode-btn-text"><div class="mode-btn-name">OVERALL</div><div class="mode-btn-sub">'+count+' POKÉMON · FULL '+genLabel+'</div></div>'
+      +'</button>'
+      +'<button class="mode-btn" onclick="S.screen=\'typeselect\';render()">'
+        +'<div class="mode-btn-cursor">▶</div>'
+        +'<div class="mode-btn-icon">◆</div>'
+        +'<div class="mode-btn-text"><div class="mode-btn-name">BY TYPE</div><div class="mode-btn-sub">FIND THE BEST BY TYPE</div></div>'
+      +'</button>'
+      +'<button class="mode-btn community" onclick="openLeaderboard(\'gen\')">'
+        +'<div class="mode-btn-cursor">▶</div>'
+        +'<div class="mode-btn-icon">★</div>'
+        +'<div class="mode-btn-text"><div class="mode-btn-name">LEADERBOARD</div><div class="mode-btn-sub">★ COMMUNITY · GEN '+(g===1?'I':g===2?'II':g===3?'III':g===4?'IV':'V')+'</div></div>'
+      +'</button>'
       +'</div>'
       +'<div class="menu-right"><div class="saved-title">★ YOUR CHAMPIONS — GEN '+(g===1?'I':g===2?'II':g===3?'III':g===4?'IV':'V')+'</div>'+savedHtml+'</div>'
       +'</div>';
