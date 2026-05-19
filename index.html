@@ -433,58 +433,115 @@ input, textarea, select { font-size:16px; }
 .menu-wrap { flex:1; display:flex; flex-direction:column; }
 .menu-left { background:var(--bg1); padding:28px 16px 24px; border-bottom:1px solid var(--border); }
 
-/* Regional showcase */
-.region-showcase {
-  border:1px solid var(--border);
-  background:rgba(0,0,0,0.15);
-  padding:18px 16px;
-  margin-bottom:24px;
-  display:flex; flex-direction:column; gap:12px;
+/* ══ REGION CARD — centered showcase style ══ */
+.region-card {
+  position:relative;
+  background:linear-gradient(180deg, var(--region-grad-1, var(--bg1)) 0%, var(--region-grad-2, var(--bg0)) 100%);
+  border:1px solid var(--region-edge, var(--accent));
+  border-left-width:3px;
+  border-right-width:3px;
+  padding:14px 16px 12px;
+  margin-bottom:18px;
+  overflow:hidden;
+  display:flex; flex-direction:column; gap:8px;
+  text-align:center;
 }
-.region-eyebrow {
-  font-size:7px; color:var(--accent); letter-spacing:4px;
+/* Subtle pixel dot overlay */
+.region-card::before {
+  content:''; position:absolute; inset:0;
+  background-image:radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size:8px 8px;
+  pointer-events:none;
 }
-.region-meta-row {
-  display:flex; gap:24px;
-  border-top:1px solid var(--bg2);
-  border-bottom:1px solid var(--bg2);
-  padding:10px 0;
+
+/* Header: name + tagline */
+.region-card-header { position:relative; z-index:1; }
+.region-card-name {
+  font-size:10px; color:var(--region-edge, var(--accent));
+  letter-spacing:2px; line-height:1.3;
+  font-weight:bold;
 }
-.region-meta-stat { display:flex; flex-direction:column; gap:5px; }
-.region-meta-num {
-  font-size:11px; color:var(--accent); letter-spacing:1px;
+.region-card-tagline {
+  font-size:4px; color:var(--fg5);
+  letter-spacing:4px; margin-top:5px;
 }
-.region-meta-label {
-  font-size:5px; color:var(--bg3); letter-spacing:2px;
+
+/* Quote */
+.region-card-quote {
+  position:relative; z-index:1;
+  padding:2px 8px;
 }
-.region-games {
-  font-size:6px; color:var(--fg5); letter-spacing:2px; line-height:1.6;
+.region-quote-text {
+  font-size:6px; color:var(--fg6);
+  letter-spacing:1px; line-height:1.9;
+  font-style:italic;
+  max-width:280px; margin:0 auto;
 }
-.region-iconic-label {
-  font-size:5px; color:var(--bg3); letter-spacing:2px; margin-top:4px;
+.region-quote-by {
+  font-size:4px; color:var(--region-edge, var(--accent));
+  letter-spacing:3px; margin-top:6px;
+  font-style:normal;
 }
-.region-iconic-row {
-  display:flex; gap:4px; flex-wrap:wrap;
+
+/* Divider — single dotted line */
+.region-card-divider {
+  height:1px;
+  background-image:linear-gradient(to right, transparent 0%, var(--bg3) 40%, var(--bg3) 60%, transparent 100%);
+  margin:2px 0;
+  position:relative; z-index:1;
 }
-.region-iconic-cell {
-  width:38px; height:38px;
-  background:var(--bg0); border:1px solid var(--bg2);
+
+/* Meta */
+.region-card-meta {
+  position:relative; z-index:1;
+  display:flex; flex-direction:column; gap:3px;
+}
+.region-card-meta-line {
+  font-size:5px; color:var(--fg5); letter-spacing:2px;
+  line-height:1.4;
+}
+.region-card-meta-line.games {
+  color:var(--region-edge, var(--accent));
+  font-size:4px; letter-spacing:3px;
+}
+
+/* Starters — final evolutions in a row */
+.region-card-starters {
+  display:flex; justify-content:center; align-items:center; gap:6px;
+  margin-top:4px;
+  position:relative; z-index:1;
+}
+.region-starter-cell {
   display:flex; align-items:center; justify-content:center;
+  width:72px; height:72px;
   flex-shrink:0;
 }
-.region-iconic-sprite {
-  width:32px; height:32px; image-rendering:pixelated; opacity:0.95;
+.region-starter-sprite {
+  max-width:100%; max-height:100%;
+  width:auto; height:auto;
+  image-rendering:pixelated;
+  filter:drop-shadow(0 2px 0 rgba(0,0,0,0.5));
+  display:block;
+  margin:auto;
 }
+
+/* Per-gen palette */
+.region-card.gen1-card { --region-grad-1:#1a2a14; --region-grad-2:#0a1408; --region-edge:#9bbc0f; }
+.region-card.gen2-card { --region-grad-1:#1f1530; --region-grad-2:#0e0820; --region-edge:#ffd060; }
+.region-card.gen3-card { --region-grad-1:#2a0e15; --region-grad-2:#180608; --region-edge:#e85060; }
+.region-card.gen4-card { --region-grad-1:#0e1f30; --region-grad-2:#070f1a; --region-edge:#7cc8ff; }
+.region-card.gen5-card { --region-grad-1:#1a0e10; --region-grad-2:#080406; --region-edge:#ff5050; }
+
 @media (min-width:700px){
-  .region-showcase { padding:24px 22px; gap:14px; margin-bottom:32px; }
-  .region-eyebrow { font-size:8px; }
-  .region-meta-row { gap:36px; padding:14px 0; }
-  .region-meta-num { font-size:14px; }
-  .region-meta-label { font-size:6px; }
-  .region-games { font-size:7px; }
-  .region-iconic-label { font-size:6px; }
-  .region-iconic-cell { width:48px; height:48px; }
-  .region-iconic-sprite { width:40px; height:40px; }
+  .region-card { padding:20px 20px 16px; margin-bottom:24px; gap:12px; }
+  .region-card-name { font-size:14px; letter-spacing:3px; }
+  .region-card-tagline { font-size:5px; letter-spacing:5px; }
+  .region-quote-text { font-size:7px; max-width:380px; line-height:2; }
+  .region-quote-by { font-size:5px; }
+  .region-card-meta-line { font-size:6px; }
+  .region-card-meta-line.games { font-size:5px; }
+  .region-card-starters { gap:10px; margin-top:8px; }
+  .region-starter-cell { width:92px; height:92px; }
 }
 .menu-hero { font-size:10px; color:var(--accent); line-height:2.2; margin-bottom:6px; letter-spacing:1px; }
 .menu-sub { font-size:7px; color:var(--fg4); line-height:2.0; margin-bottom:24px; }
@@ -1930,34 +1987,64 @@ function currentPKM() { return S.gen===1 ? PKM1 : S.gen===2 ? PKM2 : S.gen===3 ?
 
 // Regional info — name, year, games, and iconic Pokémon by gen
 const REGION_INFO = {
-  1: { name:'KANTO',  year:'1996', games:'RED · BLUE · YELLOW',
-       iconic:[{id:25,gen:1},{id:6,gen:1},{id:9,gen:1},{id:150,gen:1},{id:143,gen:1},{id:94,gen:1},{id:130,gen:1},{id:151,gen:1}] },
-  2: { name:'JOHTO',  year:'1999', games:'GOLD · SILVER · CRYSTAL',
-       iconic:[{id:155,gen:2},{id:158,gen:2},{id:152,gen:2},{id:249,gen:2},{id:250,gen:2},{id:196,gen:2},{id:197,gen:2},{id:251,gen:2}] },
-  3: { name:'HOENN',  year:'2002', games:'RUBY · SAPPHIRE · EMERALD',
-       iconic:[{id:257,gen:3},{id:254,gen:3},{id:260,gen:3},{id:384,gen:3},{id:382,gen:3},{id:383,gen:3},{id:373,gen:3},{id:282,gen:3}] },
-  4: { name:'SINNOH', year:'2006', games:'DIAMOND · PEARL · PLATINUM',
-       iconic:[{id:392,gen:4},{id:389,gen:4},{id:395,gen:4},{id:483,gen:4},{id:484,gen:4},{id:487,gen:4},{id:448,gen:4},{id:445,gen:4}] },
-  5: { name:'UNOVA',  year:'2010', games:'BLACK · WHITE · BLACK 2 · WHITE 2',
-       iconic:[{id:497,gen:5},{id:500,gen:5},{id:503,gen:5},{id:643,gen:5},{id:644,gen:5},{id:646,gen:5},{id:609,gen:5},{id:637,gen:5}] },
+  // All quotes are from the original games (verified via Bulbapedia / Wikiquote).
+  1: { name:'KANTO',  year:'1996', console:'GAME BOY',
+       games:'RED · BLUE · YELLOW',
+       tagline:'WHERE IT ALL BEGAN',
+       quote:"Your very own Pokémon legend\nis about to unfold!",
+       quoteBy:'PROF. OAK',
+       starters:[{id:3,gen:1},{id:6,gen:1},{id:9,gen:1}] },
+  2: { name:'JOHTO',  year:'1999', console:'GAME BOY COLOR',
+       games:'GOLD · SILVER · CRYSTAL',
+       tagline:'LAND OF TRADITION',
+       quote:"A world of dreams and adventures\nwith Pokémon awaits. Let's go!",
+       quoteBy:'PROF. OAK',
+       starters:[{id:154,gen:2},{id:157,gen:2},{id:160,gen:2}] },
+  3: { name:'HOENN',  year:'2002', console:'GAME BOY ADVANCE',
+       games:'RUBY · SAPPHIRE · EMERALD',
+       tagline:'LAND OF SEA AND VOLCANO',
+       quote:"Take courage, and leap into\nthe world of Pokémon.",
+       quoteBy:'PROF. BIRCH',
+       starters:[{id:254,gen:3},{id:257,gen:3},{id:260,gen:3}] },
+  4: { name:'SINNOH', year:'2006', console:'NINTENDO DS',
+       games:'DIAMOND · PEARL · PLATINUM',
+       tagline:'THE MYTHIC HIGHLANDS',
+       quote:"The world is immense.\nThere are many thrills to seek.",
+       quoteBy:'PROF. ROWAN',
+       starters:[{id:389,gen:4},{id:392,gen:4},{id:395,gen:4}] },
+  5: { name:'UNOVA',  year:'2010', console:'NINTENDO DS',
+       games:'BLACK · WHITE · BLACK 2 · WHITE 2',
+       tagline:'TRUTH OR IDEALS',
+       quote:"I hope you find something\nthat you alone can treasure.",
+       quoteBy:'PROF. JUNIPER',
+       starters:[{id:497,gen:5},{id:500,gen:5},{id:503,gen:5}] },
 };
 
 function regionShowcaseHTML(g){
   const r = REGION_INFO[g];
   if(!r) return '';
-  const iconicHtml = r.iconic.map(p =>
-    '<div class="region-iconic-cell">'+spriteWithFallback(p.id,p.gen,'region-iconic-sprite','')+'</div>'
-  ).join('');
   const count = g===1?151:g===2?100:g===3?135:g===4?107:156;
-  return '<div class="region-showcase">'
-    +'<div class="region-eyebrow">★ '+r.name+' REGION</div>'
-    +'<div class="region-meta-row">'
-      +'<div class="region-meta-stat"><div class="region-meta-num">'+count+'</div><div class="region-meta-label">POKÉMON</div></div>'
-      +'<div class="region-meta-stat"><div class="region-meta-num">'+r.year+'</div><div class="region-meta-label">RELEASE</div></div>'
+  // Three FINAL EVOLUTION starters showcased
+  const startersHtml = r.starters.map(p =>
+    '<div class="region-starter-cell">'+spriteWithFallback(p.id,p.gen,'region-starter-sprite','')+'</div>'
+  ).join('');
+  // Letter-spaced region name with stars
+  const nameSpaced = r.name.split('').join(' ');
+  return '<div class="region-card gen'+g+'-card">'
+    +'<div class="region-card-header">'
+      +'<div class="region-card-name">★ '+nameSpaced+' ★</div>'
+      +'<div class="region-card-tagline">'+r.tagline+'</div>'
     +'</div>'
-    +'<div class="region-games">'+r.games+'</div>'
-    +'<div class="region-iconic-label">★ ICONIC POKÉMON</div>'
-    +'<div class="region-iconic-row">'+iconicHtml+'</div>'
+    +'<div class="region-card-quote">'
+      +'<div class="region-quote-text">"'+r.quote.replace(/\n/g,'<br>')+'"</div>'
+      +'<div class="region-quote-by">— '+r.quoteBy+'</div>'
+    +'</div>'
+    +'<div class="region-card-divider"></div>'
+    +'<div class="region-card-meta">'
+      +'<div class="region-card-meta-line">'+count+' POKÉMON · '+r.year+' · '+r.console+'</div>'
+      +'<div class="region-card-meta-line games">'+r.games+'</div>'
+    +'</div>'
+    +'<div class="region-card-starters">'+startersHtml+'</div>'
     +'</div>';
 }
 function genPrefix() { return S.gen===1 ? 'g1_' : S.gen===2 ? 'g2_' : S.gen===3 ? 'g3_' : S.gen===4 ? 'g4_' : 'g5_'; }
