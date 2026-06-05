@@ -68,27 +68,11 @@ body.challenges::after {
 .challenge-card-eyebrow { font-size:6px; color:var(--fg4); letter-spacing:2px; }
 .challenge-card-title { font-size:11px; color:var(--accent); letter-spacing:1px; line-height:1.6; }
 .challenge-card-desc { font-size:8px; color:var(--fg4); line-height:1.8; margin-top:4px; }
-.challenge-card-sprites {
-  display:flex; gap:8px; margin-top:12px;
-  align-items:center;
-}
-.challenge-sprite-cell {
-  width:44px; height:44px;
-  display:flex; align-items:center; justify-content:center;
-  background:var(--bg0); border:1px solid var(--bg3);
-  flex-shrink:0;
-}
-.challenge-sprite-img {
-  max-width:100%; max-height:100%;
-  image-rendering:pixelated;
-  filter:drop-shadow(0 1px 0 rgba(0,0,0,0.4));
-}
 @media (min-width:700px){
   .challenge-card-eyebrow { font-size:8px; }
   .challenge-card-title { font-size:12px; }
   .challenge-card-desc { font-size:8px; }
-  .challenge-sprite-cell { width:52px; height:52px; }
-}
+  }
 .challenge-badge {
   position:absolute; top:14px; right:14px; font-size:6px; color:var(--bg3);
   border:1px solid var(--bg3); padding:3px 7px; letter-spacing:2px;
@@ -3710,21 +3694,12 @@ function renderChallengesMenu(app){
     let badge='';
     if(!isAvail) badge='<div class="challenge-badge">SOON</div>';
     else if(isMega) badge='<div class="challenge-badge mega-badge">★ MEGA</div>';
-    // Get 4 sample sprites from the challenge pool (or fallback to empty)
-    let sprPreviewHtml = '';
-    if(isAvail && ch.pool){
-      const sample = ch.pool.slice(0, Math.min(4, ch.pool.length));
-      sprPreviewHtml = '<div class="challenge-card-sprites">'
-        + sample.map(p => '<div class="challenge-sprite-cell">'+spriteWithFallback(p.id,p.gen||genFromId(p.id),'challenge-sprite-img','')+'</div>').join('')
-        + '</div>';
-    }
     html+='<button class="'+cls+'" '+click+'>'
       +badge
       +'<div class="challenge-card-body">'
         +'<div class="challenge-card-eyebrow">'+ch.eyebrow+'</div>'
         +'<div class="challenge-card-title">'+ch.title+'</div>'
         +'<div class="challenge-card-desc">'+ch.desc+'</div>'
-        +sprPreviewHtml
       +'</div>'
       +'<div class="challenge-card-footer">'
         +pickPreviewHTML(S.favorites['ch_'+ch.slug],'challenge-pick-preview','',S.favorites['ch_'+ch.slug]&&S.favorites['ch_'+ch.slug].gen)
