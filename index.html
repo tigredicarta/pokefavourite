@@ -3322,7 +3322,7 @@ async function choose(idx){
   } else {
     render();
   }
-  if(footer) footer.textContent='▶ CLICK YOUR FAVOURITE';
+  if(footer){ footer.innerHTML='<span class="tap-hint">&#9658; TAP YOUR FAVOURITE</span><span class="battle-helper-text kbd-hint">&#9664; &#9654; CHOOSE &nbsp;·&nbsp; U UNDO</span>'; normalizeIcons(footer); }
   // swap placeholder/floating undo button if needed
   const placeholder=document.querySelector('.battle-undo-placeholder');
   const floating=document.querySelector('.battle-undo-floating');
