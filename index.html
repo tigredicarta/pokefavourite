@@ -26,18 +26,18 @@
 
 .gen1 {
   --bg0:#0a0f0a; --bg1:#0f1f0f; --bg2:#1a3a1a; --bg3:#306230;
-  --fg4:#3d8c3d; --fg5:#8bac0f; --fg6:#9bbc0f; --accent:#c8ff00;
+  --fg4:#56a856; --fg5:#8bac0f; --fg6:#9bbc0f; --accent:#c8ff00;
   --border:#1a3a1a; --scanline:rgba(0,0,0,0.09);
 }
 .gen2 {
   --bg0:#0d0b1a; --bg1:#13112a; --bg2:#1e1b3a; --bg3:#3a2d6e;
-  --fg4:#6a5acd; --fg5:#c8a800; --fg6:#e8c800; --accent:#ffe040;
+  --fg4:#8979e0; --fg5:#c8a800; --fg6:#e8c800; --accent:#ffe040;
   --border:#1e1b3a; --scanline:rgba(100,80,200,0.06);
 }
 /* CHALLENGES theme — neutral blue/gold, distinct from gens */
 .challenges {
   --bg0:#08101a; --bg1:#0c1830; --bg2:#15264a; --bg3:#2a4070;
-  --fg4:#5570a0; --fg5:#c89030; --fg6:#e0b860; --accent:#ffd060;
+  --fg4:#7089ba; --fg5:#c89030; --fg6:#e0b860; --accent:#ffd060;
   --border:#15264a; --scanline:rgba(80,120,200,0.05);
 }
 body.challenges::after {
@@ -78,7 +78,7 @@ body.challenges::after {
 .challenge-card-footer { margin-top:14px; }
 .challenge-card:active { background:var(--bg2); border-color:var(--fg5); }
 .challenge-card.disabled { opacity:0.4; cursor:not-allowed; pointer-events:none; }
-.challenge-card-eyebrow { font-size:6px; color:var(--fg4); letter-spacing:2px; }
+.challenge-card-eyebrow { font-size:7px; color:var(--fg4); letter-spacing:2px; }
 .challenge-card-title { font-size:11px; color:var(--accent); letter-spacing:1px; line-height:1.6; }
 .challenge-card-desc { font-size:8px; color:var(--fg4); line-height:2; margin-top:6px; }
 @media (min-width:700px){
@@ -87,14 +87,14 @@ body.challenges::after {
   .challenge-card-desc { font-size:8px; }
   }
 .challenge-badge {
-  position:absolute; top:14px; right:14px; font-size:6px; color:var(--bg3);
+  position:absolute; top:14px; right:14px; font-size:7px; color:var(--bg3);
   border:1px solid var(--bg3); padding:3px 7px; letter-spacing:2px;
 }
 .challenge-badge.new { color:var(--accent); border-color:var(--accent); }
 .challenge-badge.mega-badge {
   background:linear-gradient(135deg, #ffd060, #ff8030);
   color:#1a0f00; border:none; font-weight:bold;
-  font-size:6px; padding:5px 10px;
+  font-size:7px; padding:5px 10px;
   box-shadow:0 0 8px rgba(255,200,80,0.4);
 }
 .challenge-card.mega {
@@ -110,14 +110,14 @@ body.challenges::after {
 
 /* gen badge under sprite in challenge battle */
 .poke-gen-badge {
-  font-size:6px; color:var(--fg4); border:1px solid var(--bg3);
+  font-size:7px; color:var(--fg4); border:1px solid var(--bg3);
   padding:3px 8px; letter-spacing:2px; margin-top:4px;
 }
 
 /* GEN 3 — Game Boy Advance: deep red/crimson */
 .gen3 {
   --bg0:#0f0a08; --bg1:#1f1008; --bg2:#3a1a08; --bg3:#7a2a08;
-  --fg4:#c05020; --fg5:#e87828; --fg6:#f09038; --accent:#ff4800;
+  --fg4:#d4673a; --fg5:#e87828; --fg6:#f09038; --accent:#ff4800;
   --border:#3a1a08; --scanline:rgba(200,80,0,0.07);
 }
 body.gen3::after {
@@ -130,12 +130,12 @@ body.gen3::after {
 /* GEN 4 — Nintendo DS Diamond/Pearl: glacial steel-blue */
 .gen4 {
   --bg0:#080c12; --bg1:#0e1422; --bg2:#1a2540; --bg3:#3a4d75;
-  --fg4:#5a78a8; --fg5:#8ca8d4; --fg6:#c0d4ec; --accent:#7cc8ff;
+  --fg4:#7593c2; --fg5:#8ca8d4; --fg6:#c0d4ec; --accent:#7cc8ff;
   --border:#1a2540; --scanline:rgba(120,180,240,0.06);
 }
 .gen5 {
   --bg0:#06070a; --bg1:#0e0f14; --bg2:#1d1f28; --bg3:#4a4e58;
-  --fg4:#7c828c; --fg5:#a8aeb8; --fg6:#e8e8ec; --accent:#ff5050;
+  --fg4:#969ca6; --fg5:#a8aeb8; --fg6:#e8e8ec; --accent:#ff5050;
   --border:#1d1f28; --scanline:rgba(255,255,255,0.04);
 }
 body.gen4::after {
@@ -191,7 +191,7 @@ body.gen2::after {
 /* ── GEN SWITCHER ── */
 .gen-switcher {
   background:var(--bg1); border-bottom:1px solid var(--border);
-  padding:8px 16px; display:flex; align-items:center; gap:6px;
+  padding:10px 16px; display:flex; align-items:center; gap:8px;
 }
 .gen-switcher-label { display:none; }
 .gen-tab {
@@ -222,7 +222,7 @@ body.gen2::after {
 }
 .user-trigger:active, .user-trigger.open { border-color:var(--accent); color:var(--accent); }
 .user-trigger-name { max-width:80px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-.user-trigger-caret { font-size:6px; color:var(--fg4); transition:transform 0.15s; }
+.user-trigger-caret { font-size:7px; color:var(--fg4); transition:transform 0.15s; }
 .user-trigger.open .user-trigger-caret { transform:rotate(180deg); color:var(--accent); }
 
 /* dropdown menu */
@@ -236,10 +236,10 @@ body.gen2::after {
   padding:14px 16px; border-bottom:1px solid var(--border);
   display:flex; flex-direction:column; gap:8px;
 }
-.user-menu-label { font-size:6px; color:var(--fg4); letter-spacing:2px; }
+.user-menu-label { font-size:7px; color:var(--fg4); letter-spacing:2px; }
 .user-menu-name { font-size:9px; color:var(--accent); letter-spacing:1px;
   word-break:break-all; line-height:1.5; }
-.user-menu-meta { font-size:6px; color:var(--bg3); letter-spacing:1px; line-height:1.6; }
+.user-menu-meta { font-size:7px; color:var(--bg3); letter-spacing:1px; line-height:1.6; }
 .user-menu-action {
   display:block; width:100%; text-align:left;
   background:transparent; border:none; border-bottom:1px solid var(--border);
@@ -251,7 +251,7 @@ body.gen2::after {
 .user-menu-action:active { background:var(--bg2); color:var(--accent); }
 .user-menu-action.danger:active { color:#ff5050; }
 .user-menu-action .menu-action-sub {
-  display:block; font-size:6px; color:var(--bg3); letter-spacing:1px; margin-top:5px;
+  display:block; font-size:7px; color:var(--bg3); letter-spacing:1px; margin-top:5px;
 }
 
 /* backdrop for closing */
@@ -322,7 +322,7 @@ body.gen2::after {
 }
 .legal-list li { margin-bottom:6px; }
 .legal-meta {
-  font-size:6px; color:var(--bg3); letter-spacing:2px;
+  font-size:7px; color:var(--bg3); letter-spacing:2px;
   margin-top:32px; padding-top:16px; border-top:1px solid var(--border);
 }
 @media (min-width:700px){
@@ -366,7 +366,7 @@ body.gen2::after {
 }
 .landing-legal-link:active, .landing-legal-link:hover { color:var(--accent); }
 .landing-legal-disclaimer {
-  font-size:6px; color:var(--bg3); line-height:1.8;
+  font-size:7px; color:var(--bg3); line-height:1.8;
   letter-spacing:1px; max-width:480px; margin-top:10px;
 }
 @media (min-width:700px){
@@ -388,7 +388,7 @@ body.gen2::after {
   display:flex; flex-direction:column; gap:8px;
   padding:10px 0; font-size:8px; color:var(--fg5);
 }
-.account-row-label { font-size:6px; color:var(--bg3); letter-spacing:2px; }
+.account-row-label { font-size:7px; color:var(--bg3); letter-spacing:2px; }
 .account-row-value { color:var(--fg6); word-break:break-all; }
 .btn-danger {
   background:transparent; border:1px solid #6b2020; color:#c05050;
@@ -408,7 +408,7 @@ body.gen2::after {
 @media (max-width: 520px) {
   .site-header { padding:10px 12px; gap:12px; }
   .header-right { gap:6px; }
-  .user-trigger { font-size:6px; padding:6px 8px; }
+  .user-trigger { font-size:7px; padding:6px 8px; }
   .user-trigger-name { max-width:60px; }
   .user-menu { min-width:200px; right:-8px; }
   .user-menu-name { font-size:8px; }
@@ -416,13 +416,13 @@ body.gen2::after {
 }
 .nav-btn {
   background:transparent; border:none; color:var(--fg4); font-family:var(--px);
-  font-size:6px; padding:7px 8px; cursor:pointer; letter-spacing:1px;
+  font-size:7px; padding:10px 12px; cursor:pointer; letter-spacing:1px;
   border-bottom:2px solid transparent;
 }
 .nav-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
 .btn-sm {
   background:transparent; border:1px solid var(--bg3); color:var(--fg5);
-  font-family:var(--px); font-size:6px; padding:7px 10px; cursor:pointer; letter-spacing:1px;
+  font-family:var(--px); font-size:7px; padding:10px 12px; cursor:pointer; letter-spacing:1px;
 }
 
 /* ── MAIN ── */
@@ -477,7 +477,7 @@ input, textarea, select { font-size:18px; }
   border-left-width:3px;
   border-right-width:3px;
   padding:14px 16px 12px;
-  margin-bottom:18px;
+  margin-bottom:32px;
   overflow:hidden;
   display:flex; flex-direction:column; gap:8px;
   text-align:center;
@@ -499,7 +499,7 @@ input, textarea, select { font-size:18px; }
   font-weight:bold;
 }
 .region-card-tagline {
-  font-size:6px; color:var(--fg5);
+  font-size:7px; color:var(--fg5);
   letter-spacing:4px; margin-top:3px;
 }
 
@@ -515,7 +515,7 @@ input, textarea, select { font-size:18px; }
   max-width:300px; margin:0 auto;
 }
 .region-quote-by {
-  font-size:6px; color:var(--region-edge, var(--accent));
+  font-size:7px; color:var(--region-edge, var(--accent));
   letter-spacing:3px; margin-top:4px;
   font-style:normal;
 }
@@ -531,15 +531,15 @@ input, textarea, select { font-size:18px; }
 /* Meta */
 .region-card-meta {
   position:relative; z-index:1;
-  display:flex; flex-direction:column; gap:2px;
+  display:flex; flex-direction:column; gap:5px;
 }
 .region-card-meta-line {
-  font-size:6px; color:var(--fg5); letter-spacing:2px;
+  font-size:7px; color:var(--fg5); letter-spacing:2px;
   line-height:1.6;
 }
 .region-card-meta-line.games {
   color:var(--region-edge, var(--accent));
-  font-size:6px; letter-spacing:3px;
+  font-size:7px; letter-spacing:3px;
 }
 
 /* Starters — final evolutions in a row */
@@ -581,7 +581,7 @@ input, textarea, select { font-size:18px; }
   .region-card-name {
   font-size:14px; letter-spacing:3px; }
   .region-card-tagline {
-  font-size:6px; letter-spacing:5px; }
+  font-size:7px; letter-spacing:5px; }
   .region-quote-text { font-size:9px; max-width:420px; line-height:1.9; }
   .region-quote-by { font-size:8px; }
   .region-card-meta-line { font-size:8px; }
@@ -697,7 +697,7 @@ input, textarea, select { font-size:18px; }
 }
 .type-pick-preview.empty, .challenge-pick-preview.empty { display:none; }
 .preview-label {
-  font-size:6px; color:var(--bg3); letter-spacing:2px;
+  font-size:7px; color:var(--bg3); letter-spacing:2px;
 }
 
 
@@ -720,7 +720,7 @@ input, textarea, select { font-size:18px; }
 }
 .lb-card-body { display:flex; flex-direction:column; gap:5px; flex:1; min-width:0; }
 .lb-card-eyebrow {
-  font-size:6px;
+  font-size:7px;
   color:var(--accent);
   letter-spacing:3px;
 }
@@ -792,7 +792,7 @@ input, textarea, select { font-size:18px; }
 .battle-streak-r { text-align:right; }
 .progress-track { width:100%; max-width:200px; height:3px; background:var(--bg2); }
 .progress-fill { height:100%; background:var(--accent); transition:width 0.4s; }
-.autosave-badge { font-size:6px; color:var(--bg3); letter-spacing:1px; opacity:0; transition:opacity 0.3s; }
+.autosave-badge { font-size:7px; color:var(--bg3); letter-spacing:1px; opacity:0; transition:opacity 0.3s; }
 .autosave-badge.show { opacity:1; }
 
 /* BATTLE ARENA — stacked on mobile */
@@ -818,9 +818,9 @@ input, textarea, select { font-size:18px; }
 .bracket-side::-webkit-scrollbar-thumb { background:var(--bg3); border-radius:0; }
 
 .bracket-side-title { font-size:8px; color:var(--accent); letter-spacing:2px; line-height:1.6; }
-.bracket-side-sub { font-size:6px; color:var(--fg4); letter-spacing:2px; margin-top:-12px; line-height:1.6; }
+.bracket-side-sub { font-size:7px; color:var(--fg4); letter-spacing:2px; margin-top:-12px; line-height:1.6; }
 .bracket-side-group { display:flex; flex-direction:column; gap:8px; }
-.bracket-side-group-label { font-size:6px; color:var(--bg3); letter-spacing:2px; }
+.bracket-side-group-label { font-size:7px; color:var(--bg3); letter-spacing:2px; }
 .bracket-side-grid {
   display:flex; flex-wrap:wrap; gap:3px;
 }
@@ -835,7 +835,7 @@ input, textarea, select { font-size:18px; }
 .bracket-side-sprite {
   width:24px; height:24px; image-rendering:pixelated;
 }
-.bracket-side-empty { font-size:6px; color:var(--bg3); padding:4px 0; }
+.bracket-side-empty { font-size:7px; color:var(--bg3); padding:4px 0; }
 
 .pokemon-card {
   flex:1; display:flex; flex-direction:row; align-items:center; justify-content:center;
@@ -851,22 +851,14 @@ input, textarea, select { font-size:18px; }
 .pokemon-card:last-child { border-bottom:none; border-top:1px solid var(--border); }
 .pokemon-card:active { background:var(--bg1); transform:scale(0.99); }
 .pokemon-card:active .poke-name { color:var(--accent); }
-/* ── SELECTION EFFECT ── winner pops & wobbles, loser fades out ── */
+/* ── SELECTION EFFECT ── localized: sprite pops, ring pulses, loser fades ── */
 .pokemon-card.winner {
   background:var(--bg2); z-index:2;
-  animation:pickwin 0.34s ease-out;
 }
-@keyframes pickwin {
-  0%   { transform:scale(1) rotate(0); }
-  25%  { transform:scale(1.06) rotate(-2deg); }
-  50%  { transform:scale(1.04) rotate(2deg); }
-  75%  { transform:scale(1.05) rotate(-1deg); }
-  100% { transform:scale(1) rotate(0); }
-}
-.pokemon-card.winner .poke-sprite { animation:pickpop 0.34s ease-out; }
+.pokemon-card.winner .poke-sprite { animation:pickpop 0.32s ease-out; }
 @keyframes pickpop {
   0%   { transform:scale(1); filter:brightness(1); }
-  40%  { transform:scale(1.18) translateY(-4px); filter:brightness(1.7) drop-shadow(0 0 6px var(--accent)); }
+  40%  { transform:scale(1.12) translateY(-3px); filter:brightness(1.5) drop-shadow(0 0 6px var(--accent)); }
   100% { transform:scale(1); filter:brightness(1); }
 }
 .pokemon-card.winner .poke-name { color:var(--accent); text-shadow:0 0 8px var(--accent); }
@@ -909,14 +901,14 @@ input, textarea, select { font-size:18px; }
 .battle-footer-text { flex:1; text-align:center; font-size:8px; color:var(--fg4); letter-spacing:1px; line-height:1.8; }
 .guest-battle-banner {
   background:var(--bg0); border-bottom:1px solid var(--border);
-  color:var(--fg4); font-size:6px; line-height:2; letter-spacing:1px;
+  color:var(--fg4); font-size:7px; line-height:2; letter-spacing:1px;
   padding:8px 14px; text-align:center;
 }
 .guest-battle-banner button {
   background:transparent; border:none; color:var(--accent); font-family:var(--px);
-  font-size:6px; cursor:pointer; padding:0; letter-spacing:1px;
+  font-size:7px; cursor:pointer; padding:0; letter-spacing:1px;
 }
-.battle-helper-text { display:block; font-size:6px; color:var(--bg3); margin-top:4px; letter-spacing:1px; }
+.battle-helper-text { display:block; font-size:7px; color:var(--bg3); margin-top:4px; letter-spacing:1px; }
 .battle-exit-btn {
   background:transparent; border:1px solid var(--bg3); color:var(--fg4);
   font-family:var(--px); font-size:8px; padding:8px 12px; cursor:pointer; letter-spacing:1px;
@@ -945,7 +937,7 @@ input, textarea, select { font-size:18px; }
   display:flex; flex-direction:column; align-items:center;
   padding:32px 16px; gap:20px;
 }
-.result-eyebrow { font-size:6px; color:var(--bg3); letter-spacing:3px; }
+.result-eyebrow { font-size:7px; color:var(--bg3); letter-spacing:3px; }
 .result-sprite { width:120px; height:120px; image-rendering:pixelated; }
 .result-name { font-size:14px; color:var(--accent); letter-spacing:2px; text-align:center; line-height:1.8; }
 .result-num { font-size:8px; color:var(--bg3); letter-spacing:2px; }
@@ -984,7 +976,7 @@ input, textarea, select { font-size:18px; }
 }
 .team-slot-num {
   position:absolute; top:4px; left:6px;
-  font-size:6px; color:var(--bg3); letter-spacing:1px;
+  font-size:7px; color:var(--bg3); letter-spacing:1px;
 }
 .team-slot-sprite {
   width:48px; height:48px; image-rendering:pixelated; margin-top:4px;
@@ -994,7 +986,7 @@ input, textarea, select { font-size:18px; }
   max-width:100%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
 }
 .team-slot-num-id {
-  font-size:6px; color:var(--fg4); letter-spacing:1px;
+  font-size:7px; color:var(--fg4); letter-spacing:1px;
 }
 .team-reveal-msg {
   font-size:8px; color:var(--fg5); line-height:2; letter-spacing:1px;
@@ -1014,7 +1006,7 @@ input, textarea, select { font-size:18px; }
   width:100%;
 }
 .saved-team-label {
-  font-size:6px; color:var(--bg3); letter-spacing:2px;
+  font-size:7px; color:var(--bg3); letter-spacing:2px;
 }
 .saved-team-row {
   display:flex; gap:6px; flex-wrap:wrap;
@@ -1052,7 +1044,7 @@ input, textarea, select { font-size:18px; }
   display:flex; flex-direction:column; gap:12px; align-items:center;
 }
 .result-team-label {
-  font-size:6px; color:var(--bg3); letter-spacing:2px;
+  font-size:7px; color:var(--bg3); letter-spacing:2px;
 }
 .result-team-row {
   display:flex; gap:5px; flex-wrap:wrap; justify-content:center;
@@ -1091,20 +1083,20 @@ input, textarea, select { font-size:18px; }
 
 
 
-.lb-filter-tabs { display:flex; gap:3px; flex-wrap:wrap; margin-bottom:10px; }
+.lb-filter-tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:14px; }
 .lb-tab {
   background:transparent; border:1px solid var(--bg3); color:var(--fg4);
-  font-family:var(--px); font-size:6px; padding:6px 8px; cursor:pointer; letter-spacing:1px;
+  font-family:var(--px); font-size:7px; padding:9px 11px; cursor:pointer; letter-spacing:1px;
 }
 .lb-tab.active { background:var(--bg3); color:var(--accent); border-color:var(--fg5); }
 .lb-table-wrap { overflow-x:auto; margin-top:16px; -webkit-overflow-scrolling:touch; }
 .lb-table { width:100%; border-collapse:collapse; }
-.lb-table th { font-size:6px; color:var(--bg3); letter-spacing:1px; padding:10px 8px; text-align:left; border-bottom:1px solid var(--border); font-weight:normal; white-space:nowrap; }
+.lb-table th { font-size:7px; color:var(--bg3); letter-spacing:1px; padding:10px 8px; text-align:left; border-bottom:1px solid var(--border); font-weight:normal; white-space:nowrap; }
 .lb-table td { padding:11px 8px; border-bottom:1px solid var(--bg1); vertical-align:middle; }
 .lb-sprite { width:28px; height:28px; image-rendering:pixelated; display:block; }
 .lb-pkm-name { font-size:8px; color:var(--fg6); letter-spacing:1px; line-height:1.5; }
-.lb-pkm-num { font-size:6px; color:var(--bg3); margin-top:4px; letter-spacing:1px; }
-.lb-pkm-type { font-size:6px; color:var(--fg4); margin-top:4px; }
+.lb-pkm-num { font-size:7px; color:var(--bg3); margin-top:4px; letter-spacing:1px; }
+.lb-pkm-type { font-size:7px; color:var(--fg4); margin-top:4px; }
 .lb-votes { font-size:9px; color:var(--fg5); text-align:right; white-space:nowrap; }
 .lb-bar-cell { width:60px; }
 .lb-bar-track { height:3px; background:var(--bg2); }
@@ -1154,7 +1146,7 @@ input, textarea, select { font-size:18px; }
   padding:36px 24px 40px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:20px;
   position:relative; overflow:hidden;
 }
-.landing-eyebrow { font-size:6px; color:var(--fg4); letter-spacing:4px; }
+.landing-eyebrow { font-size:7px; color:var(--fg4); letter-spacing:4px; }
 
 /* ── HERO VS SCENE — Gengar vs Nidorino, the RB intro battle ──
    The two fighters sit large & semi-transparent BEHIND the title, charging
@@ -1236,14 +1228,14 @@ input, textarea, select { font-size:18px; }
 .landing-stat-row { display:flex; gap:36px; justify-content:center; margin-top:6px; }
 .landing-stat { text-align:center; }
 .landing-stat-num { font-size:16px; color:var(--accent); line-height:1.6; }
-.landing-stat-label { font-size:6px; color:var(--fg4); letter-spacing:1px; margin-top:6px; }
+.landing-stat-label { font-size:7px; color:var(--fg4); letter-spacing:1px; margin-top:6px; }
 
 .landing-gens { display:flex; flex-direction:column; }
 .landing-gen {
   flex:1; padding:40px 28px; border-bottom:1px solid var(--border);
   display:flex; flex-direction:column; gap:20px;
 }
-.landing-gen-eyebrow { font-size:6px; color:var(--fg4); letter-spacing:2px; }
+.landing-gen-eyebrow { font-size:7px; color:var(--fg4); letter-spacing:2px; }
 .landing-gen-title { font-size:16px; color:var(--accent); letter-spacing:2px; line-height:2; }
 .landing-gen-count { font-size:8px; color:var(--fg5); letter-spacing:1px; }
 .landing-gen-sprites { display:flex; flex-wrap:wrap; gap:6px; margin:8px 0; }
@@ -1313,6 +1305,18 @@ input, textarea, select { font-size:18px; }
   .mode-btn:hover, .type-btn:hover, .menu-btn:hover, .lb-card:hover, .challenge-card:hover { box-shadow:none; transform:none; }
 }
 
+/* ── ACCESSIBILITY: respect reduced-motion ── */
+@media (prefers-reduced-motion: reduce){
+  .fighter-l, .fighter-r, .landing-title,
+  .pokemon-card.winner, .pokemon-card.winner .poke-sprite, .pokemon-card.winner::after,
+  .pokemon-card.loser, .inprog-dot, .pixel-cursor {
+    animation:none !important;
+  }
+  .landing .reveal { opacity:1 !important; transform:none !important; transition:none !important; }
+  .pokemon-card.loser { opacity:0.2; }
+  * { scroll-behavior:auto !important; }
+}
+
 .landing-coming {
   display:flex; flex-direction:column;
   padding:36px 28px; gap:18px;
@@ -1326,9 +1330,9 @@ input, textarea, select { font-size:18px; }
   opacity:0.45;
 }
 .landing-coming-gen { font-size:9px; color:var(--fg6); letter-spacing:1px; }
-.landing-coming-region { font-size:6px; color:var(--fg4); letter-spacing:2px; }
-.landing-coming-count { font-size:6px; color:var(--fg5); letter-spacing:1px; }
-.landing-coming-badge { font-size:6px; color:var(--bg3); border:1px solid var(--bg3); padding:3px 8px; letter-spacing:2px; width:fit-content; margin-top:2px; }
+.landing-coming-region { font-size:7px; color:var(--fg4); letter-spacing:2px; }
+.landing-coming-count { font-size:7px; color:var(--fg5); letter-spacing:1px; }
+.landing-coming-badge { font-size:7px; color:var(--bg3); border:1px solid var(--bg3); padding:3px 8px; letter-spacing:2px; width:fit-content; margin-top:2px; }
 
 /* CHALLENGES SHOWCASE on landing */
 .landing-challenges {
@@ -1339,7 +1343,7 @@ input, textarea, select { font-size:18px; }
   overflow:hidden;
 }
 .landing-challenges-eyebrow {
-  font-size:6px; color:#5570a0; letter-spacing:3px; margin-bottom:10px;
+  font-size:7px; color:#5570a0; letter-spacing:3px; margin-bottom:10px;
   display:flex; align-items:center; justify-content:center; gap:12px;
 }
 .landing-challenges-eyebrow::before, .landing-challenges-eyebrow::after { content:'★'; color:#ffd060; }
@@ -1368,7 +1372,7 @@ input, textarea, select { font-size:18px; }
   font-size:8px; color:#e0b860; letter-spacing:1px; line-height:1.6;
 }
 .landing-challenge-card-meta {
-  font-size:6px; color:#5570a0; letter-spacing:1px;
+  font-size:7px; color:#5570a0; letter-spacing:1px;
 }
 .landing-challenge-sprites {
   display:flex; gap:2px; margin-top:4px; flex-wrap:wrap;
@@ -1393,7 +1397,7 @@ input, textarea, select { font-size:18px; }
   position:relative;
 }
 .landing-mega-eyebrow {
-  font-size:6px; color:#e0b860; letter-spacing:2px;
+  font-size:7px; color:#e0b860; letter-spacing:2px;
 }
 .landing-mega-title {
   font-size:10px; color:#ffd060; letter-spacing:2px;
@@ -1409,10 +1413,10 @@ input, textarea, select { font-size:18px; }
   font-size:10px; color:#ffd060; line-height:1.6;
 }
 .landing-mega-label {
-  font-size:6px; color:#a08550; letter-spacing:1px;
+  font-size:7px; color:#a08550; letter-spacing:1px;
 }
 .landing-mega-desc {
-  font-size:6px; color:#c8a868; line-height:2; letter-spacing:1px;
+  font-size:7px; color:#c8a868; line-height:2; letter-spacing:1px;
 }
 .landing-mega-sprites {
   display:flex; gap:3px; flex-wrap:wrap; margin-top:4px;
@@ -1445,14 +1449,14 @@ input, textarea, select { font-size:18px; }
 .landing-feature { display:flex; flex-direction:column; gap:16px; padding:24px; background:var(--bg1); border:1px solid var(--border); }
 .landing-feature-icon { font-size:16px; color:var(--accent); }
 .landing-feature-title { font-size:8px; color:var(--fg6); letter-spacing:1px; line-height:1.8; }
-.landing-feature-desc { font-size:6px; color:var(--fg4); line-height:2.2; }
+.landing-feature-desc { font-size:7px; color:var(--fg4); line-height:2.2; }
 
 .landing-footer-cta {
   padding:48px 28px 40px; background:var(--bg0);
   display:flex; flex-direction:column; align-items:center; gap:18px;
   border-top:1px solid var(--border);
 }
-.landing-footer-note { font-size:6px; color:var(--bg3); letter-spacing:2px; }
+.landing-footer-note { font-size:7px; color:var(--bg3); letter-spacing:2px; }
 
 /* ── DESKTOP ── */
 @media (min-width: 700px) {
@@ -1466,10 +1470,10 @@ input, textarea, select { font-size:18px; }
   .challenge-card-title { font-size:12px; }
   .challenge-card-desc { font-size:8px; }
   .challenge-card-eyebrow { font-size:8px; }
-  .challenge-badge { font-size:6px; padding:4px 9px; }
+  .challenge-badge { font-size:7px; padding:4px 9px; }
 
   .gen-switcher { padding:8px 48px; gap:12px; }
-  .gen-switcher-label { display:block; font-size:6px; color:var(--fg4); letter-spacing:2px; margin-right:12px; }
+  .gen-switcher-label { display:block; font-size:7px; color:var(--fg4); letter-spacing:2px; margin-right:12px; }
   .gen-tab { flex:none; font-size:8px; padding:7px 20px; text-align:left; }
 
   .site-header { padding:18px 48px; }
@@ -1519,7 +1523,7 @@ input, textarea, select { font-size:18px; }
   .mode-btn:hover .mode-btn-cursor { color:var(--accent); }
 
 
-  .preview-label { font-size:6px; }
+  .preview-label { font-size:7px; }
   .preview-name { font-size:8px; }
   .type-pick-preview, .challenge-pick-preview { gap:6px; }
   .type-pick-preview .preview-name,
@@ -1551,7 +1555,7 @@ input, textarea, select { font-size:18px; }
   .battle-count { font-size:9px; }
   .battle-streak { font-size:8px; min-width:80px; }
   .progress-track { max-width:500px; }
-  .autosave-badge { font-size:6px; }
+  .autosave-badge { font-size:7px; }
 
   /* BATTLE ARENA — side by side on desktop */
   .battle-arena { flex-direction:row; }
@@ -1589,7 +1593,7 @@ input, textarea, select { font-size:18px; }
 
   .battle-footer { padding:16px 48px; }
   .battle-footer-text { font-size:9px; }
-  .battle-helper-text { font-size:6px; }
+  .battle-helper-text { font-size:7px; }
   .guest-battle-banner { font-size:8px; padding:10px 48px; }
   .guest-battle-banner button { font-size:8px; }
   .battle-exit-btn { font-size:8px; padding:8px 14px; }
@@ -2271,7 +2275,7 @@ function typeIconsHTML(types, sizeOverride, genOverride){
       const url=typeIconUrl(t);
       return '<span class="type-tag" data-type="'+t+'" style="position:relative;display:inline-flex">'
         +'<img src="'+url+'" alt="'+t+'" style="height:'+size+'px;width:auto;image-rendering:auto" '
-        +'onerror="this.parentNode.innerHTML=\'<span style=\\\'font-size:6px;color:var(--fg5);\\\'>\'+this.alt.toUpperCase()+\'</span>\'">'
+        +'onerror="this.parentNode.innerHTML=\'<span style=\\\'font-size:7px;color:var(--fg5);\\\'>\'+this.alt.toUpperCase()+\'</span>\'">'
         +'</span>';
     }).join('')
     +'</span>';
@@ -3177,7 +3181,7 @@ async function choose(idx){
     const cat=S.mode==='challenge'?'ch_'+S.filterType:(genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall'));
     autoSave(cat,chosen);
   }
-  await new Promise(r=>setTimeout(r,360));
+  await new Promise(r=>setTimeout(r,250));
   if(S.pool.length===1){
     S.winner=S.pool[0];
     const cat=S.mode==='challenge'?'ch_'+S.filterType:(genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall'));
@@ -3227,7 +3231,7 @@ async function choose(idx){
   }
   if(!S.isGuest) saveSession();
 
-  await new Promise(r=>setTimeout(r,360));
+  await new Promise(r=>setTimeout(r,250));
 
   // round complete?
   if(b.currentMatchIndex>=b.matches.length){
@@ -4718,6 +4722,16 @@ async function init(){
     }
     if(ev==='SIGNED_OUT'){if(S.screen==='auth'&&S.guestAuthReturn){return;}S.user=null;S.profile=null;S.favorites={};S.teams={};S.isGuest=false;S.guestLocalOnly=false;S.guestAuthReturn=null;S.screen='landing';render();}
   });}
+
+// Desktop keyboard controls during battle: ←/1 pick left, →/2 pick right, U undo.
+document.addEventListener('keydown', (e)=>{
+  if(S.screen!=='battle') return;
+  const tag=(e.target&&e.target.tagName||'').toLowerCase();
+  if(tag==='input'||tag==='textarea') return;
+  if(e.key==='ArrowLeft'||e.key==='1'){ e.preventDefault(); choose(0); }
+  else if(e.key==='ArrowRight'||e.key==='2'){ e.preventDefault(); choose(1); }
+  else if(e.key==='u'||e.key==='U'){ e.preventDefault(); undoLastPick(); }
+});
 
 init();
 </script>
