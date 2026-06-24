@@ -1117,7 +1117,7 @@ input, textarea, select { font-size:18px; }
 .landing-titlewrap {
   position:relative; align-self:stretch;
   display:flex; align-items:center; justify-content:center;
-  min-height:210px;
+  min-height:130px;
 }
 .landing-vs {
   position:absolute; inset:0; z-index:0; pointer-events:none;
@@ -1157,15 +1157,15 @@ input, textarea, select { font-size:18px; }
 }
 /* Title sits above the fighters and flashes briefly on each clash */
 @keyframes titleimpact {
-  0%,38%,100%{ text-shadow:0 0 6px var(--accent) }
-  41%{ text-shadow:0 0 15px var(--accent),0 0 3px #fff }
-  47%{ text-shadow:0 0 6px var(--accent) }
-  57%{ text-shadow:0 0 15px var(--accent),0 0 3px #fff }
-  63%{ text-shadow:0 0 6px var(--accent) }
+  0%,38%,100%{ text-shadow:0 0 4px var(--accent) }
+  41%{ text-shadow:0 0 9px var(--accent) }
+  47%{ text-shadow:0 0 4px var(--accent) }
+  57%{ text-shadow:0 0 9px var(--accent) }
+  63%{ text-shadow:0 0 4px var(--accent) }
 }
 
 .landing-title { font-size:20px; color:var(--accent); letter-spacing:2px; line-height:1.5;
-  position:relative; z-index:1; text-shadow:0 0 6px var(--accent);
+  position:relative; z-index:1; text-shadow:0 0 4px var(--accent);
   animation:titleimpact 2.6s ease-in-out infinite; }
 .landing-sub { font-size:8px; color:var(--fg4); line-height:2.1; letter-spacing:1px; max-width:300px; }
 .landing-cta { display:flex; flex-direction:column; gap:16px; width:100%; max-width:320px; }
@@ -1209,6 +1209,70 @@ input, textarea, select { font-size:18px; }
 .gen3-card { background:#0f0a08; --accent:#ff4800; --fg4:#c05020; --fg5:#e87828; }
 .gen4-card { background:#080c12; --accent:#7cc8ff; --fg4:#5a78a8; --fg5:#8ca8d4; }
 .gen5-card { background:#0a0608; --accent:#ff5050; --fg4:#a06868; --fg5:#c89898; }
+
+/* ── LANDING VINTAGE FX ── */
+/* chunky pixel scroll-reveal (sections rise in on scroll) */
+.landing .reveal { opacity:0; transform:translateY(18px); }
+.landing .reveal.in { opacity:1; transform:none;
+  transition:opacity .45s steps(6), transform .45s steps(6); }
+
+/* gen cards: hover glow + Game Boy window corner brackets */
+.landing-gen { position:relative; transition:box-shadow .2s, background .2s; }
+.landing-gen::before, .landing-gen::after {
+  content:''; position:absolute; width:12px; height:12px;
+  border:2px solid var(--accent); opacity:0.3; pointer-events:none; transition:opacity .2s;
+}
+.landing-gen::before { top:12px; left:12px; border-right:none; border-bottom:none; }
+.landing-gen::after { bottom:12px; right:12px; border-left:none; border-top:none; }
+.landing-gen:hover { box-shadow:inset 0 0 0 1px var(--accent), 0 0 22px -12px var(--accent); }
+.landing-gen:hover::before, .landing-gen:hover::after { opacity:0.8; }
+.landing-gen-title { text-shadow:0 0 6px var(--accent); }
+
+/* living sprite rows — staggered bob, pop on hover */
+.landing-gen-sprites img { animation:genbob 2.6s ease-in-out infinite; transition:filter .15s; }
+.landing-gen-sprites img:nth-child(2n){ animation-delay:.25s; }
+.landing-gen-sprites img:nth-child(3n){ animation-delay:.5s; }
+.landing-gen-sprites img:nth-child(4n){ animation-delay:.75s; }
+.landing-gen-sprites img:nth-child(5n){ animation-delay:1s; }
+.landing-gen-sprites img:hover { animation-play-state:paused; filter:drop-shadow(0 0 6px var(--accent)); }
+@keyframes genbob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+
+/* challenge cards on landing: hover glow */
+.landing-challenge-card { transition:transform .15s, box-shadow .2s, border-color .2s; }
+.landing-challenge-card:hover { transform:translateY(-2px); box-shadow:0 0 24px -10px #ffd060; border-color:#ffd060; }
+
+/* feature tiles: lift + glowing icon */
+.landing-feature { transition:transform .15s; }
+.landing-feature:hover { transform:translateY(-3px); }
+.landing-feature-icon { text-shadow:0 0 5px var(--accent); }
+
+/* CRT vignette over the viewport while on the landing */
+.landing::after {
+  content:''; position:fixed; inset:0; z-index:3; pointer-events:none;
+  background:radial-gradient(ellipse 110% 90% at 50% 45%, transparent 58%, rgba(0,0,0,0.35) 100%);
+}
+
+/* ── IN-APP VINTAGE FX (light) ── */
+/* GB-window corner brackets + hover glow on challenge cards */
+.challenge-card { position:relative; transition:background .1s, border-color .1s, box-shadow .2s; }
+.challenge-card::before, .challenge-card::after {
+  content:''; position:absolute; width:9px; height:9px;
+  border:2px solid var(--accent); opacity:0.22; pointer-events:none; transition:opacity .2s;
+}
+.challenge-card::before { top:8px; left:8px; border-right:none; border-bottom:none; }
+.challenge-card::after { bottom:8px; right:8px; border-left:none; border-top:none; }
+.challenge-card:hover { box-shadow:0 0 20px -12px var(--accent); }
+.challenge-card:hover::before, .challenge-card:hover::after { opacity:0.7; }
+/* hover glow on the main interactive cards/buttons */
+.mode-btn, .type-btn, .menu-btn, .lb-card { transition:background .15s, border-color .15s, box-shadow .2s, transform .15s; }
+.mode-btn:hover, .type-btn:hover, .menu-btn:hover, .lb-card:hover { box-shadow:0 0 18px -12px var(--accent); }
+.type-btn:hover { transform:translateY(-2px); }
+/* faint phosphor on section titles */
+.challenges-title, .typesel-title, .lb-title, .menu-claim, .team-reveal-title { text-shadow:0 0 4px var(--accent); }
+@media (hover:none){
+  /* no hover glints on touch — keep it light */
+  .mode-btn:hover, .type-btn:hover, .menu-btn:hover, .lb-card:hover, .challenge-card:hover { box-shadow:none; transform:none; }
+}
 
 .landing-coming {
   display:flex; flex-direction:column;
@@ -1521,9 +1585,9 @@ input, textarea, select { font-size:18px; }
   
   
   .landing-hero { padding:64px 64px 60px; gap:28px; }
-  .landing-titlewrap { min-height:380px; }
+  .landing-titlewrap { min-height:190px; }
   .landing-vs { gap:180px; }
-  .landing-vs-cell { width:380px; height:380px; }
+  .landing-vs-cell { width:360px; height:360px; }
   .landing-title { font-size:26px; }
   .landing-sub { font-size:8px; max-width:500px; }
   .landing-stat-num { font-size:22px; }
@@ -3381,7 +3445,7 @@ function renderLanding(app){
 
     // HERO
     +'<div class="landing-hero">'
-    +'<div class="landing-eyebrow">★ A FAN-MADE 1V1 TOURNAMENT ★</div>'
+    +'<div class="landing-eyebrow">★ FAN-MADE · TAP YOUR FAVOURITE ★</div>'
     +'<div class="landing-titlewrap">'
     +'<div class="landing-vs">'
     +'<div class="landing-vs-cell fighter-l">'+spriteWithFallback(33,1,'landing-vs-sprite flip','')+'</div>'
@@ -3389,7 +3453,7 @@ function renderLanding(app){
     +'</div>'
     +'<div class="landing-title">YOUR<br>FAVOURITE<br>POKÉMON</div>'
     +'</div>'
-    +'<div class="landing-sub">TWO POKÉMON. ONE CHOICE.<br>BATTLE THROUGH AN ENTIRE GENERATION,<br>OR JOIN A CROSS-GEN CHALLENGE.<br><br>NO ACCOUNT REQUIRED.</div>'
+    +'<div class="landing-sub">TWO POKÉMON. ONE CHOICE.<br>NOT A BATTLE — JUST YOUR FAVOURITE.<br>NO STATS, NO MOVES. TAP THE ONE YOU LIKE<br>ROUND AFTER ROUND, TILL ONE IS LEFT.<br><br>NO ACCOUNT REQUIRED.</div>'
     +'<div class="landing-stat-row">'
     +'<div class="landing-stat"><div class="landing-stat-num">649</div><div class="landing-stat-label">POKÉMON</div></div>'
     +'<div class="landing-stat"><div class="landing-stat-num">5</div><div class="landing-stat-label">GENERATIONS</div></div>'
@@ -3442,7 +3506,7 @@ function renderLanding(app){
     +'<div class="landing-challenges">'
     +'<div class="landing-challenges-eyebrow">CROSS-GENERATION TOURNAMENTS</div>'
     +'<div class="landing-challenges-title">CHALLENGES</div>'
-    +'<div class="landing-challenges-sub">Themed brackets that mix Pokémon from every generation. Pick a category, fight 1v1, find your favourite. Or take on the ultimate test below.</div>'
+    +'<div class="landing-challenges-sub">Themed brackets that mix Pokémon from every generation. Pick a category, tap 1v1, find your favourite. Or take on the ultimate test below.</div>'
     +megaHtml
     +'<div class="landing-challenges-grid">'+chHtml+'</div>'
     +'</div>'
@@ -3455,7 +3519,7 @@ function renderLanding(app){
 
     // FEATURES
     +'<div class="landing-features">'
-    +'<div class="landing-feature"><div class="landing-feature-icon">⚔</div><div class="landing-feature-title">1 VS 1 BATTLE</div><div class="landing-feature-desc">Two Pokémon at a time. Pick your favourite. Winner advances until only one remains.</div></div>'
+    +'<div class="landing-feature"><div class="landing-feature-icon">⚔</div><div class="landing-feature-title">1 VS 1 PICKS</div><div class="landing-feature-desc">Two Pokémon at a time — tap the one you like more. No stats, no moves, pure preference. The one you pick advances until only your favourite remains.</div></div>'
     +'<div class="landing-feature"><div class="landing-feature-icon">◎</div><div class="landing-feature-title">SAVE & RESUME</div><div class="landing-feature-desc">Every pick is saved automatically on this device. Sign up to sync your picks across devices.</div></div>'
     +'<div class="landing-feature"><div class="landing-feature-icon"><svg width="14" height="16" viewBox="0 0 10 12" fill="none" xmlns="http://www.w3.org/2000/svg" style="color:var(--accent)"><path d="M5 1L5 7M5 1L2.5 3.5M5 1L7.5 3.5M1 6V11H9V6" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></div><div class="landing-feature-title">SHARE STORY</div><div class="landing-feature-desc">Get a custom 9:16 image of your favourite. Share it on Instagram, WhatsApp or wherever.</div></div>'
     +'<div class="landing-feature"><div class="landing-feature-icon">▦</div><div class="landing-feature-title">LEADERBOARDS</div><div class="landing-feature-desc">See the most-loved Pokémon by generation, by type, and across challenges. Anonymous, aggregated, no usernames exposed.</div></div>'
@@ -3473,6 +3537,20 @@ function renderLanding(app){
     +'</div>'
 
     +'</div>';
+
+  setupLandingFX();
+}
+
+// Chunky pixel scroll-reveal for the landing sections below the hero.
+function setupLandingFX(){
+  const els=document.querySelectorAll('.landing-gen, .landing-challenges, .landing-coming, .landing-features, .landing-footer-cta');
+  if(!els.length) return;
+  els.forEach(el=>el.classList.add('reveal'));
+  if(!('IntersectionObserver' in window)){ els.forEach(el=>el.classList.add('in')); return; }
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, {threshold:0.12, rootMargin:'0px 0px -8% 0px'});
+  els.forEach(el=>io.observe(el));
 }
 
 
