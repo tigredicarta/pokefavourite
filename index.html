@@ -1109,7 +1109,34 @@ input, textarea, select { font-size:18px; }
   padding:64px 24px 56px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:28px;
 }
 .landing-eyebrow { font-size:6px; color:var(--fg4); letter-spacing:4px; }
-.landing-title { font-size:20px; color:var(--accent); letter-spacing:2px; line-height:2; }
+
+/* ── HERO VS SCENE — Gengar vs Nidorino, the RB intro battle ── */
+.landing-vs {
+  display:flex; align-items:center; justify-content:center; gap:20px;
+  margin:4px 0 -4px;
+}
+.landing-vs-cell {
+  width:92px; height:92px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+}
+.landing-vs-cell.bob-a { animation:vsbob 1.6s ease-in-out infinite; }
+.landing-vs-cell.bob-b { animation:vsbob 1.6s ease-in-out infinite; animation-delay:0.8s; }
+.landing-vs-sprite {
+  max-width:100%; max-height:100%; width:auto; height:auto;
+  image-rendering:pixelated;
+  filter:drop-shadow(0 3px 0 rgba(0,0,0,0.55));
+}
+.landing-vs-sprite.flip { transform:scaleX(-1); }
+.landing-vs-text {
+  font-size:20px; color:var(--accent); letter-spacing:2px; font-weight:bold;
+  text-shadow:0 0 10px var(--accent);
+  animation:vspulse 0.95s steps(2,jump-none) infinite;
+}
+@keyframes vsbob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+@keyframes vspulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.45;transform:scale(0.9)} }
+
+.landing-title { font-size:20px; color:var(--accent); letter-spacing:2px; line-height:2;
+  text-shadow:0 0 16px var(--accent), 0 0 4px var(--accent); }
 .landing-sub { font-size:8px; color:var(--fg4); line-height:2.8; letter-spacing:1px; max-width:300px; }
 .landing-cta { display:flex; flex-direction:column; gap:16px; width:100%; max-width:320px; }
 .landing-login-link {
@@ -1464,6 +1491,9 @@ input, textarea, select { font-size:18px; }
   
   
   .landing-hero { padding:96px 64px 80px; gap:36px; }
+  .landing-vs { gap:36px; margin:8px 0 0; }
+  .landing-vs-cell { width:128px; height:128px; }
+  .landing-vs-text { font-size:28px; }
   .landing-title { font-size:26px; }
   .landing-sub { font-size:8px; max-width:500px; }
   .landing-stat-num { font-size:22px; }
@@ -3322,6 +3352,11 @@ function renderLanding(app){
     // HERO
     +'<div class="landing-hero">'
     +'<div class="landing-eyebrow">★ A FAN-MADE 1V1 TOURNAMENT ★</div>'
+    +'<div class="landing-vs">'
+    +'<div class="landing-vs-cell bob-a">'+spriteWithFallback(33,1,'landing-vs-sprite flip','')+'</div>'
+    +'<div class="landing-vs-text">VS</div>'
+    +'<div class="landing-vs-cell bob-b">'+spriteWithFallback(94,1,'landing-vs-sprite','')+'</div>'
+    +'</div>'
     +'<div class="landing-title">YOUR<br>FAVOURITE<br>POKÉMON</div>'
     +'<div class="landing-sub">TWO POKÉMON. ONE CHOICE.<br>BATTLE THROUGH AN ENTIRE GENERATION,<br>OR JOIN A CROSS-GEN CHALLENGE.<br><br>NO ACCOUNT REQUIRED.</div>'
     +'<div class="landing-stat-row">'
