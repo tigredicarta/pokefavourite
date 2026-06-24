@@ -542,23 +542,23 @@ input, textarea, select { font-size:18px; }
   font-size:7px; letter-spacing:3px;
 }
 
-/* Starters — final evolutions in a row */
+/* Starters — final evolutions in a row, aligned on a common baseline */
 .region-card-starters {
-  display:flex; justify-content:center; align-items:center; gap:8px;
+  display:flex; justify-content:center; align-items:flex-end; gap:14px;
   margin-top:0;
   position:relative; z-index:1;
 }
 .region-starter-cell {
-  display:flex; align-items:center; justify-content:center;
-  width:68px; height:68px;
+  display:flex; align-items:flex-end; justify-content:center;
   flex-shrink:0;
 }
 .region-starter-sprite {
-  width:100%; height:100%; object-fit:contain;
+  /* fixed render height = identical size for all three, regardless of each
+     source sprite's native canvas dimensions */
+  height:64px; width:auto;
   image-rendering:pixelated;
   filter:drop-shadow(0 2px 0 rgba(0,0,0,0.5));
   display:block;
-  margin:auto;
   transition:transform .15s, filter .15s;
 }
 .region-starter-cell:hover .region-starter-sprite {
@@ -568,6 +568,11 @@ input, textarea, select { font-size:18px; }
 @media (hover:none){
   .region-starter-cell:hover .region-starter-sprite { transform:none; filter:drop-shadow(0 2px 0 rgba(0,0,0,0.5)); }
 }
+/* Optical size match: later-gen sprites fill more of their canvas, so they get
+   a slightly smaller render height to read as the same size as Gen I/II. */
+.region-card.gen3-card .region-starter-sprite { height:56px; }
+.region-card.gen4-card .region-starter-sprite { height:54px; }
+.region-card.gen5-card .region-starter-sprite { height:52px; }
 
 /* Per-gen palette */
 .region-card.gen1-card { --region-grad-1:#1a2a14; --region-grad-2:#0a1408; --region-edge:#9bbc0f; }
@@ -586,8 +591,11 @@ input, textarea, select { font-size:18px; }
   .region-quote-by { font-size:8px; }
   .region-card-meta-line { font-size:8px; }
   .region-card-meta-line.games { font-size:8px; }
-  .region-card-starters { gap:16px; margin-top:4px; }
-  .region-starter-cell { width:88px; height:88px; }
+  .region-card-starters { gap:22px; margin-top:4px; }
+  .region-starter-sprite { height:84px; }
+  .region-card.gen3-card .region-starter-sprite { height:74px; }
+  .region-card.gen4-card .region-starter-sprite { height:70px; }
+  .region-card.gen5-card .region-starter-sprite { height:68px; }
 }
 .menu-hero { font-size:11px; color:var(--accent); line-height:1.6; margin-bottom:5px; letter-spacing:1px; }
 .menu-sub { font-size:8px; color:var(--fg4); line-height:1.6; margin-bottom:18px; }
@@ -909,6 +917,9 @@ input, textarea, select { font-size:18px; }
   font-size:7px; cursor:pointer; padding:0; letter-spacing:1px;
 }
 .battle-helper-text { display:block; font-size:7px; color:var(--bg3); margin-top:4px; letter-spacing:1px; }
+/* keyboard hint only where there's a real keyboard (pointer + hover) */
+.kbd-hint { display:none; color:var(--fg4); }
+@media (hover:hover) and (pointer:fine){ .kbd-hint { display:block; } }
 .battle-exit-btn {
   background:transparent; border:1px solid var(--bg3); color:var(--fg4);
   font-family:var(--px); font-size:8px; padding:8px 12px; cursor:pointer; letter-spacing:1px;
@@ -4429,7 +4440,7 @@ function renderScreen(){
       +'</div>'
       +'<div class="battle-footer">'
       +'<button class="battle-exit-btn" onclick="exitBattle()">&#8962; HOME</button>'
-      +'<span class="battle-footer-text">&#9658; TAP YOUR FAVOURITE<span class="battle-helper-text">'+(S.isGuest?'FINAL VOTE GOES TO POKÉMON LEADERBOARD':'PROGRESS AUTOSAVES DURING THE RUN')+'</span></span>'
+      +'<span class="battle-footer-text">&#9658; TAP YOUR FAVOURITE<span class="battle-helper-text kbd-hint">&#8592; / &#8594; CHOOSE &nbsp;·&nbsp; U UNDO</span><span class="battle-helper-text">'+(S.isGuest?'FINAL VOTE GOES TO POKÉMON LEADERBOARD':'PROGRESS AUTOSAVES DURING THE RUN')+'</span></span>'
       +'<button class="battle-restart-btn" onclick="restartGame()">&#8635; RESTART RUN</button>'
       +'</div>'
       +(S.history&&S.history.length>0?'<button class="battle-undo-floating" onclick="undoLastPick()">&#8630; UNDO LAST PICK</button>':'<div class="battle-undo-placeholder"></div>')
