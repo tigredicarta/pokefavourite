@@ -17,10 +17,11 @@
    this rule re-centres them on the text line. */
 .ico {
   display:inline-block;
+  font-size:0.9em;
   line-height:1;
-  vertical-align:middle;
+  vertical-align:baseline;
   position:relative;
-  top:-0.06em;
+  top:-0.15em;
 }
 
 .gen1 {
@@ -772,9 +773,9 @@ input, textarea, select { font-size:18px; }
 
 .battle-topbar {
   background:var(--bg1); border-bottom:1px solid var(--border);
-  padding:10px 16px; display:flex; align-items:center; justify-content:space-between; gap:12px;
+  padding:12px 16px; display:flex; align-items:center; justify-content:space-between; gap:14px;
 }
-.battle-topbar-center { flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; }
+.battle-topbar-center { flex:1; display:flex; flex-direction:column; align-items:center; gap:10px; }
 .battle-mode-label { font-size:8px; color:var(--bg3); letter-spacing:2px; }
 .battle-count { font-size:8px; color:var(--fg5); }
 .battle-streak { font-size:8px; color:var(--fg4); min-width:60px; }
@@ -806,8 +807,8 @@ input, textarea, select { font-size:18px; }
 .bracket-side::-webkit-scrollbar-track { background:var(--bg0); }
 .bracket-side::-webkit-scrollbar-thumb { background:var(--bg3); border-radius:0; }
 
-.bracket-side-title { font-size:8px; color:var(--accent); letter-spacing:2px; }
-.bracket-side-sub { font-size:6px; color:var(--fg4); letter-spacing:2px; margin-top:-8px; }
+.bracket-side-title { font-size:8px; color:var(--accent); letter-spacing:2px; line-height:1.6; }
+.bracket-side-sub { font-size:6px; color:var(--fg4); letter-spacing:2px; margin-top:-12px; line-height:1.6; }
 .bracket-side-group { display:flex; flex-direction:column; gap:8px; }
 .bracket-side-group-label { font-size:6px; color:var(--bg3); letter-spacing:2px; }
 .bracket-side-grid {
@@ -843,9 +844,9 @@ input, textarea, select { font-size:18px; }
 .pokemon-card.loser { background:var(--bg0); opacity:0.2; pointer-events:none; }
 
 .poke-sprite { width:125px; height:125px; image-rendering:pixelated; flex-shrink:0; }
-.poke-info { display:flex; flex-direction:column; gap:8px; }
+.poke-info { display:flex; flex-direction:column; gap:10px; }
 .poke-num { font-size:8px; color:var(--bg3); letter-spacing:2px; }
-.poke-name { font-size:11px; color:var(--fg6); letter-spacing:1px; transition:color 0.1s; }
+.poke-name { font-size:11px; color:var(--fg6); letter-spacing:1px; line-height:1.5; transition:color 0.1s; }
 .poke-type { font-size:8px; color:var(--bg3); letter-spacing:1px; }
 
 .vs-divider {
@@ -857,10 +858,10 @@ input, textarea, select { font-size:18px; }
 
 .battle-footer {
   background:var(--bg1); border-top:1px solid var(--border);
-  padding:10px 14px; display:flex; align-items:center; justify-content:space-between;
-  gap:12px;
+  padding:12px 16px; display:flex; align-items:center; justify-content:space-between;
+  gap:14px;
 }
-.battle-footer-text { flex:1; text-align:center; font-size:8px; color:var(--fg4); letter-spacing:1px; }
+.battle-footer-text { flex:1; text-align:center; font-size:8px; color:var(--fg4); letter-spacing:1px; line-height:1.8; }
 .guest-battle-banner {
   background:var(--bg0); border-bottom:1px solid var(--border);
   color:var(--fg4); font-size:6px; line-height:2; letter-spacing:1px;
