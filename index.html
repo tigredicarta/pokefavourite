@@ -80,7 +80,7 @@ body.challenges::after {
 .challenge-card.disabled { opacity:0.4; cursor:not-allowed; pointer-events:none; }
 .challenge-card-eyebrow { font-size:6px; color:var(--fg4); letter-spacing:2px; }
 .challenge-card-title { font-size:11px; color:var(--accent); letter-spacing:1px; line-height:1.6; }
-.challenge-card-desc { font-size:8px; color:var(--fg4); line-height:1.8; margin-top:4px; }
+.challenge-card-desc { font-size:8px; color:var(--fg4); line-height:2; margin-top:6px; }
 @media (min-width:700px){
   .challenge-card-eyebrow { font-size:8px; }
   .challenge-card-title { font-size:12px; }
@@ -197,8 +197,8 @@ body.gen2::after {
 .gen-switcher-label { display:none; }
 .gen-tab {
   flex:1; background:transparent; border:1px solid var(--bg3); color:var(--fg4);
-  font-family:var(--px); font-size:8px; padding:8px 0; cursor:pointer;
-  letter-spacing:1px; text-align:center; transition:all 0.15s;
+  font-family:var(--px); font-size:8px; padding:10px 0; cursor:pointer;
+  letter-spacing:1px; text-align:center; transition:all 0.15s; line-height:1.5;
 }
 .gen-tab.active { background:var(--bg3); border-color:var(--accent); color:var(--accent); }
 
@@ -747,7 +747,7 @@ input, textarea, select { font-size:18px; }
 .typesel-wrap { flex:1; padding:20px 16px; }
 .typesel-title { font-size:11px; color:var(--accent); margin-bottom:6px; letter-spacing:2px; }
 .typesel-sub { font-size:8px; color:var(--fg4); margin-bottom:20px; line-height:2.2; }
-.type-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+.type-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 .type-btn {
   background:var(--bg1); border:1px solid var(--border); color:var(--fg5);
   font-family:var(--px); font-size:8px; padding:14px 12px; cursor:pointer;
@@ -911,7 +911,7 @@ input, textarea, select { font-size:18px; }
 .result-stat-val { font-size:11px; color:var(--fg5); }
 .result-saved { font-size:8px; color:var(--bg3); letter-spacing:1px; margin-top:16px; line-height:2.5; }
 .guest-save-note { font-size:8px; color:var(--fg4); line-height:2.2; margin-bottom:18px; border:1px solid var(--bg3); padding:16px; }
-.result-actions { display:flex; flex-direction:column; gap:12px; margin-top:20px; }
+.result-actions { display:flex; flex-direction:column; gap:14px; margin-top:24px; }
 
 /* ── TEAM REVEAL ── */
 .team-reveal-wrap {
@@ -1054,12 +1054,12 @@ input, textarea, select { font-size:18px; }
 .lb-tab.active { background:var(--bg3); color:var(--accent); border-color:var(--fg5); }
 .lb-table-wrap { overflow-x:auto; margin-top:16px; -webkit-overflow-scrolling:touch; }
 .lb-table { width:100%; border-collapse:collapse; }
-.lb-table th { font-size:6px; color:var(--bg3); letter-spacing:1px; padding:8px 8px; text-align:left; border-bottom:1px solid var(--border); font-weight:normal; white-space:nowrap; }
-.lb-table td { padding:8px 8px; border-bottom:1px solid var(--bg1); vertical-align:middle; }
+.lb-table th { font-size:6px; color:var(--bg3); letter-spacing:1px; padding:10px 8px; text-align:left; border-bottom:1px solid var(--border); font-weight:normal; white-space:nowrap; }
+.lb-table td { padding:11px 8px; border-bottom:1px solid var(--bg1); vertical-align:middle; }
 .lb-sprite { width:28px; height:28px; image-rendering:pixelated; display:block; }
-.lb-pkm-name { font-size:8px; color:var(--fg6); letter-spacing:1px; }
-.lb-pkm-num { font-size:6px; color:var(--bg3); margin-top:2px; letter-spacing:1px; }
-.lb-pkm-type { font-size:6px; color:var(--fg4); margin-top:2px; }
+.lb-pkm-name { font-size:8px; color:var(--fg6); letter-spacing:1px; line-height:1.5; }
+.lb-pkm-num { font-size:6px; color:var(--bg3); margin-top:4px; letter-spacing:1px; }
+.lb-pkm-type { font-size:6px; color:var(--fg4); margin-top:4px; }
 .lb-votes { font-size:9px; color:var(--fg5); text-align:right; white-space:nowrap; }
 .lb-bar-cell { width:60px; }
 .lb-bar-track { height:3px; background:var(--bg2); }
