@@ -919,6 +919,8 @@ input, textarea, select { font-size:18px; }
 .kbd-hint { display:none; color:var(--fg4); }
 @media (hover:hover) and (pointer:fine){
   .kbd-hint { display:block; }
+  /* desktop: keyboard hint replaces the (implicit) "tap your favourite" */
+  .tap-hint { display:none; }
   /* desktop has the U shortcut, so drop the big undo bar */
   .battle-undo-floating, .battle-undo-placeholder { display:none; }
 }
@@ -4442,7 +4444,7 @@ function renderScreen(){
       +'</div>'
       +'<div class="battle-footer">'
       +'<button class="battle-exit-btn" onclick="exitBattle()">&#8962; HOME</button>'
-      +'<span class="battle-footer-text">&#9658; TAP YOUR FAVOURITE<span class="battle-helper-text kbd-hint">&#9664; &#9654; CHOOSE &nbsp;·&nbsp; U UNDO</span></span>'
+      +'<span class="battle-footer-text"><span class="tap-hint">&#9658; TAP YOUR FAVOURITE</span><span class="battle-helper-text kbd-hint">&#9664; &#9654; CHOOSE &nbsp;·&nbsp; U UNDO</span></span>'
       +'<button class="battle-restart-btn" onclick="restartGame()">&#8635; RESTART</button>'
       +'</div>'
       +(S.history&&S.history.length>0?'<button class="battle-undo-floating" onclick="undoLastPick()">&#8630; UNDO LAST PICK</button>':'<div class="battle-undo-placeholder"></div>')
