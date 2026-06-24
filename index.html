@@ -1228,14 +1228,9 @@ input, textarea, select { font-size:18px; }
 .landing-gen:hover::before, .landing-gen:hover::after { opacity:0.8; }
 .landing-gen-title { text-shadow:0 0 6px var(--accent); }
 
-/* living sprite rows — staggered bob, pop on hover */
-.landing-gen-sprites img { animation:genbob 2.6s ease-in-out infinite; transition:filter .15s; }
-.landing-gen-sprites img:nth-child(2n){ animation-delay:.25s; }
-.landing-gen-sprites img:nth-child(3n){ animation-delay:.5s; }
-.landing-gen-sprites img:nth-child(4n){ animation-delay:.75s; }
-.landing-gen-sprites img:nth-child(5n){ animation-delay:1s; }
-.landing-gen-sprites img:hover { animation-play-state:paused; filter:drop-shadow(0 0 6px var(--accent)); }
-@keyframes genbob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+/* sprite rows — static, just a pop on hover (no idle wobble) */
+.landing-gen-sprites img { transition:transform .15s, filter .15s; }
+.landing-gen-sprites img:hover { transform:translateY(-4px) scale(1.12); filter:drop-shadow(0 0 6px var(--accent)); }
 
 /* challenge cards on landing: hover glow */
 .landing-challenge-card { transition:transform .15s, box-shadow .2s, border-color .2s; }
