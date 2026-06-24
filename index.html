@@ -11,6 +11,18 @@
 
 :root { --px: 'Press Start 2P', monospace; }
 
+/* Decorative glyphs (★ ▶ ◀ ⌂ ↻ ↶ …) are not in Press Start 2P, so the browser
+   substitutes a fallback font with different vertical metrics, leaving them
+   misaligned next to the pixel text. normalizeIcons() wraps them in .ico and
+   this rule re-centres them on the text line. */
+.ico {
+  display:inline-block;
+  line-height:1;
+  vertical-align:middle;
+  position:relative;
+  top:-0.06em;
+}
+
 .gen1 {
   --bg0:#0a0f0a; --bg1:#0f1f0f; --bg2:#1a3a1a; --bg3:#306230;
   --fg4:#3d8c3d; --fg5:#8bac0f; --fg6:#9bbc0f; --accent:#c8ff00;
@@ -145,16 +157,19 @@ html, body {
   transition:background 0.3s, color 0.3s;
   -webkit-text-size-adjust:100%;
 }
-/* When in battle screen — lock viewport, no page scroll */
+/* When in battle screen — lock viewport, no page scroll.
+   Use flex fill so .main takes exactly the space left under the header,
+   regardless of header height across breakpoints (no magic px number). */
 body.battle-active {
   height:100vh; height:100svh; height:100dvh;
   min-height:0;
   overflow:hidden;
+  display:flex;
+  flex-direction:column;
 }
 body.battle-active .main {
-  height:calc(100vh - 95px);
-  height:calc(100svh - 95px);
-  height:calc(100dvh - 95px);
+  flex:1 1 auto;
+  height:auto;
   min-height:0;
   overflow:hidden;
 }
@@ -753,7 +768,7 @@ input, textarea, select { font-size:18px; }
 }
 
 /* ── BATTLE ── */
-.battle-wrap { flex:1; display:flex; flex-direction:column; height:calc(100svh - 95px); height:calc(100dvh - 95px); overflow:hidden; }
+.battle-wrap { flex:1 1 auto; display:flex; flex-direction:column; min-height:0; overflow:hidden; }
 
 .battle-topbar {
   background:var(--bg1); border-bottom:1px solid var(--border);
@@ -1370,7 +1385,6 @@ input, textarea, select { font-size:18px; }
   .type-btn:hover { background:var(--bg2); border-color:var(--fg4); color:var(--accent); }
   .back-link { font-size:8px; margin-bottom:36px; }
 
-  .battle-wrap { height:calc(100vh - 102px); }
   .battle-topbar { padding:16px 48px; gap:32px; }
   .battle-mode-label { font-size:8px; letter-spacing:3px; }
   .battle-count { font-size:9px; }
@@ -2713,13 +2727,13 @@ async function continueAsGuest(){
     S.user={id:'local-guest'};
     S.profile=null;
     S.favorites=loadGuestPicks();
+    S.teams=loadGuestTeams();
     S.activeSessions=[];
     S.isGuest=true;
     S.guestLocalOnly=true;
     S.screen='menu';
     S.currentView='game';
     render();
-    S.teams=loadGuestTeams();
   }finally{S.busy=false;}
 }
 
@@ -3108,7 +3122,7 @@ async function choose(idx){
     if(num) num.textContent='#'+String(p.id).padStart(3,'0');
     if(name) name.textContent=p.name;
     if(type) type.innerHTML=typeIconsHTML(p.types,18,S.mode==='challenge'&&p.gen?p.gen:null);
-    if(genBadge) genBadge.textContent='GEN '+(p.gen===1?'I':p.gen===2?'II':'III');
+    if(genBadge) genBadge.textContent='GEN '+(p.gen===1?'I':p.gen===2?'II':p.gen===3?'III':p.gen===4?'IV':'V');
     if(img){
       const useGen=S.mode==='challenge'&&p.gen?p.gen:g;
       img.src=sprite(p.id,useGen);
@@ -3960,7 +3974,53 @@ async function deleteAccount(){
   render();
 }
 
+// Decorative glyphs not present in Press Start 2P (rendered via fallback font).
+const ICON_GLYPHS='★▶◀▷▼▲⌂▦↻↶↺⚔◎♥✕≡◆→';
+const ICON_RE=new RegExp('(['+ICON_GLYPHS+'])');
+const ICON_TEST=new RegExp('['+ICON_GLYPHS+']');
+// Wrap decorative glyphs in <span class="ico"> so CSS can re-centre them on the
+// text line. Walks text nodes only — attributes and CSS are untouched.
+function normalizeIcons(root){
+  if(!root) return;
+  const walker=document.createTreeWalker(root, NodeFilter.SHOW_TEXT, {
+    acceptNode(n){
+      if(!n.nodeValue || !ICON_TEST.test(n.nodeValue)) return NodeFilter.FILTER_REJECT;
+      const p=n.parentNode;
+      if(p && p.nodeType===1 && p.classList.contains('ico')) return NodeFilter.FILTER_REJECT;
+      return NodeFilter.FILTER_ACCEPT;
+    }
+  });
+  const nodes=[];
+  while(walker.nextNode()) nodes.push(walker.currentNode);
+  nodes.forEach(n=>{
+    const frag=document.createDocumentFragment();
+    n.nodeValue.split(ICON_RE).forEach(part=>{
+      if(!part) return;
+      if(ICON_TEST.test(part) && part.length===1){
+        const s=document.createElement('span');
+        s.className='ico'; s.textContent=part;
+        frag.appendChild(s);
+      } else {
+        frag.appendChild(document.createTextNode(part));
+      }
+    });
+    n.parentNode.replaceChild(frag, n);
+  });
+}
+
 function render(){
+  renderScreen();
+  // Mount the confirm dialog (lives outside #app so it overlays any screen).
+  const mount=document.getElementById('confirm-dialog-mount');
+  if(mount) mount.innerHTML=renderConfirmDialog();
+  // Re-align decorative glyphs everywhere after the DOM is built.
+  normalizeIcons(document.getElementById('app'));
+  normalizeIcons(document.getElementById('header-user'));
+  normalizeIcons(document.getElementById('header-nav'));
+  normalizeIcons(mount);
+}
+
+function renderScreen(){
   // Lock viewport during battle screens (no page scroll)
   const inBattle = S.screen==='battle';
   document.body.classList.toggle('battle-active', inBattle);
@@ -4440,13 +4500,9 @@ async function init(){
       S.screen='menu';S.currentView='game';
     } else {S.screen='landing';}
   } catch(e){
-    console.warn('init: Supabase unreachable, starting in guest mode:', e);
-    S.user={id:'local-guest'};
-    S.isGuest=true;
-    S.guestLocalOnly=true;
-    S.favorites=loadGuestPicks();
-    S.teams=loadGuestTeams();
-    S.activeSessions=[];
+    // Supabase unreachable: show landing cleanly. The "PLAY AS GUEST" button
+    // (continueAsGuest) handles its own offline fallback to local guest mode.
+    console.warn('init: Supabase unreachable, showing landing:', e);
     S.screen='landing';
   }
   render();
@@ -4454,7 +4510,7 @@ async function init(){
     if(ev==='SIGNED_IN'&&sess?.user){
       S.user=sess.user;
       S.isGuest=!!(S.user.is_anonymous||!S.user.email);
-      if(S.isGuest){S.profile=null;S.favorites=loadGuestPicks();S.activeSessions=[];S.screen='menu';S.currentView='game';render();return;}
+      if(S.isGuest){S.profile=null;S.favorites=loadGuestPicks();S.teams=loadGuestTeams();S.activeSessions=[];S.screen='menu';S.currentView='game';render();return;}
       // save pending nickname if present (from registration)
       try{
         const nick=localStorage.getItem('pending_nick');
@@ -4473,7 +4529,7 @@ async function init(){
       }
       S.screen='menu';S.currentView='game';render();
     }
-    if(ev==='SIGNED_OUT'){if(S.screen==='auth'&&S.guestAuthReturn){return;}S.user=null;S.profile=null;S.favorites={};S.isGuest=false;S.guestLocalOnly=false;S.guestAuthReturn=null;S.screen='landing';render();}
+    if(ev==='SIGNED_OUT'){if(S.screen==='auth'&&S.guestAuthReturn){return;}S.user=null;S.profile=null;S.favorites={};S.teams={};S.isGuest=false;S.guestLocalOnly=false;S.guestAuthReturn=null;S.screen='landing';render();}
   });}
 
 init();
