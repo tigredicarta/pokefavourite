@@ -1106,7 +1106,7 @@ input, textarea, select { font-size:18px; }
 
 .landing-hero {
   background:var(--bg1); border-bottom:1px solid var(--border);
-  padding:64px 24px 56px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:28px;
+  padding:36px 24px 40px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:20px;
 }
 .landing-eyebrow { font-size:6px; color:var(--fg4); letter-spacing:4px; }
 
@@ -1119,8 +1119,8 @@ input, textarea, select { font-size:18px; }
   width:92px; height:92px; flex-shrink:0;
   display:flex; align-items:center; justify-content:center;
 }
-.landing-vs-cell.bob-a { animation:vsbob 1.6s ease-in-out infinite; }
-.landing-vs-cell.bob-b { animation:vsbob 1.6s ease-in-out infinite; animation-delay:0.8s; }
+.landing-vs-cell.fighter-l { animation:fight-l 2.6s ease-in-out infinite; }
+.landing-vs-cell.fighter-r { animation:fight-r 2.6s ease-in-out infinite; }
 .landing-vs-sprite {
   max-width:100%; max-height:100%; width:auto; height:auto;
   image-rendering:pixelated;
@@ -1129,15 +1129,40 @@ input, textarea, select { font-size:18px; }
 .landing-vs-sprite.flip { transform:scaleX(-1); }
 .landing-vs-text {
   font-size:20px; color:var(--accent); letter-spacing:2px; font-weight:bold;
-  text-shadow:0 0 10px var(--accent);
-  animation:vspulse 0.95s steps(2,jump-none) infinite;
+  animation:vsclash 2.6s ease-in-out infinite;
 }
-@keyframes vsbob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
-@keyframes vspulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.45;transform:scale(0.9)} }
+/* Nidorino (left): idle wobble, then charges right into the clash */
+@keyframes fight-l {
+  0%,100%{ transform:translate(0,0) rotate(0) }
+  12%{ transform:translate(0,-5px) }
+  24%{ transform:translate(0,0) }
+  40%{ transform:translate(20px,-2px) rotate(4deg) }
+  47%{ transform:translate(7px,0) rotate(0) }
+  60%{ transform:translate(0,0) }
+  82%{ transform:translate(0,-4px) }
+}
+/* Gengar (right): idle wobble, then lunges left into the clash (offset timing) */
+@keyframes fight-r {
+  0%,100%{ transform:translate(0,0) rotate(0) }
+  12%{ transform:translate(0,-4px) }
+  24%{ transform:translate(0,0) }
+  56%{ transform:translate(-20px,-3px) rotate(-4deg) }
+  63%{ transform:translate(-7px,0) rotate(0) }
+  76%{ transform:translate(0,0) }
+  88%{ transform:translate(0,-5px) }
+}
+/* VS flashes big on each impact (synced to the two charges) */
+@keyframes vsclash {
+  0%,100%{ opacity:0.85; transform:scale(1); text-shadow:0 0 4px var(--accent) }
+  40%{ opacity:1; transform:scale(1.45) rotate(-3deg); text-shadow:0 0 16px var(--accent),0 0 6px #fff }
+  48%{ opacity:0.85; transform:scale(1); text-shadow:0 0 4px var(--accent) }
+  56%{ opacity:1; transform:scale(1.45) rotate(3deg); text-shadow:0 0 16px var(--accent),0 0 6px #fff }
+  64%{ opacity:0.85; transform:scale(1); text-shadow:0 0 4px var(--accent) }
+}
 
-.landing-title { font-size:20px; color:var(--accent); letter-spacing:2px; line-height:2;
-  text-shadow:0 0 16px var(--accent), 0 0 4px var(--accent); }
-.landing-sub { font-size:8px; color:var(--fg4); line-height:2.8; letter-spacing:1px; max-width:300px; }
+.landing-title { font-size:20px; color:var(--accent); letter-spacing:2px; line-height:1.5;
+  text-shadow:0 0 6px var(--accent); }
+.landing-sub { font-size:8px; color:var(--fg4); line-height:2.1; letter-spacing:1px; max-width:300px; }
 .landing-cta { display:flex; flex-direction:column; gap:16px; width:100%; max-width:320px; }
 .landing-login-link {
   font-size:8px; color:var(--fg4); letter-spacing:1px;
@@ -3353,9 +3378,9 @@ function renderLanding(app){
     +'<div class="landing-hero">'
     +'<div class="landing-eyebrow">★ A FAN-MADE 1V1 TOURNAMENT ★</div>'
     +'<div class="landing-vs">'
-    +'<div class="landing-vs-cell bob-a">'+spriteWithFallback(33,1,'landing-vs-sprite flip','')+'</div>'
+    +'<div class="landing-vs-cell fighter-l">'+spriteWithFallback(33,1,'landing-vs-sprite flip','')+'</div>'
     +'<div class="landing-vs-text">VS</div>'
-    +'<div class="landing-vs-cell bob-b">'+spriteWithFallback(94,1,'landing-vs-sprite','')+'</div>'
+    +'<div class="landing-vs-cell fighter-r">'+spriteWithFallback(94,1,'landing-vs-sprite','')+'</div>'
     +'</div>'
     +'<div class="landing-title">YOUR<br>FAVOURITE<br>POKÉMON</div>'
     +'<div class="landing-sub">TWO POKÉMON. ONE CHOICE.<br>BATTLE THROUGH AN ENTIRE GENERATION,<br>OR JOIN A CROSS-GEN CHALLENGE.<br><br>NO ACCOUNT REQUIRED.</div>'
