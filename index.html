@@ -187,7 +187,6 @@ body.gen2::after {
 }
 
 @keyframes blink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
-@keyframes flashwin { 0%,100%{background:var(--bg2)} 50%{background:var(--bg1)} }
 
 /* ── GEN SWITCHER ── */
 .gen-switcher {
@@ -470,23 +469,27 @@ input, textarea, select { font-size:18px; }
 /* ══ REGION CARD — centered showcase style ══ */
 .region-card {
   position:relative;
-  background:linear-gradient(180deg, var(--region-grad-1, var(--bg1)) 0%, var(--region-grad-2, var(--bg0)) 100%);
+  /* pixel-dot texture layered over the per-gen gradient */
+  background:
+    radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px) 0 0 / 8px 8px,
+    linear-gradient(180deg, var(--region-grad-1, var(--bg1)) 0%, var(--region-grad-2, var(--bg0)) 100%);
   border:1px solid var(--region-edge, var(--accent));
   border-left-width:3px;
   border-right-width:3px;
-  padding:10px 16px 8px;
+  padding:14px 16px 12px;
   margin-bottom:18px;
   overflow:hidden;
-  display:flex; flex-direction:column; gap:5px;
+  display:flex; flex-direction:column; gap:8px;
   text-align:center;
+  box-shadow: inset 0 0 18px -9px var(--region-edge, var(--accent));
 }
-/* Subtle pixel dot overlay */
-.region-card::before {
-  content:''; position:absolute; inset:0;
-  background-image:radial-gradient(rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size:8px 8px;
-  pointer-events:none;
+/* Game Boy window corner brackets (per-gen colour) */
+.region-card::before, .region-card::after {
+  content:''; position:absolute; width:12px; height:12px;
+  border:2px solid var(--region-edge, var(--accent)); opacity:0.5; pointer-events:none; z-index:2;
 }
+.region-card::before { top:8px; left:8px; border-right:none; border-bottom:none; }
+.region-card::after { bottom:8px; right:8px; border-left:none; border-top:none; }
 
 /* Header: name + tagline */
 .region-card-header { position:relative; z-index:1; }
@@ -551,12 +554,19 @@ input, textarea, select { font-size:18px; }
   flex-shrink:0;
 }
 .region-starter-sprite {
-  max-width:100%; max-height:100%;
-  width:auto; height:auto;
+  width:100%; height:100%; object-fit:contain;
   image-rendering:pixelated;
   filter:drop-shadow(0 2px 0 rgba(0,0,0,0.5));
   display:block;
   margin:auto;
+  transition:transform .15s, filter .15s;
+}
+.region-starter-cell:hover .region-starter-sprite {
+  transform:translateY(-4px) scale(1.08);
+  filter:drop-shadow(0 0 6px var(--region-edge, var(--accent)));
+}
+@media (hover:none){
+  .region-starter-cell:hover .region-starter-sprite { transform:none; filter:drop-shadow(0 2px 0 rgba(0,0,0,0.5)); }
 }
 
 /* Per-gen palette */
@@ -832,6 +842,7 @@ input, textarea, select { font-size:18px; }
   gap:16px; padding:6px 12px; cursor:pointer; background:transparent; border:none;
   border-bottom:1px solid var(--border); transition:background 0.1s;
   -webkit-tap-highlight-color:transparent;
+  position:relative;
 }
 .pokemon-card .poke-sprite { transition:opacity 0.18s; }
 .pokemon-card .poke-info { transition:opacity 0.18s; }
@@ -840,8 +851,42 @@ input, textarea, select { font-size:18px; }
 .pokemon-card:last-child { border-bottom:none; border-top:1px solid var(--border); }
 .pokemon-card:active { background:var(--bg1); transform:scale(0.99); }
 .pokemon-card:active .poke-name { color:var(--accent); }
-.pokemon-card.winner { background:var(--bg2); animation:flashwin 0.2s 3; }
-.pokemon-card.loser { background:var(--bg0); opacity:0.2; pointer-events:none; }
+/* ── SELECTION EFFECT ── winner pops & wobbles, loser fades out ── */
+.pokemon-card.winner {
+  background:var(--bg2); z-index:2;
+  animation:pickwin 0.34s ease-out;
+}
+@keyframes pickwin {
+  0%   { transform:scale(1) rotate(0); }
+  25%  { transform:scale(1.06) rotate(-2deg); }
+  50%  { transform:scale(1.04) rotate(2deg); }
+  75%  { transform:scale(1.05) rotate(-1deg); }
+  100% { transform:scale(1) rotate(0); }
+}
+.pokemon-card.winner .poke-sprite { animation:pickpop 0.34s ease-out; }
+@keyframes pickpop {
+  0%   { transform:scale(1); filter:brightness(1); }
+  40%  { transform:scale(1.18) translateY(-4px); filter:brightness(1.7) drop-shadow(0 0 6px var(--accent)); }
+  100% { transform:scale(1); filter:brightness(1); }
+}
+.pokemon-card.winner .poke-name { color:var(--accent); text-shadow:0 0 8px var(--accent); }
+.pokemon-card.winner::after {
+  content:''; position:absolute; inset:0; pointer-events:none; z-index:3;
+  border:2px solid var(--accent);
+  animation:pickring 0.45s ease-out forwards;
+}
+@keyframes pickring {
+  0%   { opacity:0.85; transform:scale(0.96); }
+  100% { opacity:0; transform:scale(1.04); }
+}
+.pokemon-card.loser {
+  background:var(--bg0); pointer-events:none;
+  animation:picklose 0.3s ease-out forwards;
+}
+@keyframes picklose {
+  0%   { opacity:1; transform:scale(1); filter:none; }
+  100% { opacity:0.18; transform:scale(0.93); filter:grayscale(0.8); }
+}
 
 .poke-sprite { width:125px; height:125px; image-rendering:pixelated; flex-shrink:0; }
 .poke-info { display:flex; flex-direction:column; gap:10px; }
@@ -1226,7 +1271,6 @@ input, textarea, select { font-size:18px; }
 .landing-gen::after { bottom:12px; right:12px; border-left:none; border-top:none; }
 .landing-gen:hover { box-shadow:inset 0 0 0 1px var(--accent), 0 0 22px -12px var(--accent); }
 .landing-gen:hover::before, .landing-gen:hover::after { opacity:0.8; }
-.landing-gen-title { text-shadow:0 0 6px var(--accent); }
 
 /* sprite rows — static, just a pop on hover (no idle wobble) */
 .landing-gen-sprites img { transition:transform .15s, filter .15s; }
@@ -1262,8 +1306,8 @@ input, textarea, select { font-size:18px; }
 .mode-btn, .type-btn, .menu-btn, .lb-card { transition:background .15s, border-color .15s, box-shadow .2s, transform .15s; }
 .mode-btn:hover, .type-btn:hover, .menu-btn:hover, .lb-card:hover { box-shadow:0 0 18px -12px var(--accent); }
 .type-btn:hover { transform:translateY(-2px); }
-/* faint phosphor on section titles */
-.challenges-title, .typesel-title, .lb-title, .menu-claim, .team-reveal-title { text-shadow:0 0 4px var(--accent); }
+/* phosphor only on the big titles where it actually reads well */
+.team-reveal-title { text-shadow:0 0 6px var(--accent); }
 @media (hover:none){
   /* no hover glints on touch — keep it light */
   .mode-btn:hover, .type-btn:hover, .menu-btn:hover, .lb-card:hover, .challenge-card:hover { box-shadow:none; transform:none; }
@@ -3133,7 +3177,7 @@ async function choose(idx){
     const cat=S.mode==='challenge'?'ch_'+S.filterType:(genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall'));
     autoSave(cat,chosen);
   }
-  await new Promise(r=>setTimeout(r,300));
+  await new Promise(r=>setTimeout(r,360));
   if(S.pool.length===1){
     S.winner=S.pool[0];
     const cat=S.mode==='challenge'?'ch_'+S.filterType:(genPrefix()+(S.mode==='type'?'type_'+S.filterType:'overall'));
@@ -3183,7 +3227,7 @@ async function choose(idx){
   }
   if(!S.isGuest) saveSession();
 
-  await new Promise(r=>setTimeout(r,300));
+  await new Promise(r=>setTimeout(r,360));
 
   // round complete?
   if(b.currentMatchIndex>=b.matches.length){
@@ -3342,6 +3386,9 @@ async function switchLbTab(mode){
 
 // ── LANDING ──
 function renderLanding(app){
+  // Landing always uses the default (Gen I) theme, regardless of which gen was
+  // selected before logging out.
+  document.body.className='gen1';
   let loginLink='';
   const s1=[25,6,9,150,39,94,143,131].map(id=>spriteWithFallback(id,1,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
   const s2=[249,250,197,196,245,248,243,244].map(id=>spriteWithFallback(id,2,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
