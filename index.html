@@ -479,7 +479,8 @@ input, textarea, select { font-size:18px; }
   padding:14px 16px 12px;
   margin-bottom:32px;
   overflow:hidden;
-  display:flex; flex-direction:column; gap:8px;
+  min-height:330px;
+  display:flex; flex-direction:column; gap:8px; justify-content:center;
   text-align:center;
   box-shadow: inset 0 0 18px -9px var(--region-edge, var(--accent));
 }
@@ -542,10 +543,10 @@ input, textarea, select { font-size:18px; }
   font-size:7px; letter-spacing:3px;
 }
 
-/* Starters — final evolutions in a row, aligned on a common baseline */
+/* Starters — final evolutions in a row, fixed-height so every card matches */
 .region-card-starters {
-  display:flex; justify-content:center; align-items:flex-end; gap:14px;
-  margin-top:0;
+  display:flex; justify-content:center; align-items:center; gap:14px;
+  height:92px; margin-top:0;
   position:relative; z-index:1;
 }
 .region-starter-cell {
@@ -568,11 +569,14 @@ input, textarea, select { font-size:18px; }
 @media (hover:none){
   .region-starter-cell:hover .region-starter-sprite { transform:none; filter:drop-shadow(0 2px 0 rgba(0,0,0,0.5)); }
 }
-/* Optical size match: later-gen sprites fill more of their canvas, so they get
-   a slightly smaller render height to read as the same size as Gen I/II. */
-.region-card.gen3-card .region-starter-sprite { height:56px; }
-.region-card.gen4-card .region-starter-sprite { height:54px; }
-.region-card.gen5-card .region-starter-sprite { height:52px; }
+/* Optical size match — per-gen render height calibrated from measured sprite
+   content-fill (creature height / canvas), so the CREATURE reads the same size
+   across all gens regardless of each era's canvas framing. */
+.region-card.gen1-card .region-starter-sprite { height:76px; }
+.region-card.gen2-card .region-starter-sprite { height:72px; }
+.region-card.gen3-card .region-starter-sprite { height:43px; }
+.region-card.gen4-card .region-starter-sprite { height:46px; }
+.region-card.gen5-card .region-starter-sprite { height:55px; }
 
 /* Per-gen palette */
 .region-card.gen1-card { --region-grad-1:#1a2a14; --region-grad-2:#0a1408; --region-edge:#9bbc0f; }
@@ -582,7 +586,7 @@ input, textarea, select { font-size:18px; }
 .region-card.gen5-card { --region-grad-1:#1a0e10; --region-grad-2:#080406; --region-edge:#ff5050; }
 
 @media (min-width:700px){
-  .region-card { padding:18px 22px 16px; margin-bottom:20px; gap:14px; }
+  .region-card { padding:18px 22px 16px; margin-bottom:20px; gap:14px; min-height:340px; }
   .region-card-name {
   font-size:14px; letter-spacing:3px; }
   .region-card-tagline {
@@ -591,11 +595,12 @@ input, textarea, select { font-size:18px; }
   .region-quote-by { font-size:8px; }
   .region-card-meta-line { font-size:8px; }
   .region-card-meta-line.games { font-size:8px; }
-  .region-card-starters { gap:22px; margin-top:4px; }
-  .region-starter-sprite { height:84px; }
-  .region-card.gen3-card .region-starter-sprite { height:74px; }
-  .region-card.gen4-card .region-starter-sprite { height:70px; }
-  .region-card.gen5-card .region-starter-sprite { height:68px; }
+  .region-card-starters { gap:22px; margin-top:4px; height:124px; }
+  .region-card.gen1-card .region-starter-sprite { height:105px; }
+  .region-card.gen2-card .region-starter-sprite { height:99px; }
+  .region-card.gen3-card .region-starter-sprite { height:59px; }
+  .region-card.gen4-card .region-starter-sprite { height:63px; }
+  .region-card.gen5-card .region-starter-sprite { height:76px; }
 }
 .menu-hero { font-size:11px; color:var(--accent); line-height:1.6; margin-bottom:5px; letter-spacing:1px; }
 .menu-sub { font-size:8px; color:var(--fg4); line-height:1.6; margin-bottom:18px; }
