@@ -2033,7 +2033,7 @@ const PS_NAMES = {29:'nidoran-f',32:'nidoran-m',83:'farfetchd',122:'mr-mime',
   185:'sudowoodo',201:'unown',250:'ho-oh',351:'castform',386:'deoxys'};
 function getPSName(id){
   if(PS_NAMES[id]) return PS_NAMES[id];
-  const pkm = (id<=151?PKM1:id<=251?PKM2:id<=386?PKM3:PKM4).find(p=>p.id===id);
+  const pkm = (id<=151?PKM1:id<=251?PKM2:id<=386?PKM3:id<=493?PKM4:PKM5).find(p=>p.id===id);
   if(!pkm) return 'missingno';
   return pkm.name.toLowerCase().replace(/[^a-z0-9]/g,'-');
 }
@@ -2214,12 +2214,20 @@ async function clearFavorite(cat){
   delete S.favorites[cat];
   if(S.isGuest) saveGuestPicks();
   if(S.user && !S.guestLocalOnly){
-    await sb.from('pokemon_favorites').delete().eq('user_id',S.user.id).eq('category',cat);
+    try {
+      const {error} = await sb.from('pokemon_favorites').delete().eq('user_id',S.user.id).eq('category',cat);
+      if(error) console.warn('clearFavorite error:', error.message);
+    } catch(e){ console.warn('clearFavorite failed:', e); }
   }
 }
 
 async function migrateGuestPicksToUser(uid, picks){
-  for(const [cat,p] of Object.entries(picks||{}).filter(([,p])=>p&&p.id)) await saveFav(uid,cat,p);
+  let picksMigrated = false;
+  try {
+    for(const [cat,p] of Object.entries(picks||{}).filter(([,p])=>p&&p.id)) await saveFav(uid,cat,p);
+    picksMigrated = true;
+    clearGuestPicks();
+  } catch(e){ console.warn('migrate picks failed:', e); }
   // also migrate guest teams (cached in localStorage)
   try {
     const guestTeams = loadGuestTeams();
@@ -2245,7 +2253,7 @@ function switchGen(g) {
   S.screen = (S.screen==='auth'||S.screen==='loading') ? S.screen : 'menu';
   S.currentView='game';
   S.lbData=null;
-  document.body.className = g===1 ? 'gen1' : g===2 ? 'gen2' : g===3 ? 'gen3' : 'gen4';
+  document.body.className = g===1 ? 'gen1' : g===2 ? 'gen2' : g===3 ? 'gen3' : g===4 ? 'gen4' : 'gen5';
   updateLogoSubtitle();
   render();
 }
@@ -2261,15 +2269,16 @@ async function loadTeams(uid) {
 }
 
 async function loadFavs(uid) {
-  const {data} = await sb.from('pokemon_favorites').select('*').eq('user_id',uid);
+  const {data,error} = await sb.from('pokemon_favorites').select('*').eq('user_id',uid);
+  if(error) { console.warn('loadFavs error:', error.message); return {}; }
   const f={};
-  if(data) data.forEach(r=>{f[r.category]={id:r.pokemon_id,name:r.pokemon_name,types:r.pokemon_types,gen:r.pokemon_id<=151?1:r.pokemon_id<=251?2:r.pokemon_id<=386?3:4};});
+  if(data) data.forEach(r=>{f[r.category]={id:r.pokemon_id,name:r.pokemon_name,types:r.pokemon_types,gen:genFromId(r.pokemon_id)};});
   return f;
 }
 
 async function saveFav(uid,cat,p) {
   // ensure gen is preserved in our local cache (DB schema may not have a gen column)
-  if(p && !p.gen && p.id) p.gen = (p.id<=151?1:p.id<=251?2:p.id<=386?3:4);
+  if(p && !p.gen && p.id) p.gen = genFromId(p.id);
   await sb.from('pokemon_favorites').upsert({
     user_id:uid, category:cat,
     pokemon_id:p.id, pokemon_name:p.name, pokemon_types:p.types,
@@ -2295,8 +2304,10 @@ async function autoSave(cat, p) {
     return;
   }
   if(!S.user) return;
-  await saveFav(S.user.id,cat,p);
-  if(badge){badge.textContent=S.isGuest?'★ PICK KEPT':'★ SAVED';badge.classList.add('show');setTimeout(()=>badge.classList.remove('show'),1500);}
+  try {
+    await saveFav(S.user.id,cat,p);
+    if(badge){badge.textContent=S.isGuest?'★ PICK KEPT':'★ SAVED';badge.classList.add('show');setTimeout(()=>badge.classList.remove('show'),1500);}
+  } catch(e){ console.warn('autoSave failed:', e); }
 }
 
 // ── SESSION PERSISTENCE
@@ -2475,7 +2486,7 @@ async function doAuth() {
         if(r.data.session&&r.data.user){
           S.user=r.data.user;S.isGuest=false;S.guestLocalOnly=false;
           S.profile=await loadProfile(S.user.id);S.favorites=await loadFavs(S.user.id);S.teams=await loadTeams(S.user.id);S.activeSessions=await loadActiveSessions(S.user.id);
-          clearGuestPicks();clearGuestTeams();S.screen='menu';S.currentView='game';S.guestAuthReturn=null;S.busy=false;render();return;
+          S.screen='menu';S.currentView='game';S.guestAuthReturn=null;S.busy=false;render();return;
         }
         msg.innerHTML='▶ ACCOUNT CREATED!<br><br>CHECK YOUR INBOX FOR A CONFIRMATION EMAIL.<br>★ CHECK SPAM FOLDER TOO — FIRST EMAILS OFTEN LAND THERE.<br><br>CLICK THE LINK, THEN LOG IN.';msg.className='auth-msg';S.busy=false;return;
       }
@@ -2508,7 +2519,7 @@ async function doAuth() {
   }
   try{const nick=localStorage.getItem('pending_nick');if(nick){await upsertProfile(S.user.id,nick);localStorage.removeItem('pending_nick');}}catch(e){}
   S.profile=await loadProfile(S.user.id);S.favorites=await loadFavs(S.user.id);S.teams=await loadTeams(S.user.id);S.activeSessions=await loadActiveSessions(S.user.id);
-  clearGuestPicks();clearGuestTeams();S.screen='menu';S.currentView='game';S.guestAuthReturn=null;render();
+  S.screen='menu';S.currentView='game';S.guestAuthReturn=null;render();
 }
 
 function cancelAuth(){
@@ -2708,7 +2719,7 @@ async function continueAsGuest(){
     S.screen='menu';
     S.currentView='game';
     render();
-    setTimeout(()=>alert('Guest play enabled locally. To save guest votes in the Pokémon leaderboard, enable Anonymous Sign-ins in Supabase Auth.'),50);
+    S.teams=loadGuestTeams();
   }finally{S.busy=false;}
 }
 
@@ -3197,6 +3208,7 @@ async function switchLbTab(mode){
 
 // ── LANDING ──
 function renderLanding(app){
+  let loginLink='';
   const s1=[25,6,9,150,39,94,143,131].map(id=>spriteWithFallback(id,1,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
   const s2=[249,250,197,196,245,248,243,244].map(id=>spriteWithFallback(id,2,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
   const s3=[257,260,282,373,376,384,380,381].map(id=>spriteWithFallback(id,3,'','width:56px;height:56px;image-rendering:pixelated;opacity:0.9')).join('');
@@ -3428,9 +3440,11 @@ async function shareStory(){
     1:{bg:'#0a0f0a',bg2:'#1a3a1a',accent:'#c8ff00',fg:'#9bbc0f',fg4:'#3d8c3d'},
     2:{bg:'#0d0b1a',bg2:'#1e1b3a',accent:'#ffe040',fg:'#e8c800',fg4:'#6a5acd'},
     3:{bg:'#0f0a08',bg2:'#3a1a08',accent:'#ff4800',fg:'#f09038',fg4:'#c05020'},
+    4:{bg:'#080c12',bg2:'#1a2540',accent:'#7cc8ff',fg:'#c0d4ec',fg4:'#5a78a8'},
+    5:{bg:'#06070a',bg2:'#1d1f28',accent:'#ff5050',fg:'#e8e8ec',fg4:'#7c828c'},
     ch:{bg:'#08101a',bg2:'#15264a',accent:'#ffd060',fg:'#e0b860',fg4:'#5570a0'}
   };
-  const t=S.mode==='challenge'?themes.ch:themes[useGen];
+  const t=S.mode==='challenge'?themes.ch:(themes[useGen]||themes[1]);
 
   // background
   ctx.fillStyle=t.bg;ctx.fillRect(0,0,W,H);
@@ -3469,8 +3483,9 @@ async function shareStory(){
   txt('POKÉMON',260,t.accent,68,6);
 
   // ── SUBTITLE ──
+  const _gR=g=>(g===1?'I':g===2?'II':g===3?'III':g===4?'IV':'V');
   const sub=S.mode==='challenge'?(CHALLENGES[S.filterType]?CHALLENGES[S.filterType].title:'CHALLENGE'):
-    (S.mode==='type'?'GEN '+(useGen===1?'I':useGen===2?'II':'III')+' · '+S.filterType.toUpperCase():'GEN '+(useGen===1?'I':useGen===2?'II':'III'));
+    (S.mode==='type'?'GEN '+_gR(useGen)+' · '+S.filterType.toUpperCase():'GEN '+_gR(useGen));
   txt(sub,360,t.fg,24,4);
 
   // ── SPRITE ──
@@ -3478,9 +3493,11 @@ async function shareStory(){
   const img=new Image();
   img.crossOrigin='anonymous';
   await new Promise((resolve)=>{
+    const sources=(SPRITE_SOURCES[useGen]||SPRITE_SOURCES[1]).map(fn=>fn(winner.id));
+    let srcIdx=0;
     img.onload=resolve;
-    img.onerror=resolve; // continue even if fails
-    img.src=sprite(winner.id,useGen);
+    img.onerror=()=>{ srcIdx++; if(srcIdx<sources.length){img.src=sources[srcIdx];}else{resolve();} };
+    img.src=sources[0];
   });
 
   // sprite: large, centered
@@ -3841,7 +3858,7 @@ function renderAccountSettings(app){
     +'<div class="account-section">'
       +'<div class="account-h3">YOUR DATA</div>'
       +'<div class="account-row" style="font-size:8px;line-height:2">Download all your data (profile, picks, sessions) in JSON format.</div>'
-      +'<button class="btn-primary dark" style="margin-top:10px" onclick="exportUserData()">▼ EXPORT MY DATA</button>'
+      +'<button id="export-btn" class="btn-primary dark" style="margin-top:10px" onclick="exportUserData()">▼ EXPORT MY DATA</button>'
     +'</div>'
     +'<div class="account-section">'
       +'<div class="account-h3">DELETE ACCOUNT</div>'
@@ -3883,6 +3900,8 @@ function openLegalPage(page){
 
 async function exportUserData(){
   if(!S.user || S.isGuest) return;
+  const btn=document.getElementById('export-btn');
+  if(btn){btn.disabled=true;btn.textContent='▶ EXPORTING...';}
   try {
     const [profRes, favRes, sessRes] = await Promise.all([
       sb.from('profiles').select('*').eq('id',S.user.id).single(),
@@ -3907,6 +3926,8 @@ async function exportUserData(){
     URL.revokeObjectURL(url);
   } catch(e){
     alert('Export failed: '+(e.message||e));
+  } finally {
+    if(btn){btn.disabled=false;btn.textContent='▶ EXPORT MY DATA';}
   }
 }
 
@@ -3922,26 +3943,21 @@ function confirmDeleteAccount(){
 
 async function deleteAccount(){
   if(!S.user || S.isGuest) return;
-  try {
-    const uid=S.user.id;
-    await sb.from('pokemon_favorites').delete().eq('user_id',uid);
-    await sb.from('pokemon_sessions').delete().eq('user_id',uid);
-    await sb.from('profiles').delete().eq('id',uid);
-    await sb.auth.signOut();
-    S.user=null;S.profile=null;S.favorites={};S.activeSessions=[];
-    S.isGuest=false;S.guestLocalOnly=false;
-    S.screen='landing';S.currentView='game';
-    showConfirm({
-      title:'DELETED',
-      message:'YOUR DATA HAS BEEN ERASED FROM OUR DATABASE. TO ALSO DELETE THE AUTHENTICATION RECORD, WRITE TO '+CONTACT_EMAIL+'.',
-      confirmLabel:'OK',
-      cancelLabel:'OK',
-      onConfirm: ()=>{},
-    });
-    render();
-  } catch(e){
-    alert('Delete failed: '+(e.message||e));
-  }
+  const uid=S.user.id;
+  const errors=[];
+  try { await sb.from('pokemon_favorites').delete().eq('user_id',uid); } catch(e){ errors.push('favorites'); }
+  try { await sb.from('pokemon_sessions').delete().eq('user_id',uid); } catch(e){ errors.push('sessions'); }
+  try { await sb.from('pokemon_teams').delete().eq('user_id',uid); } catch(e){ errors.push('teams'); }
+  try { await sb.from('profiles').delete().eq('id',uid); } catch(e){ errors.push('profile'); }
+  try { await sb.auth.signOut(); } catch(e){}
+  S.user=null;S.profile=null;S.favorites={};S.teams={};S.activeSessions=[];
+  S.isGuest=false;S.guestLocalOnly=false;
+  S.screen='landing';S.currentView='game';
+  const msg=errors.length>0
+    ?'SOME DATA COULD NOT BE DELETED ('+errors.join(', ')+') — PLEASE WRITE TO '+CONTACT_EMAIL+' TO COMPLETE DELETION.'
+    :'YOUR DATA HAS BEEN ERASED. TO ALSO DELETE THE AUTHENTICATION RECORD, WRITE TO '+CONTACT_EMAIL+'.';
+  showConfirm({title:'ACCOUNT DELETED',message:msg,confirmLabel:'OK',cancelLabel:'OK',onConfirm:()=>{}});
+  render();
 }
 
 function render(){
@@ -4146,7 +4162,7 @@ function render(){
       +'<div class="poke-num">#'+String(p0.id).padStart(3,'0')+'</div>'
       +'<div class="poke-name">'+p0.name+'</div>'
       +'<div class="poke-type">'+typeIconsHTML(p0.types,18,S.mode==='challenge'&&p0.gen?p0.gen:null)+'</div>'
-      +(S.mode==='challenge'&&p0.gen?'<div class="poke-gen-badge">GEN '+(p0.gen===1?'I':p0.gen===2?'II':'III')+'</div>':'')
+      +(S.mode==='challenge'&&p0.gen?'<div class="poke-gen-badge">GEN '+(p0.gen===1?'I':p0.gen===2?'II':p0.gen===3?'III':p0.gen===4?'IV':'V')+'</div>':'')
       +'</div>'
       +'</div>'
       +'<div class="vs-divider"><div class="vs-text">VS</div></div>'
@@ -4156,7 +4172,7 @@ function render(){
       +'<div class="poke-num">#'+String(p1.id).padStart(3,'0')+'</div>'
       +'<div class="poke-name">'+p1.name+'</div>'
       +'<div class="poke-type">'+typeIconsHTML(p1.types,18,S.mode==='challenge'&&p1.gen?p1.gen:null)+'</div>'
-      +(S.mode==='challenge'&&p1.gen?'<div class="poke-gen-badge">GEN '+(p1.gen===1?'I':p1.gen===2?'II':'III')+'</div>':'')
+      +(S.mode==='challenge'&&p1.gen?'<div class="poke-gen-badge">GEN '+(p1.gen===1?'I':p1.gen===2?'II':p1.gen===3?'III':p1.gen===4?'IV':'V')+'</div>':'')
       +'</div>'
       +'</div></div>'
       +'</div>'
@@ -4263,11 +4279,7 @@ function renderLeaderboard(app){
 // for challenges: lookup pokemon's origin gen for sprite (cross-gen)
     // for pokemon: use S.gen
     const isCh=S.lbScope==='challenge';
-    const findOriginGen=(id)=>{
-      if(id<=151) return 1;
-      if(id<=251) return 2;
-      return 3;
-    };
+    const findOriginGen=(id)=>genFromId(id);
     if(!S.lbData){
       contentHtml='<div class="lb-loading">▶ LOADING...</div>';
     } else if(S.lbData.length===0){
@@ -4280,7 +4292,7 @@ function renderLeaderboard(app){
         const barCls=isTop?'lb-bar-fill top':'lb-bar-fill';
         const pct=maxV>0?(p.votes/maxV*100):0;
         const spriteGen=isCh?findOriginGen(p.id):g;
-        const genBadge=isCh?' · GEN '+(spriteGen===1?'I':spriteGen===2?'II':'III'):'';
+        const genBadge=isCh?' · GEN '+(spriteGen===1?'I':spriteGen===2?'II':spriteGen===3?'III':spriteGen===4?'IV':'V'):'';
         return '<tr>'
           +'<td class="'+rankCls+'">'+(i+1)+'</td>'
           +'<td>'+spriteWithFallback(p.id,spriteGen,'lb-sprite','')+'</td>'
@@ -4326,7 +4338,15 @@ function undoLastPick(){
 }
 
 async function restartGame(){
-  if(!confirm('Restart from scratch? Current progress will be lost.')) return;
+  const confirmed=await new Promise(resolve=>showConfirm({
+    title:'RESTART?',
+    message:'RESTART FROM SCRATCH? CURRENT PROGRESS WILL BE LOST.',
+    confirmLabel:'RESTART',
+    cancelLabel:'CANCEL',
+    onConfirm:()=>resolve(true),
+    onCancel:()=>resolve(false),
+  }));
+  if(!confirmed) return;
   if(S.mode!=='challenge'){
     await deleteSession();
     S.activeSessions=S.activeSessions.filter(s=>!(s.gen===S.gen&&s.mode===S.mode&&(s.filter_type||'__none__')===(S.filterType||'__none__')));
@@ -4402,21 +4422,33 @@ function confirmAbandon(sess){
 
 // ── INIT ──
 async function init(){
-  // don't render loading flash — resolve session first, then render once
-  const {data:{session}}=await sb.auth.getSession();
-  if(session?.user){
-    S.user=session.user;
-    S.isGuest=!!(S.user.is_anonymous||!S.user.email);
-    if(S.isGuest){
-      S.profile=null; S.favorites=loadGuestPicks(); S.activeSessions=[];
-    } else {
-      S.profile=await loadProfile(S.user.id);
-      S.favorites=await loadFavs(S.user.id);
-      S.teams=await loadTeams(S.user.id);
-      S.activeSessions=await loadActiveSessions(S.user.id);
-    }
-    S.screen='menu';S.currentView='game';
-  } else {S.screen='landing';}
+  try {
+    const {data,error}=await sb.auth.getSession();
+    const session=data?.session;
+    if(session?.user){
+      S.user=session.user;
+      S.isGuest=!!(S.user.is_anonymous||!S.user.email);
+      if(S.isGuest){
+        S.profile=null; S.favorites=loadGuestPicks(); S.teams=loadGuestTeams(); S.activeSessions=[];
+      } else {
+        try {
+          [S.profile,S.favorites,S.teams,S.activeSessions]=await Promise.all([
+            loadProfile(S.user.id),loadFavs(S.user.id),loadTeams(S.user.id),loadActiveSessions(S.user.id)
+          ]);
+        } catch(e){ console.warn('init: failed to load user data, continuing offline:', e); }
+      }
+      S.screen='menu';S.currentView='game';
+    } else {S.screen='landing';}
+  } catch(e){
+    console.warn('init: Supabase unreachable, starting in guest mode:', e);
+    S.user={id:'local-guest'};
+    S.isGuest=true;
+    S.guestLocalOnly=true;
+    S.favorites=loadGuestPicks();
+    S.teams=loadGuestTeams();
+    S.activeSessions=[];
+    S.screen='landing';
+  }
   render();
   sb.auth.onAuthStateChange(async(ev,sess)=>{
     if(ev==='SIGNED_IN'&&sess?.user){
@@ -4428,9 +4460,10 @@ async function init(){
         const nick=localStorage.getItem('pending_nick');
         if(nick){await upsertProfile(S.user.id,nick);localStorage.removeItem('pending_nick');}
       }catch(e){}
-      [S.profile, S.favorites, S.activeSessions] = await Promise.all([
+      [S.profile, S.favorites, S.teams, S.activeSessions] = await Promise.all([
         loadProfile(S.user.id),
         loadFavs(S.user.id),
+        loadTeams(S.user.id),
         loadActiveSessions(S.user.id)
       ]);
       if(!S.profile || !S.profile.display_name){
